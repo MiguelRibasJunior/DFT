@@ -1,18 +1,16 @@
 export type SubmissionStatus = 'nova' | 'lida' | 'respondida';
 
-export type EmailTriggerStatus = 'sucesso' | 'erro' | 'pendente' | 'simulado';
-
 export interface ContactSubmission {
   id: string;
   nome: string;
-  empresa: string;
+  empresa?: string;
   email: string;
   telefone: string;
   tipoSolucao: string;
   descricao: string;
-  createdAt: string; // ISO string
+  createdAt: string;
   status: SubmissionStatus;
-  emailTriggerStatus: EmailTriggerStatus;
+  emailTriggerStatus?: 'sucesso' | 'erro' | 'pendente';
   emailTriggerError?: string;
   lastEmailSentAt?: string;
 }

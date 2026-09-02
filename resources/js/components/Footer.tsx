@@ -209,4 +209,3 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
     </footer>
   );
 };
-

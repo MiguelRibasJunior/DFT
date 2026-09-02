@@ -1,0 +1,6 @@
+# Devs From Tomorrow - Robots Configuration
+User-agent: *
+Allow: /
+Disallow: /api/admin/
+
+Sitemap: https://devsfromtomorrow.com/sitemap.xml

@@ -17,7 +17,9 @@ import {
   ShieldCheck,
   Zap,
   Sparkles,
-  Inbox
+  Inbox,
+  LogOut,
+  Upload
 } from 'lucide-react';
 import type { ContactSubmission, SubmissionStatus } from '../types/contact';
 import {
@@ -31,13 +33,15 @@ import {
   sendEmailTrigger,
   ADMIN_NOTIFICATION_EMAIL,
 } from '../services/submissionService';
+import { validateFileUpload } from '../utils/security';
 
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  onLogout?: () => void;
 }
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
+export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onLogout }) => {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('todos');
@@ -46,6 +50,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'submissions' | 'email_settings'>('submissions');
   const [testSending, setTestSending] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
+  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
 
   // Load submissions whenever panel opens
   useEffect(() => {
@@ -147,10 +152,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateFileUpload(file);
+    if (!validation.valid) {
+      setUploadNotice(`Erro no upload: ${validation.error}`);
+      return;
+    }
+
+    setUploadNotice(`Arquivo "${file.name}" (${(file.size / 1024).toFixed(1)} KB) validado com sucesso!`);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="admin-panel-title"
       style={{
         position: 'fixed',
         inset: 0,
@@ -185,6 +206,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             padding: '20px 28px',
             borderBottom: '1px solid rgba(41, 50, 71, 0.8)',
             display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
             alignItems: 'center',
             justifyContent: 'space-between',
             background: 'linear-gradient(90deg, rgba(35, 136, 255, 0.08) 0%, rgba(123, 77, 255, 0.08) 100%)',
@@ -207,7 +230,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
+                <h2 id="admin-panel-title" style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
                   Painel Administrativo
                 </h2>
                 <span
@@ -222,7 +245,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  LIVE DATA
+                  LARAVEL + REACT
                 </span>
               </div>
               <p style={{ fontSize: '13px', color: 'var(--text-gray)', margin: 0 }}>
@@ -231,7 +254,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             {/* Tabs */}
             <div style={{ display: 'flex', background: 'rgba(8, 11, 20, 0.8)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-gray)' }}>
               <button
@@ -276,8 +299,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               </button>
             </div>
 
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Sair do painel administrativo"
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: '#EF4444',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <LogOut size={14} />
+                <span>Sair</span>
+              </button>
+            )}
+
             <button
               onClick={onClose}
+              aria-label="Fechar painel admin"
               style={{
                 width: '36px',
                 height: '36px',
@@ -291,14 +338,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
-                e.currentTarget.style.color = '#EF4444';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
-                e.currentTarget.style.color = 'var(--text-gray)';
-              }}
             >
               <X size={18} />
             </button>
@@ -308,116 +347,68 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         {/* Dashboard Metrics Bar */}
         <div
           style={{
-            padding: '20px 28px',
+            padding: '16px 28px',
             background: 'rgba(8, 11, 20, 0.6)',
             borderBottom: '1px solid rgba(41, 50, 71, 0.5)',
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '14px',
           }}
         >
           {/* Card 1: Total */}
-          <div
-            style={{
-              padding: '16px',
-              borderRadius: '12px',
-              background: 'rgba(16, 21, 36, 0.8)',
-              border: '1px solid var(--border-gray)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-            }}
-          >
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(35, 136, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Inbox size={20} color="#2388FF" />
+          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(16, 21, 36, 0.8)', border: '1px solid var(--border-gray)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(35, 136, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Inbox size={18} color="#2388FF" />
             </div>
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 500 }}>Total de Submissões</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#FFFFFF' }}>{stats.total}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-gray)', fontWeight: 500 }}>Total de Submissões</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF' }}>{stats.total}</div>
             </div>
           </div>
 
           {/* Card 2: Novas */}
-          <div
-            style={{
-              padding: '16px',
-              borderRadius: '12px',
-              background: 'rgba(16, 21, 36, 0.8)',
-              border: stats.novas > 0 ? '1px solid rgba(40, 215, 229, 0.5)' : '1px solid var(--border-gray)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-            }}
-          >
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(40, 215, 229, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Clock size={20} color="#28D7E5" />
+          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(16, 21, 36, 0.8)', border: stats.novas > 0 ? '1px solid rgba(40, 215, 229, 0.5)' : '1px solid var(--border-gray)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(40, 215, 229, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Clock size={18} color="#28D7E5" />
             </div>
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 500 }}>Novas (Não lidas)</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#28D7E5' }}>{stats.novas}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-gray)', fontWeight: 500 }}>Novas (Não lidas)</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#28D7E5' }}>{stats.novas}</div>
             </div>
           </div>
 
           {/* Card 3: Respondidas */}
-          <div
-            style={{
-              padding: '16px',
-              borderRadius: '12px',
-              background: 'rgba(16, 21, 36, 0.8)',
-              border: '1px solid var(--border-gray)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-            }}
-          >
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle2 size={20} color="#22C55E" />
+          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(16, 21, 36, 0.8)', border: '1px solid var(--border-gray)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <CheckCircle2 size={18} color="#22C55E" />
             </div>
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 500 }}>Respondidas</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#22C55E' }}>{stats.respondidas}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-gray)', fontWeight: 500 }}>Respondidas</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#22C55E' }}>{stats.respondidas}</div>
             </div>
           </div>
 
           {/* Card 4: E-mails Disparados */}
-          <div
-            style={{
-              padding: '16px',
-              borderRadius: '12px',
-              background: 'rgba(16, 21, 36, 0.8)',
-              border: '1px solid var(--border-gray)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-            }}
-          >
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(123, 77, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Zap size={20} color="#7B4DFF" />
+          <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(16, 21, 36, 0.8)', border: '1px solid var(--border-gray)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(123, 77, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Zap size={18} color="#7B4DFF" />
             </div>
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 500 }}>Trigger Envio Email</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#7B4DFF' }}>{stats.emailsEnviados}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-gray)', fontWeight: 500 }}>Trigger Envio Email</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#7B4DFF' }}>{stats.emailsEnviados}</div>
             </div>
           </div>
         </div>
 
         {/* Content Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 28px' }}>
           {activeTab === 'submissions' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {/* Controls Bar */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '12px',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
                 {/* Search & Filters */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', flex: 1 }}>
-                  <div style={{ position: 'relative', minWidth: '240px', flex: 1 }}>
+                  <div style={{ position: 'relative', minWidth: '220px', flex: 1 }}>
                     <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-gray)' }} />
                     <input
                       type="text"
@@ -464,7 +455,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Bulk Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => exportSubmissionsCSV(filteredSubmissions)}
                     className="btn btn-secondary"
@@ -532,14 +523,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: selectedSubmission ? '1fr 1fr' : '1fr', gap: '20px' }}>
                   {/* Table List */}
-                  <div
-                    style={{
-                      background: 'rgba(8, 11, 20, 0.6)',
-                      borderRadius: '14px',
-                      border: '1px solid var(--border-gray)',
-                      overflow: 'hidden',
-                    }}
-                  >
+                  <div style={{ background: 'rgba(8, 11, 20, 0.6)', borderRadius: '14px', border: '1px solid var(--border-gray)', overflow: 'hidden' }}>
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                         <thead>
@@ -568,16 +552,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                   cursor: 'pointer',
                                   transition: 'background 0.2s ease',
                                 }}
-                                onMouseEnter={(e) => {
-                                  if (!isSelected) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  if (!isSelected)
-                                    e.currentTarget.style.background =
-                                      sub.status === 'nova' ? 'rgba(35, 136, 255, 0.04)' : 'transparent';
-                                }}
                               >
-                                {/* Lead info */}
                                 <td style={{ padding: '14px 16px' }}>
                                   <div style={{ fontWeight: 700, color: '#F5F7FA' }}>{sub.nome}</div>
                                   <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>{sub.email}</div>
@@ -588,34 +563,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                   )}
                                 </td>
 
-                                {/* Solucao */}
                                 <td style={{ padding: '14px 16px', color: 'var(--text-gray)' }}>
-                                  <span
-                                    style={{
-                                      padding: '4px 8px',
-                                      borderRadius: '6px',
-                                      background: 'rgba(255, 255, 255, 0.05)',
-                                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                                      fontSize: '11px',
-                                      color: '#F5F7FA',
-                                      fontWeight: 500,
-                                    }}
-                                  >
+                                  <span style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '11px', color: '#F5F7FA', fontWeight: 500 }}>
                                     {sub.tipoSolucao}
                                   </span>
                                 </td>
 
-                                {/* Data */}
                                 <td style={{ padding: '14px 16px', color: 'var(--text-gray)', whiteSpace: 'nowrap', fontSize: '12px' }}>
-                                  {new Date(sub.createdAt).toLocaleDateString('pt-BR', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                  })}
+                                  {new Date(sub.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                 </td>
 
-                                {/* Status Badge */}
                                 <td style={{ padding: '14px 16px' }}>
                                   <select
                                     value={sub.status}
@@ -629,18 +586,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                       border: 'none',
                                       outline: 'none',
                                       cursor: 'pointer',
-                                      background:
-                                        sub.status === 'nova'
-                                          ? 'rgba(40, 215, 229, 0.2)'
-                                          : sub.status === 'respondida'
-                                          ? 'rgba(34, 197, 94, 0.2)'
-                                          : 'rgba(234, 179, 8, 0.2)',
-                                      color:
-                                        sub.status === 'nova'
-                                          ? '#28D7E5'
-                                          : sub.status === 'respondida'
-                                          ? '#22C55E'
-                                          : '#EAB308',
+                                      background: sub.status === 'nova' ? 'rgba(40, 215, 229, 0.2)' : sub.status === 'respondida' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(234, 179, 8, 0.2)',
+                                      color: sub.status === 'nova' ? '#28D7E5' : sub.status === 'respondida' ? '#22C55E' : '#EAB308',
                                     }}
                                   >
                                     <option value="nova">Nova</option>
@@ -649,7 +596,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                   </select>
                                 </td>
 
-                                {/* Action Buttons */}
                                 <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                                     <button
@@ -657,14 +603,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                         e.stopPropagation();
                                         setSelectedSubmission(sub);
                                       }}
-                                      style={{
-                                        padding: '6px',
-                                        borderRadius: '6px',
-                                        background: 'rgba(35, 136, 255, 0.15)',
-                                        border: 'none',
-                                        color: '#2388FF',
-                                        cursor: 'pointer',
-                                      }}
+                                      style={{ padding: '6px', borderRadius: '6px', background: 'rgba(35, 136, 255, 0.15)', border: 'none', color: '#2388FF', cursor: 'pointer' }}
                                       title="Visualizar detalhes"
                                     >
                                       <Eye size={15} />
@@ -674,14 +613,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                                         e.stopPropagation();
                                         handleDelete(sub.id);
                                       }}
-                                      style={{
-                                        padding: '6px',
-                                        borderRadius: '6px',
-                                        background: 'rgba(239, 68, 68, 0.15)',
-                                        border: 'none',
-                                        color: '#EF4444',
-                                        cursor: 'pointer',
-                                      }}
+                                      style={{ padding: '6px', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.15)', border: 'none', color: '#EF4444', cursor: 'pointer' }}
                                       title="Excluir submissão"
                                     >
                                       <Trash2 size={15} />
@@ -698,36 +630,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
                   {/* Detail Inspector Drawer */}
                   {selectedSubmission && (
-                    <div
-                      style={{
-                        background: 'rgba(16, 21, 36, 0.95)',
-                        borderRadius: '14px',
-                        border: '1px solid rgba(40, 215, 229, 0.3)',
-                        padding: '24px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '20px',
-                        position: 'relative',
-                        maxHeight: '600px',
-                        overflowY: 'auto',
-                      }}
-                    >
+                    <div style={{ background: 'rgba(16, 21, 36, 0.95)', borderRadius: '14px', border: '1px solid rgba(40, 215, 229, 0.3)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px', position: 'relative', maxHeight: '600px', overflowY: 'auto' }}>
                       <button
                         onClick={() => setSelectedSubmission(null)}
-                        style={{
-                          position: 'absolute',
-                          top: '16px',
-                          right: '16px',
-                          background: 'none',
-                          border: 'none',
-                          color: 'var(--text-gray)',
-                          cursor: 'pointer',
-                        }}
+                        style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-gray)', cursor: 'pointer' }}
                       >
                         <X size={18} />
                       </button>
 
-                      <div style={{ borderBottom: '1px solid var(--border-gray)', paddingBottom: '14px' }}>
+                      <div style={{ borderBottom: '1px solid var(--border-gray)', paddingBottom: '12px' }}>
                         <div style={{ fontSize: '11px', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                           Detalhes da Mensagem #{selectedSubmission.id}
                         </div>
@@ -740,15 +651,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                       </div>
 
                       {/* Lead Info Grid */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                         <div style={{ background: 'rgba(8, 11, 20, 0.6)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-gray)' }}>
                           <div style={{ fontSize: '11px', color: 'var(--text-gray)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <Mail size={13} color="#2388FF" /> E-mail
                           </div>
-                          <a
-                            href={`mailto:${selectedSubmission.email}`}
-                            style={{ fontSize: '13px', fontWeight: 600, color: '#F5F7FA', textDecoration: 'underline' }}
-                          >
+                          <a href={`mailto:${selectedSubmission.email}`} style={{ fontSize: '13px', fontWeight: 600, color: '#F5F7FA', textDecoration: 'underline' }}>
                             {selectedSubmission.email}
                           </a>
                         </div>
@@ -757,12 +665,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                           <div style={{ fontSize: '11px', color: 'var(--text-gray)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <Phone size={13} color="#28D7E5" /> Telefone / WhatsApp
                           </div>
-                          <a
-                            href={`https://wa.me/55${selectedSubmission.telefone.replace(/\D/g, '')}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{ fontSize: '13px', fontWeight: 600, color: '#28D7E5', textDecoration: 'none' }}
-                          >
+                          <a href={`https://wa.me/55${selectedSubmission.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" style={{ fontSize: '13px', fontWeight: 600, color: '#28D7E5', textDecoration: 'none' }}>
                             {selectedSubmission.telefone}
                           </a>
                         </div>
@@ -791,35 +694,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-gray)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <MessageSquare size={14} color="#28D7E5" /> Descrição do Projeto / Necessidade
                         </div>
-                        <div
-                          style={{
-                            padding: '14px',
-                            borderRadius: '10px',
-                            background: 'rgba(8, 11, 20, 0.8)',
-                            border: '1px solid var(--border-gray)',
-                            color: '#F5F7FA',
-                            fontSize: '13px',
-                            lineHeight: 1.6,
-                            whiteSpace: 'pre-wrap',
-                          }}
-                        >
+                        <div style={{ padding: '14px', borderRadius: '10px', background: 'rgba(8, 11, 20, 0.8)', border: '1px solid var(--border-gray)', color: '#F5F7FA', fontSize: '13px', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
                           {selectedSubmission.descricao}
                         </div>
                       </div>
 
                       {/* Email Trigger Status Pill */}
-                      <div
-                        style={{
-                          padding: '12px',
-                          borderRadius: '10px',
-                          background: 'rgba(123, 77, 255, 0.1)',
-                          border: '1px solid rgba(123, 77, 255, 0.3)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          fontSize: '12px',
-                        }}
-                      >
+                      <div style={{ padding: '12px', borderRadius: '10px', background: 'rgba(123, 77, 255, 0.1)', border: '1px solid rgba(123, 77, 255, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <Mail size={16} color="#7B4DFF" />
                           <div>
@@ -830,23 +711,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => handleManualEmailTrigger(selectedSubmission)}
                           disabled={testSending}
-                          style={{
-                            padding: '4px 10px',
-                            borderRadius: '6px',
-                            background: '#7B4DFF',
-                            border: 'none',
-                            color: '#FFF',
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                          }}
+                          style={{ padding: '4px 10px', borderRadius: '6px', background: '#7B4DFF', border: 'none', color: '#FFF', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
                         >
                           {testSending ? 'Enviando...' : 'Re-enviar Notificação'}
                         </button>
                       </div>
 
                       {/* Action buttons */}
-                      <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '10px' }}>
+                      <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '10px', flexWrap: 'wrap' }}>
                         <a
                           href={`mailto:${selectedSubmission.email}?cc=${ADMIN_NOTIFICATION_EMAIL}&subject=Contato Devs From Tomorrow - Resposta ao Projeto: ${encodeURIComponent(selectedSubmission.tipoSolucao)}&body=Olá ${encodeURIComponent(selectedSubmission.nome)},\n\nObrigado por entrar em contato com a Devs From Tomorrow! Analisamos a sua solicitação sobre ${encodeURIComponent(selectedSubmission.tipoSolucao)}.\n\nAtenciosamente,\nEquipe Devs From Tomorrow`}
                           target="_blank"
@@ -873,131 +745,58 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               )}
             </div>
           ) : (
-            /* Email Trigger Settings Tab */
+            /* Settings & File Upload Tab */
             <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div
-                style={{
-                  padding: '24px',
-                  borderRadius: '16px',
-                  background: 'rgba(16, 21, 36, 0.8)',
-                  border: '1px solid rgba(40, 215, 229, 0.3)',
-                }}
-              >
+              <div style={{ padding: '24px', borderRadius: '16px', background: 'rgba(16, 21, 36, 0.8)', border: '1px solid rgba(40, 215, 229, 0.3)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div
-                    style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '12px',
-                      background: 'rgba(40, 215, 229, 0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
+                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(40, 215, 229, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Mail size={24} color="#28D7E5" />
                   </div>
                   <div>
                     <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#FFF' }}>
-                      Configuração de Trigger de Notificação por E-mail
+                      Configuração de Trigger & Validador de Upload
                     </h3>
                     <p style={{ fontSize: '13px', color: 'var(--text-gray)' }}>
-                      Todas as submissões enviadas pelo formulário público acionam uma notificação automática.
+                      Notificações automáticas para submissões e teste de upload seguro de anexos.
                     </p>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div
-                    style={{
-                      padding: '16px',
-                      borderRadius: '12px',
-                      background: 'rgba(8, 11, 20, 0.8)',
-                      border: '1px solid var(--border-gray)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
+                  <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(8, 11, 20, 0.8)', border: '1px solid var(--border-gray)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 600 }}>
-                        E-mail de Destino do Administrador
-                      </div>
-                      <div style={{ fontSize: '16px', fontWeight: 700, color: '#28D7E5', marginTop: '2px' }}>
-                        {ADMIN_NOTIFICATION_EMAIL}
-                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-gray)', fontWeight: 600 }}>E-mail de Destino do Administrador</div>
+                      <div style={{ fontSize: '16px', fontWeight: 700, color: '#28D7E5', marginTop: '2px' }}>{ADMIN_NOTIFICATION_EMAIL}</div>
                     </div>
-                    <span
-                      style={{
-                        padding: '4px 10px',
-                        borderRadius: '20px',
-                        background: 'rgba(34, 197, 94, 0.15)',
-                        border: '1px solid rgba(34, 197, 94, 0.3)',
-                        color: '#22C55E',
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
+                    <span style={{ padding: '4px 10px', borderRadius: '20px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#22C55E', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <CheckCircle2 size={14} /> Ativo & Monitorado
                     </span>
                   </div>
 
-                  <div
-                    style={{
-                      padding: '16px',
-                      borderRadius: '12px',
-                      background: 'rgba(8, 11, 20, 0.8)',
-                      border: '1px solid var(--border-gray)',
-                    }}
-                  >
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#F5F7FA', marginBottom: '8px' }}>
-                      ⚡ Como Funciona o Trigger Automático:
+                  {/* Upload Security Tester */}
+                  <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(8, 11, 20, 0.8)', border: '1px solid var(--border-gray)' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#FFF', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Upload size={16} color="#28D7E5" /> Validação de Upload Seguro de Anexos
                     </div>
-                    <ul style={{ fontSize: '13px', color: 'var(--text-gray)', paddingLeft: '20px', lineHeight: 1.7 }}>
-                      <li>Quando o visitante preenche o formulário de contato no site, os dados são salvos instantaneamente no Painel.</li>
-                      <li>Um payload HTTP POST é disparado para a API de e-mail mapeando o destinatário <strong style={{ color: '#FFF' }}>{ADMIN_NOTIFICATION_EMAIL}</strong>.</li>
-                      <li>Caso haja falha de conexão no navegador, o painel grava o registro em fallback local para envio com 1 clique.</li>
-                    </ul>
+                    <p style={{ fontSize: '12px', color: 'var(--text-gray)', marginBottom: '12px' }}>
+                      Tipos permitidos: PNG, JPG, WebP, SVG, PDF. Limite máximo: 5MB.
+                    </p>
+                    <input type="file" accept=".png,.jpg,.jpeg,.webp,.svg,.pdf" onChange={handleFileUpload} style={{ fontSize: '13px', color: 'var(--text-gray)' }} />
+                    {uploadNotice && (
+                      <div style={{ marginTop: '10px', padding: '10px 14px', borderRadius: '8px', background: uploadNotice.includes('Erro') ? 'rgba(239, 68, 68, 0.12)' : 'rgba(34, 197, 94, 0.12)', border: uploadNotice.includes('Erro') ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(34, 197, 94, 0.3)', color: uploadNotice.includes('Erro') ? '#EF4444' : '#22C55E', fontSize: '12px', fontWeight: 600 }}>
+                        {uploadNotice}
+                      </div>
+                    )}
                   </div>
 
                   {/* Test Action */}
                   <div style={{ marginTop: '10px' }}>
-                    <button
-                      onClick={handleTestEmailTrigger}
-                      disabled={testSending}
-                      className="btn btn-primary"
-                      style={{ padding: '12px 24px', fontSize: '14px' }}
-                    >
-                      {testSending ? (
-                        <span>Enviando disparo de teste...</span>
-                      ) : (
-                        <>
-                          <Send size={16} />
-                          <span>Disparar E-mail de Teste para {ADMIN_NOTIFICATION_EMAIL}</span>
-                        </>
-                      )}
+                    <button onClick={handleTestEmailTrigger} disabled={testSending} className="btn btn-primary" style={{ padding: '12px 24px', fontSize: '14px' }}>
+                      {testSending ? <span>Enviando disparo de teste...</span> : <><Send size={16} /><span>Disparar E-mail de Teste para {ADMIN_NOTIFICATION_EMAIL}</span></>}
                     </button>
 
                     {testResult && (
-                      <div
-                        style={{
-                          marginTop: '12px',
-                          padding: '12px 16px',
-                          borderRadius: '10px',
-                          background: testResult.includes('Sucesso') || testResult.includes('sucesso')
-                            ? 'rgba(34, 197, 94, 0.15)'
-                            : 'rgba(239, 68, 68, 0.15)',
-                          border: testResult.includes('Sucesso') || testResult.includes('sucesso')
-                            ? '1px solid rgba(34, 197, 94, 0.3)'
-                            : '1px solid rgba(239, 68, 68, 0.3)',
-                          color: testResult.includes('Sucesso') || testResult.includes('sucesso') ? '#22C55E' : '#EF4444',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                        }}
-                      >
+                      <div style={{ marginTop: '12px', padding: '12px 16px', borderRadius: '10px', background: testResult.includes('Sucesso') || testResult.includes('sucesso') ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)', border: testResult.includes('Sucesso') || testResult.includes('sucesso') ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)', color: testResult.includes('Sucesso') || testResult.includes('sucesso') ? '#22C55E' : '#EF4444', fontSize: '13px', fontWeight: 600 }}>
                         {testResult}
                       </div>
                     )}

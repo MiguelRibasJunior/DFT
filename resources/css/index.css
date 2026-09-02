@@ -47,6 +47,23 @@ body {
   overflow-x: hidden;
 }
 
+/* Accessibility Focus-Visible Rings */
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-float, .animate-float-slow, .animate-pulse-glow, .marquee-track, .marquee-track-reverse {
+    animation: none !important;
+  }
+}
+
 /* Digital Grid Background Effect */
 .bg-digital-grid {
   background-image: 

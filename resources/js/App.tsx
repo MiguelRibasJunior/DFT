@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GeometricCanvas } from './components/GeometricCanvas';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -12,11 +12,15 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
+import { AdminAuthModal } from './components/AdminAuthModal';
 import { AdminPanel } from './components/AdminPanel';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
-  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState<boolean>(false);
+  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
     title: string;
@@ -28,6 +32,34 @@ export function App() {
     description: '',
     technologies: [],
   });
+
+  useEffect(() => {
+    const authSession = sessionStorage.getItem('dft_admin_authenticated');
+    if (authSession === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleOpenAdminTrigger = () => {
+    if (isAuthenticated) {
+      setIsAdminPanelOpen(true);
+    } else {
+      setIsAdminAuthModalOpen(true);
+    }
+  };
+
+  const handleAuthenticatedSuccess = () => {
+    setIsAuthenticated(true);
+    setIsAdminAuthModalOpen(false);
+    setIsAdminPanelOpen(true);
+  };
+
+  const handleAdminLogout = () => {
+    sessionStorage.removeItem('dft_admin_authenticated');
+    sessionStorage.removeItem('dft_admin_token');
+    setIsAuthenticated(false);
+    setIsAdminPanelOpen(false);
+  };
 
   const handleOpenQuote = () => {
     const contactElem = document.getElementById('contato');
@@ -59,7 +91,7 @@ export function App() {
       <GeometricCanvas />
 
       {/* Main Header / Navbar */}
-      <Navbar onOpenQuote={handleOpenQuote} onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Navbar onOpenQuote={handleOpenQuote} onOpenAdmin={handleOpenAdminTrigger} />
 
       {/* Main Content Assembly */}
       <main style={{ position: 'relative', zIndex: 1 }}>
@@ -71,11 +103,11 @@ export function App() {
         <Portfolio onSelectProject={handleSelectProject} />
         <TechStack />
         <CTASection onStartProject={handleOpenQuote} />
-        <ContactForm initialSolution={selectedSolution} onOpenAdmin={() => setIsAdminOpen(true)} />
+        <ContactForm initialSolution={selectedSolution} onOpenAdmin={handleOpenAdminTrigger} />
       </main>
 
       {/* Footer */}
-      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Footer onOpenAdmin={handleOpenAdminTrigger} />
 
       {/* Detail Modal */}
       <ProjectModal
@@ -86,11 +118,21 @@ export function App() {
         technologies={modalData.technologies}
       />
 
+      {/* Admin Auth Modal Challenge */}
+      <AdminAuthModal
+        isOpen={isAdminAuthModalOpen}
+        onClose={() => setIsAdminAuthModalOpen(false)}
+        onAuthenticated={handleAuthenticatedSuccess}
+      />
+
       {/* Admin Panel Modal */}
-      <AdminPanel isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
+      <AdminPanel
+        isOpen={isAdminPanelOpen}
+        onClose={() => setIsAdminPanelOpen(false)}
+        onLogout={handleAdminLogout}
+      />
     </div>
   );
 }
 
 export default App;
-

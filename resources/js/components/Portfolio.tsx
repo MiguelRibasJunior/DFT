@@ -40,7 +40,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject }) => {
   ];
 
   return (
-    <section id="projetos" style={{ padding: '100px 0', position: 'relative' }}>
+    <section id="portfolio" style={{ padding: '100px 0', position: 'relative' }}>
       <div className="container">
         {/* Header */}
         <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
@@ -137,7 +137,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject }) => {
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '4px' }}>
-                      <div style={{ height: '28px', background: 'rgba(35, 136, 255, 0.15)', borderRadius: '6px', border: '1px stroke #2388FF' }} />
+                      <div style={{ height: '28px', background: 'rgba(35, 136, 255, 0.15)', borderRadius: '6px' }} />
                       <div style={{ height: '28px', background: 'rgba(123, 77, 255, 0.15)', borderRadius: '6px' }} />
                     </div>
                   </div>

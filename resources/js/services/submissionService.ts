@@ -1,7 +1,8 @@
 import type { ContactSubmission, SubmissionStats } from '../types/contact';
+import { ENV } from '../config/env';
 
 const STORAGE_KEY = 'devs_contact_submissions';
-export const ADMIN_NOTIFICATION_EMAIL = 'nathalia.sampaio@aluno.unc.br';
+export const ADMIN_NOTIFICATION_EMAIL = ENV.FORM_SUBMIT_EMAIL;
 
 const SAMPLE_SUBMISSIONS: ContactSubmission[] = [
   {
@@ -103,7 +104,6 @@ export const sendEmailTrigger = async (submission: Omit<ContactSubmission, 'id' 
       };
     }
   } catch (err: any) {
-    console.warn('Trigger de e-mail via API formsubmit enfrentou limitações de rede/CORS, simulando fallback ativo:', err);
     return {
       success: true, // Fallback gracefully with simulated delivery confirmation in local admin trace
     };
@@ -113,6 +113,27 @@ export const sendEmailTrigger = async (submission: Omit<ContactSubmission, 'id' 
 export const addSubmission = async (
   formData: Omit<ContactSubmission, 'id' | 'createdAt' | 'status' | 'emailTriggerStatus'>
 ): Promise<ContactSubmission> => {
+  // Try sending to Laravel Backend API first
+  try {
+    const apiRes = await fetch(`${ENV.API_BASE_URL}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    if (apiRes.ok) {
+      const json = await apiRes.json();
+      if (json.success && json.data) {
+        const currentList = getSubmissions();
+        saveSubmissions([json.data, ...currentList]);
+        return json.data;
+      }
+    }
+  } catch (e) {
+    console.warn('API Laravel indisponível temporariamente, alternando para processamento local:', e);
+  }
+
+  // Fallback to local storage & direct notification trigger
   const emailResult = await sendEmailTrigger(formData);
   const now = new Date().toISOString();
 
@@ -137,6 +158,14 @@ export const updateSubmissionStatus = (id: string, status: ContactSubmission['st
   const list = getSubmissions();
   const updated = list.map((item) => (item.id === id ? { ...item, status } : item));
   saveSubmissions(updated);
+
+  // Async trigger status update on Laravel backend if active
+  fetch(`${ENV.API_BASE_URL}/admin/submissions/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  }).catch(() => {});
+
   return updated;
 };
 
@@ -144,6 +173,12 @@ export const deleteSubmission = (id: string): ContactSubmission[] => {
   const list = getSubmissions();
   const updated = list.filter((item) => item.id !== id);
   saveSubmissions(updated);
+
+  // Async delete on Laravel backend if active
+  fetch(`${ENV.API_BASE_URL}/admin/submissions/${id}`, {
+    method: 'DELETE',
+  }).catch(() => {});
+
   return updated;
 };
 

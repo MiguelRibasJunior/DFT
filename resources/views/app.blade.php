@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -59,9 +59,11 @@
       ]
     }
     </script>
+
+    @viteReactRefresh
+    @vite(['resources/js/main.tsx', 'resources/css/index.css'])
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/resources/js/main.tsx"></script>
   </body>
 </html>
