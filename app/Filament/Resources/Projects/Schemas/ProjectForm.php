@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Projects\Schemas;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -36,6 +37,10 @@ class ProjectForm
                                 TextInput::make('category')
                                     ->label('Categoria')
                                     ->required(),
+                                TagsInput::make('technologies')
+                                    ->label('Tecnologias')
+                                    ->placeholder('Digite e pressione Enter')
+                                    ->columnSpanFull(),
                                 TextInput::make('short_description')
                                     ->label('Descrição curta')
                                     ->required()

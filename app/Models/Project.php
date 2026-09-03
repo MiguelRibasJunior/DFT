@@ -15,6 +15,7 @@ class Project extends Model
         'short_description',
         'description',
         'category',
+        'technologies',
         'cover_image',
         'gallery',
         'status',
@@ -30,6 +31,7 @@ class Project extends Model
     ];
 
     protected $casts = [
+        'technologies' => 'array',
         'gallery' => 'array',
         'featured' => 'boolean',
         'order' => 'integer',
