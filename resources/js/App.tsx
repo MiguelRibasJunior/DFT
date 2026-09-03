@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GeometricCanvas } from './components/GeometricCanvas';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -12,14 +12,11 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { AdminAuthModal } from './components/AdminAuthModal';
-import { AdminPanel } from './components/AdminPanel';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState<boolean>(false);
-  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -33,32 +30,8 @@ export function App() {
     technologies: [],
   });
 
-  useEffect(() => {
-    const authSession = sessionStorage.getItem('dft_admin_authenticated');
-    if (authSession === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
   const handleOpenAdminTrigger = () => {
-    if (isAuthenticated) {
-      setIsAdminPanelOpen(true);
-    } else {
-      setIsAdminAuthModalOpen(true);
-    }
-  };
-
-  const handleAuthenticatedSuccess = () => {
-    setIsAuthenticated(true);
-    setIsAdminAuthModalOpen(false);
     setIsAdminPanelOpen(true);
-  };
-
-  const handleAdminLogout = () => {
-    sessionStorage.removeItem('dft_admin_authenticated');
-    sessionStorage.removeItem('dft_admin_token');
-    setIsAuthenticated(false);
-    setIsAdminPanelOpen(false);
   };
 
   const handleOpenQuote = () => {
@@ -118,18 +91,10 @@ export function App() {
         technologies={modalData.technologies}
       />
 
-      {/* Admin Auth Modal Challenge */}
-      <AdminAuthModal
-        isOpen={isAdminAuthModalOpen}
-        onClose={() => setIsAdminAuthModalOpen(false)}
-        onAuthenticated={handleAuthenticatedSuccess}
-      />
-
-      {/* Admin Panel Modal */}
-      <AdminPanel
+      {/* Admin Dashboard */}
+      <AdminDashboard
         isOpen={isAdminPanelOpen}
         onClose={() => setIsAdminPanelOpen(false)}
-        onLogout={handleAdminLogout}
       />
     </div>
   );
