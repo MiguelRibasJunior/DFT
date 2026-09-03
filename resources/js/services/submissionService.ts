@@ -1,4 +1,4 @@
-import type { ContactSubmission, SubmissionStats } from '../types/contact';
+import type { ContactSubmission } from '../types/contact';
 import { ENV } from '../config/env';
 
 const STORAGE_KEY = 'devs_contact_submissions';
@@ -152,80 +152,4 @@ export const addSubmission = async (
   saveSubmissions(updatedList);
 
   return newSubmission;
-};
-
-export const updateSubmissionStatus = (id: string, status: ContactSubmission['status']): ContactSubmission[] => {
-  const list = getSubmissions();
-  const updated = list.map((item) => (item.id === id ? { ...item, status } : item));
-  saveSubmissions(updated);
-
-  // Async trigger status update on Laravel backend if active
-  fetch(`${ENV.API_BASE_URL}/admin/submissions/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status }),
-  }).catch(() => {});
-
-  return updated;
-};
-
-export const deleteSubmission = (id: string): ContactSubmission[] => {
-  const list = getSubmissions();
-  const updated = list.filter((item) => item.id !== id);
-  saveSubmissions(updated);
-
-  // Async delete on Laravel backend if active
-  fetch(`${ENV.API_BASE_URL}/admin/submissions/${id}`, {
-    method: 'DELETE',
-  }).catch(() => {});
-
-  return updated;
-};
-
-export const clearAllSubmissions = (): ContactSubmission[] => {
-  saveSubmissions([]);
-  return [];
-};
-
-export const resetToSampleSubmissions = (): ContactSubmission[] => {
-  saveSubmissions(SAMPLE_SUBMISSIONS);
-  return SAMPLE_SUBMISSIONS;
-};
-
-export const getSubmissionStats = (submissions: ContactSubmission[]): SubmissionStats => {
-  return {
-    total: submissions.length,
-    novas: submissions.filter((s) => s.status === 'nova').length,
-    lidas: submissions.filter((s) => s.status === 'lida').length,
-    respondidas: submissions.filter((s) => s.status === 'respondida').length,
-    emailsEnviados: submissions.filter((s) => s.emailTriggerStatus === 'sucesso').length,
-  };
-};
-
-export const exportSubmissionsCSV = (submissions: ContactSubmission[]): void => {
-  if (!submissions.length) return;
-
-  const headers = ['ID', 'Data/Hora', 'Nome', 'Empresa', 'E-mail', 'Telefone', 'Solução Desejada', 'Descrição', 'Status', 'Trigger E-mail'];
-  const rows = submissions.map((s) => [
-    s.id,
-    new Date(s.createdAt).toLocaleString('pt-BR'),
-    `"${s.nome.replace(/"/g, '""')}"`,
-    `"${(s.empresa || '').replace(/"/g, '""')}"`,
-    `"${s.email.replace(/"/g, '""')}"`,
-    `"${s.telefone.replace(/"/g, '""')}"`,
-    `"${s.tipoSolucao.replace(/"/g, '""')}"`,
-    `"${s.descricao.replace(/"/g, '""')}"`,
-    s.status,
-    s.emailTriggerStatus,
-  ]);
-
-  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `contatos_devs_from_tomorrow_${new Date().toISOString().slice(0, 10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 };

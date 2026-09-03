@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
-import { getSubmissions } from '../services/submissionService';
 
 interface NavbarProps {
   onOpenQuote: () => void;
-  onOpenAdmin?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenAdmin }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,17 +15,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenAdmin }) => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const checkUnread = () => {
-      const submissions = getSubmissions();
-      const unread = submissions.filter((s) => s.status === 'nova').length;
-      setUnreadCount(unread);
-    };
-    checkUnread();
-    const interval = setInterval(checkUnread, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   const navLinks = [
@@ -135,39 +121,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenAdmin }) => {
 
         {/* Desktop CTA Button & Admin Button */}
         <div style={{ display: 'none', alignItems: 'center', gap: '12px' }} className="desktop-nav">
-          {onOpenAdmin && (
-            <button
-              onClick={onOpenAdmin}
-              className="btn btn-secondary"
-              style={{
-                padding: '9px 16px',
-                fontSize: '13px',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                borderColor: unreadCount > 0 ? '#28D7E5' : 'var(--border-gray)',
-              }}
-              title="Abrir Painel Administrativo de Respostas"
-            >
-              <ShieldCheck size={16} color="#28D7E5" />
-              <span>Painel Admin</span>
-              {unreadCount > 0 && (
-                <span
-                  style={{
-                    padding: '2px 7px',
-                    borderRadius: '10px',
-                    background: '#28D7E5',
-                    color: '#080B14',
-                    fontSize: '11px',
-                    fontWeight: 800,
-                  }}
-                >
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-          )}
+          <a
+            href="/admin"
+            className="btn btn-secondary"
+            style={{
+              padding: '9px 16px',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              textDecoration: 'none',
+            }}
+            title="Abrir Painel Administrativo"
+          >
+            <ShieldCheck size={16} color="#28D7E5" />
+            <span>Painel Admin</span>
+          </a>
 
           <button onClick={onOpenQuote} className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '14px' }}>
             <span>Solicitar orçamento</span>
@@ -230,19 +199,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenAdmin }) => {
               {link.name}
             </a>
           ))}
-          {onOpenAdmin && (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenAdmin();
-              }}
-              className="btn btn-secondary"
-              style={{ width: '100%', marginTop: '4px', justifyContent: 'center' }}
-            >
-              <ShieldCheck size={18} color="#28D7E5" />
-              <span>Painel Admin {unreadCount > 0 && `(${unreadCount} novas)`}</span>
-            </button>
-          )}
+          <a
+            href="/admin"
+            onClick={() => setMobileMenuOpen(false)}
+            className="btn btn-secondary"
+            style={{ width: '100%', marginTop: '4px', justifyContent: 'center', textDecoration: 'none' }}
+          >
+            <ShieldCheck size={18} color="#28D7E5" />
+            <span>Painel Admin</span>
+          </a>
           <button
             onClick={() => {
               setMobileMenuOpen(false);

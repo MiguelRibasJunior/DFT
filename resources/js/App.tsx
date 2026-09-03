@@ -12,11 +12,9 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
-  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState<boolean>(false);
 
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -29,10 +27,6 @@ export function App() {
     description: '',
     technologies: [],
   });
-
-  const handleOpenAdminTrigger = () => {
-    setIsAdminPanelOpen(true);
-  };
 
   const handleOpenQuote = () => {
     const contactElem = document.getElementById('contato');
@@ -64,7 +58,7 @@ export function App() {
       <GeometricCanvas />
 
       {/* Main Header / Navbar */}
-      <Navbar onOpenQuote={handleOpenQuote} onOpenAdmin={handleOpenAdminTrigger} />
+      <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Main Content Assembly */}
       <main style={{ position: 'relative', zIndex: 1 }}>
@@ -76,11 +70,11 @@ export function App() {
         <Portfolio onSelectProject={handleSelectProject} />
         <TechStack />
         <CTASection onStartProject={handleOpenQuote} />
-        <ContactForm initialSolution={selectedSolution} onOpenAdmin={handleOpenAdminTrigger} />
+        <ContactForm initialSolution={selectedSolution} />
       </main>
 
       {/* Footer */}
-      <Footer onOpenAdmin={handleOpenAdminTrigger} />
+      <Footer />
 
       {/* Detail Modal */}
       <ProjectModal
@@ -89,12 +83,6 @@ export function App() {
         title={modalData.title}
         description={modalData.description}
         technologies={modalData.technologies}
-      />
-
-      {/* Admin Dashboard */}
-      <AdminDashboard
-        isOpen={isAdminPanelOpen}
-        onClose={() => setIsAdminPanelOpen(false)}
       />
     </div>
   );

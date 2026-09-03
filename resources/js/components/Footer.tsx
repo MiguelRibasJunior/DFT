@@ -1,11 +1,7 @@
 import React from 'react';
 import { ArrowUp, ShieldCheck } from 'lucide-react';
 
-interface FooterProps {
-  onOpenAdmin?: () => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+export const Footer: React.FC = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -156,25 +152,21 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           <div>© 2026 Devs From Tomorrow. Todos os direitos reservados.</div>
 
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            {onOpenAdmin && (
-              <button
-                onClick={onOpenAdmin}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--accent-cyan)',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <ShieldCheck size={14} />
-                <span>Área Administrativa</span>
-              </button>
-            )}
+            <a
+              href="/admin"
+              style={{
+                color: 'var(--accent-cyan)',
+                textDecoration: 'none',
+                fontSize: '13px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <ShieldCheck size={14} />
+              <span>Área Administrativa</span>
+            </a>
             <span>•</span>
             <a href="#" style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
               Política de privacidade

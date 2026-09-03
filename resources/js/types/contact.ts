@@ -14,11 +14,3 @@ export interface ContactSubmission {
   emailTriggerError?: string;
   lastEmailSentAt?: string;
 }
-
-export interface SubmissionStats {
-  total: number;
-  novas: number;
-  lidas: number;
-  respondidas: number;
-  emailsEnviados: number;
-}

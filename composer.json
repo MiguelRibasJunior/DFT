@@ -1,11 +1,19 @@
 {
     "name": "devsfromtomorrow/dft-platform",
     "type": "project",
-    "description": "Devs From Tomorrow — Soluções Digitais, Automação & Inteligência Artificial",
-    "keywords": ["laravel", "react", "typescript", "vite", "dft", "automation"],
+    "description": "Devs From Tomorrow \u2014 Solu\u00e7\u00f5es Digitais, Automa\u00e7\u00e3o & Intelig\u00eancia Artificial",
+    "keywords": [
+        "laravel",
+        "react",
+        "typescript",
+        "vite",
+        "dft",
+        "automation"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9"
     },
@@ -32,7 +40,8 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
