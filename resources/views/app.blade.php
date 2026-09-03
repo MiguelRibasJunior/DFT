@@ -39,6 +39,7 @@
 
     <!-- Schema.org Structured Data (JSON-LD) -->
     <script type="application/ld+json">
+    @verbatim
     {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
@@ -58,6 +59,7 @@
         "https://github.com/devs-from-tomorrow"
       ]
     }
+    @endverbatim
     </script>
 
     @viteReactRefresh
