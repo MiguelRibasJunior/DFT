@@ -9,6 +9,8 @@ import { MessagesScreen } from './MessagesScreen'
 import { CTAsScreen } from './CTAsScreen'
 import { FooterScreen } from './FooterScreen'
 import { SettingsScreen } from './SettingsScreen'
+import { UsersScreen } from './UsersScreen'
+import { ProfileScreen } from './ProfileScreen'
 
 interface AdminDashboardProps {
   isOpen: boolean
@@ -69,6 +71,8 @@ export function AdminDashboard({ isOpen, onClose }: AdminDashboardProps) {
           {screen === 'ctas' && <CTAsScreen onNav={navigate} />}
           {screen === 'footer' && <FooterScreen onNav={navigate} />}
           {screen === 'settings' && <SettingsScreen onNav={navigate} />}
+          {screen === 'users' && <UsersScreen onNav={navigate} />}
+          {screen === 'profile' && <ProfileScreen onNav={navigate} />}
         </>
       )}
     </div>
