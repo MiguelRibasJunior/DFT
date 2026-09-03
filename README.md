@@ -25,7 +25,7 @@
 - **HTML5 Canvas**: Animação de background geométrica interativa de alta performance.
 
 ### Backend (API RESTful)
-- **PHP 8.2+ & Laravel 11**: Estrutura robusta para controle de rotas, API REST e envio de e-mails.
+- **PHP 8.2+ & Laravel 12**: Estrutura robusta para controle de rotas, API REST e envio de e-mails.
 - **SQLite / MySQL**: Banco de dados para persistência de mensagens de orçamento e contatos.
 - **Throttle Middleware**: Proteção nativa contra spam e abuso de envios nos formulários.
 
@@ -61,45 +61,58 @@
 
 ## 📂 Estrutura do Projeto
 
+O frontend vive dentro do próprio projeto Laravel — não é um app separado. O Laravel serve a
+SPA React através de uma única view Blade ([resources/views/app.blade.php](resources/views/app.blade.php)),
+que carrega os assets via `@vite`. Em desenvolvimento, o Vite injeta os módulos com HMR real; em
+produção, o `@vite` aponta para os arquivos já compilados em `public/build/`.
+
 ```bash
 DFT/
-├── app/                        # Backend Laravel (Controllers, Models)
+├── app/                        # Backend Laravel (Controllers, Models, Providers)
 │   ├── Http/Controllers/
 │   │   ├── AdminController.php
 │   │   ├── ContactController.php
 │   │   └── UploadController.php
-│   └── Models/
+│   ├── Models/
+│   └── Providers/
 ├── bootstrap/                  # Bootstrap e configurações do framework Laravel
+├── config/                     # Configuração do Laravel (app, database, session, etc.)
 ├── database/                   # Migrações e configurações do SQLite/MySQL
 │   └── migrations/
-├── public/                     # Arquivos públicos e SEO
+├── public/                     # Front controller do Laravel + assets públicos e SEO
+│   ├── index.php               # Front controller (todas as requisições passam por aqui)
+│   ├── build/                  # Assets compilados pelo Vite (gerado, não versionado)
 │   ├── robots.txt
 │   └── sitemap.xml
-├── resources/                  # Código Fonte do Frontend (React + CSS)
+├── resources/                  # Código Fonte do Frontend (React + CSS) + a view Blade
 │   ├── css/
 │   │   └── index.css          # Design System e tokens visuais
-│   └── js/
-│       ├── components/        # Componentes React reutilizáveis
-│       │   ├── AdminAuthModal.tsx
-│       │   ├── AdminPanel.tsx
-│       │   ├── ContactForm.tsx
-│       │   ├── GeometricCanvas.tsx
-│       │   ├── Hero.tsx
-│       │   ├── Navbar.tsx
-│       │   └── Portfolio.tsx
-│       ├── services/          # Camada de requisições HTTP e API
-│       ├── types/             # Definições de tipos TypeScript
-│       ├── App.tsx            # Componente principal da aplicação
-│       └── main.tsx           # Entry point do React
-├── routes/                     # Rotas de API e Web
+│   ├── js/
+│   │   ├── components/        # Componentes React reutilizáveis
+│   │   │   ├── AdminAuthModal.tsx
+│   │   │   ├── AdminPanel.tsx
+│   │   │   ├── ContactForm.tsx
+│   │   │   ├── GeometricCanvas.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   └── Portfolio.tsx
+│   │   ├── services/          # Camada de requisições HTTP e API
+│   │   ├── types/             # Definições de tipos TypeScript
+│   │   ├── App.tsx            # Componente principal da aplicação
+│   │   └── main.tsx           # Entry point do React
+│   └── views/
+│       └── app.blade.php      # View única que monta a SPA via @vite
+├── routes/                     # Rotas de API, Web e Console
 │   ├── api.php
+│   ├── console.php
 │   └── web.php
+├── storage/                     # Cache, sessões, logs e uploads do Laravel
 ├── .env.example                # Modelo de variáveis de ambiente
 ├── .gitignore                  # Regras de exclusão do Git
-├── index.html                  # HTML principal com Meta Tags de SEO
+├── composer.json               # Dependências PHP e scripts (composer run dev)
 ├── package.json                # Dependências Node.js
 ├── tsconfig.json               # Configurações do TypeScript
-└── vite.config.ts              # Configurações de alias e servidor Vite
+└── vite.config.ts              # Plugin Laravel + React + alias do Vite
 ```
 
 ---
@@ -108,8 +121,8 @@ DFT/
 
 ### Pré-requisitos
 - **Node.js**: `v20.x` ou superior
-- **PHP**: `v8.2` ou superior (opcional para rodar o backend Laravel localmente)
-- **Composer**: `v2.x` (opcional caso utilize os endpoints Laravel)
+- **PHP**: `v8.2` ou superior com as extensões `fileinfo` e `pdo_sqlite` habilitadas
+- **Composer**: `v2.x`
 
 ### 1. Clonar o Repositório
 ```bash
@@ -117,28 +130,35 @@ git clone https://github.com/MiguelRibasJunior/DFT.git
 cd DFT
 ```
 
-### 2. Instalar Dependências Frontend
+### 2. Instalar Dependências (Backend + Frontend)
 ```bash
+composer install
 npm install
 ```
 
 ### 3. Configurar Variáveis de Ambiente
-Crie um arquivo `.env` baseado no `.env.example`:
+Crie um arquivo `.env` baseado no `.env.example`, gere a chave da aplicação e prepare o banco SQLite:
 ```bash
 cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
 ```
 
 ### 4. Executar em Modo de Desenvolvimento
+Sobe o servidor Laravel (`http://127.0.0.1:8000`) e o Vite (HMR) juntos, com um único comando:
 ```bash
-npm run dev
+composer run dev
 ```
-A aplicação estará disponível em `http://localhost:3000`.
+Abra `http://127.0.0.1:8000` — é essa URL que serve a SPA, não a porta do Vite. Se preferir rodar
+cada processo separadamente, use dois terminais: `php artisan serve` e `npm run dev`.
 
 ### 5. Compilar para Produção (Build)
 ```bash
 npm run build
 ```
-Os arquivos otimizados para deploy serão gerados no diretório `/dist`.
+Os assets otimizados são gerados em `public/build/` (versionados via `manifest.json`, lido pelo
+`@vite` do Blade) — não é preciso servir nada separado, o próprio Laravel já serve tudo em produção.
 
 ---
 
