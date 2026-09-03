@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Messages\Tables;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -27,7 +28,9 @@ class MessagesTable
                 TextColumn::make('body')
                     ->label('Prévia')
                     ->limit(60)
-                    ->color('gray'),
+                    ->color('gray')
+                    ->grow(false)
+                    ->extraAttributes(['style' => 'max-width: 280px']),
                 TextColumn::make('created_at')
                     ->label('Data')
                     ->dateTime('d/m/Y H:i')
@@ -46,16 +49,21 @@ class MessagesTable
                     ->query(fn (Builder $query) => $query->where('archived', true)),
             ])
             ->recordActions([
-                EditAction::make()->label('Abrir'),
-                Action::make('toggleRead')
-                    ->label(fn ($record) => $record->read ? 'Marcar não lida' : 'Marcar lida')
-                    ->icon(Heroicon::OutlinedEnvelope)
-                    ->action(fn ($record) => $record->update(['read' => ! $record->read])),
-                Action::make('toggleArchived')
-                    ->label(fn ($record) => $record->archived ? 'Desarquivar' : 'Arquivar')
-                    ->icon(Heroicon::OutlinedArchiveBox)
-                    ->action(fn ($record) => $record->update(['archived' => ! $record->archived])),
-                DeleteAction::make()->requiresConfirmation(),
+                EditAction::make()
+                    ->label('Abrir')
+                    ->iconButton()
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare),
+                ActionGroup::make([
+                    Action::make('toggleRead')
+                        ->label(fn ($record) => $record->read ? 'Marcar não lida' : 'Marcar lida')
+                        ->icon(Heroicon::OutlinedEnvelope)
+                        ->action(fn ($record) => $record->update(['read' => ! $record->read])),
+                    Action::make('toggleArchived')
+                        ->label(fn ($record) => $record->archived ? 'Desarquivar' : 'Arquivar')
+                        ->icon(Heroicon::OutlinedArchiveBox)
+                        ->action(fn ($record) => $record->update(['archived' => ! $record->archived])),
+                    DeleteAction::make()->requiresConfirmation(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
