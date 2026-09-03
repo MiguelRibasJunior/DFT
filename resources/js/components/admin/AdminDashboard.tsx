@@ -6,6 +6,9 @@ import { ProjectsScreen } from './ProjectsScreen'
 import { ProjectFormScreen } from './ProjectFormScreen'
 import { ContactsScreen } from './ContactsScreen'
 import { MessagesScreen } from './MessagesScreen'
+import { CTAsScreen } from './CTAsScreen'
+import { FooterScreen } from './FooterScreen'
+import { SettingsScreen } from './SettingsScreen'
 
 interface AdminDashboardProps {
   isOpen: boolean
@@ -63,6 +66,9 @@ export function AdminDashboard({ isOpen, onClose }: AdminDashboardProps) {
           {screen === 'project-form' && <ProjectFormScreen onNav={navigate} />}
           {screen === 'contacts' && <ContactsScreen onNav={navigate} />}
           {screen === 'messages' && <MessagesScreen onNav={navigate} />}
+          {screen === 'ctas' && <CTAsScreen onNav={navigate} />}
+          {screen === 'footer' && <FooterScreen onNav={navigate} />}
+          {screen === 'settings' && <SettingsScreen onNav={navigate} />}
         </>
       )}
     </div>
