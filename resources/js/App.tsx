@@ -12,14 +12,16 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { getProjects, type PublicProject } from './services/contentService';
+import { getProjects, getSiteSettings, type PublicProject, type PublicSiteSettings } from './services/contentService';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
   const [projects, setProjects] = useState<PublicProject[]>([]);
+  const [siteSettings, setSiteSettings] = useState<PublicSiteSettings | null>(null);
 
   useEffect(() => {
     getProjects().then(setProjects);
+    getSiteSettings().then(setSiteSettings);
   }, []);
 
   const [modalData, setModalData] = useState<{
@@ -76,11 +78,11 @@ export function App() {
         <Portfolio onSelectProject={handleSelectProject} projects={projects} />
         <TechStack />
         <CTASection onStartProject={handleOpenQuote} />
-        <ContactForm initialSolution={selectedSolution} />
+        <ContactForm initialSolution={selectedSolution} settings={siteSettings} />
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer settings={siteSettings} />
 
       {/* Detail Modal */}
       <ProjectModal

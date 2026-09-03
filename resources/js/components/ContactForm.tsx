@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import { Mail, MessageSquare, Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { addSubmission, ADMIN_NOTIFICATION_EMAIL } from '../services/submissionService';
 import { sanitizeInput, validateEmail, validatePhone, checkRateLimit } from '../utils/security';
+import type { PublicSiteSettings } from '../services/contentService';
 
 interface ContactFormProps {
   initialSolution?: string;
+  settings?: PublicSiteSettings | null;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '' }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', settings }) => {
+  const contactEmail = settings?.email || 'contato@devsfromtomorrow.com';
+  const contactWhatsapp = settings?.whatsapp || '+55 (11) 99999-9999';
+  const whatsappDigits = contactWhatsapp.replace(/\D/g, '');
   const [formData, setFormData] = useState({
     nome: '',
     empresa: '',
@@ -356,7 +361,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '' }
             {/* Direct Channels */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <a
-                href="mailto:contato@devsfromtomorrow.com"
+                href={`mailto:${contactEmail}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -376,12 +381,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '' }
                 </div>
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>E-mail corporativo</div>
-                  <div style={{ fontSize: '15px', fontWeight: 600 }}>contato@devsfromtomorrow.com</div>
+                  <div style={{ fontSize: '15px', fontWeight: 600 }}>{contactEmail}</div>
                 </div>
               </a>
 
               <a
-                href="https://wa.me/5511999999999"
+                href={`https://wa.me/${whatsappDigits}`}
                 target="_blank"
                 rel="noreferrer"
                 style={{
@@ -403,7 +408,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '' }
                 </div>
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>WhatsApp Oficial</div>
-                  <div style={{ fontSize: '15px', fontWeight: 600 }}>+55 (11) 99999-9999</div>
+                  <div style={{ fontSize: '15px', fontWeight: 600 }}>{contactWhatsapp}</div>
                 </div>
               </a>
             </div>
