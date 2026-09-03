@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Cta;
+use App\Models\Message;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use App\Models\User;
@@ -80,6 +81,37 @@ class DatabaseSeeder extends Seeder
                 'order' => 1,
             ]
         );
+
+        $messages = [
+            [
+                'sender_name' => 'Pedro Almeida',
+                'sender_email' => 'pedro@fintech.com.br',
+                'subject' => 'Orçamento urgente — sistema ERP',
+                'body' => 'Precisamos de uma proposta o quanto antes para apresentar ao conselho.',
+                'read' => false,
+            ],
+            [
+                'sender_name' => 'Carla Santos',
+                'sender_email' => 'carla@design.studio',
+                'subject' => 'Parceria em projetos',
+                'body' => 'Vi o portfólio de vocês e adorei! Gostaria de conversar sobre uma possível parceria.',
+                'read' => false,
+            ],
+            [
+                'sender_name' => 'Eduardo Lima',
+                'sender_email' => 'edu@startup.co',
+                'subject' => 'Re: Proposta chatbot',
+                'body' => 'Ótimo! Aprovamos a proposta. Quando podemos iniciar o projeto?',
+                'read' => true,
+            ],
+        ];
+
+        foreach ($messages as $message) {
+            Message::updateOrCreate(
+                ['sender_email' => $message['sender_email'], 'subject' => $message['subject']],
+                $message
+            );
+        }
 
         SiteSetting::updateOrCreate(['id' => 1], [
             'site_name' => 'Devs From Tomorrow',
