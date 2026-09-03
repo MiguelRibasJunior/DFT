@@ -10,12 +10,14 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -27,6 +29,28 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Devs From Tomorrow')
+            ->brandLogo(fn () => new HtmlString(<<<'SVG'
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 2.25rem; height: 2.25rem;">
+                    <polygon points="20,4 6,34 34,34" stroke="url(#admin-logo-grad-1)" stroke-width="2.5" fill="none" />
+                    <polygon points="20,12 12,28 28,28" fill="url(#admin-logo-grad-2)" opacity="0.8" />
+                    <circle cx="20" cy="4" r="2.5" fill="#28D7E5" />
+                    <circle cx="6" cy="34" r="2.5" fill="#2388FF" />
+                    <circle cx="34" cy="34" r="2.5" fill="#7B4DFF" />
+                    <line x1="20" y1="4" x2="20" y2="28" stroke="#28D7E5" stroke-width="1" stroke-dasharray="2 2" />
+                    <defs>
+                        <linearGradient id="admin-logo-grad-1" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#28D7E5" />
+                            <stop offset="50%" stop-color="#2388FF" />
+                            <stop offset="100%" stop-color="#7B4DFF" />
+                        </linearGradient>
+                        <linearGradient id="admin-logo-grad-2" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" stop-color="#7B4DFF" />
+                            <stop offset="100%" stop-color="#28D7E5" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                SVG))
+            ->brandLogoHeight('2.25rem')
             ->favicon('/favicon.svg')
             ->login()
             ->colors([
@@ -46,6 +70,16 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
             ])
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn () => new HtmlString(
+                    '<div class="fi-align-center" style="margin-top: 1.5rem; text-align: center;">'
+                    . '<a href="/" style="font-size: 0.875rem; font-weight: 600; color: rgb(var(--primary-600));">'
+                    . '&larr; Voltar ao site'
+                    . '</a>'
+                    . '</div>'
+                ),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
