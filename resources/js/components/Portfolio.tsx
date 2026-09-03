@@ -1,43 +1,55 @@
 import React from 'react';
 import { ExternalLink, Layers, Bot, Smartphone, ArrowRight } from 'lucide-react';
+import type { PublicProject } from '../services/contentService';
 
 interface PortfolioProps {
   onSelectProject: (title: string, desc: string, tags: string[]) => void;
+  projects?: PublicProject[];
 }
 
-export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject }) => {
-  const projects = [
-    {
-      id: 1,
-      title: 'Plataforma de Gestão',
-      category: 'Sistema Web & Dashboard',
-      description: 'Sistema online para gerenciamento de processos, usuários, documentos e indicadores.',
-      technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
-      gradient: 'linear-gradient(135deg, rgba(35, 136, 255, 0.25) 0%, rgba(123, 77, 255, 0.15) 100%)',
-      borderColor: 'rgba(35, 136, 255, 0.4)',
-      icon: Layers,
-    },
-    {
-      id: 2,
-      title: 'Assistente Virtual com IA',
-      category: 'Chatbot & Automação n8n',
-      description: 'Chatbot inteligente integrado a dados e ferramentas de automação.',
-      technologies: ['Python', 'n8n', 'OpenAI', 'WhatsApp API'],
-      gradient: 'linear-gradient(135deg, rgba(40, 215, 229, 0.25) 0%, rgba(35, 136, 255, 0.15) 100%)',
-      borderColor: 'rgba(40, 215, 229, 0.4)',
-      icon: Bot,
-    },
-    {
-      id: 3,
-      title: 'Aplicativo Personalizado',
-      category: 'Mobile iOS & Android',
-      description: 'Aplicativo desenvolvido para facilitar serviços, comunicação e acesso a informações.',
-      technologies: ['React Native', 'TypeScript', 'Node.js', 'Docker'],
-      gradient: 'linear-gradient(135deg, rgba(123, 77, 255, 0.25) 0%, rgba(40, 215, 229, 0.15) 100%)',
-      borderColor: 'rgba(123, 77, 255, 0.4)',
-      icon: Smartphone,
-    },
-  ];
+const FALLBACK_PROJECTS = [
+  {
+    title: 'Plataforma de Gestão',
+    category: 'Sistema Web & Dashboard',
+    description: 'Sistema online para gerenciamento de processos, usuários, documentos e indicadores.',
+    technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
+  },
+  {
+    title: 'Assistente Virtual com IA',
+    category: 'Chatbot & Automação n8n',
+    description: 'Chatbot inteligente integrado a dados e ferramentas de automação.',
+    technologies: ['Python', 'n8n', 'OpenAI', 'WhatsApp API'],
+  },
+  {
+    title: 'Aplicativo Personalizado',
+    category: 'Mobile iOS & Android',
+    description: 'Aplicativo desenvolvido para facilitar serviços, comunicação e acesso a informações.',
+    technologies: ['React Native', 'TypeScript', 'Node.js', 'Docker'],
+  },
+];
+
+// Decorative styling only — cycled by card position, not stored in the database.
+const CARD_STYLES = [
+  { gradient: 'linear-gradient(135deg, rgba(35, 136, 255, 0.25) 0%, rgba(123, 77, 255, 0.15) 100%)', borderColor: 'rgba(35, 136, 255, 0.4)', icon: Layers },
+  { gradient: 'linear-gradient(135deg, rgba(40, 215, 229, 0.25) 0%, rgba(35, 136, 255, 0.15) 100%)', borderColor: 'rgba(40, 215, 229, 0.4)', icon: Bot },
+  { gradient: 'linear-gradient(135deg, rgba(123, 77, 255, 0.25) 0%, rgba(40, 215, 229, 0.15) 100%)', borderColor: 'rgba(123, 77, 255, 0.4)', icon: Smartphone },
+];
+
+export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects: apiProjects }) => {
+  const source = apiProjects && apiProjects.length > 0
+    ? apiProjects.map((p) => ({
+        title: p.title,
+        category: p.category,
+        description: p.short_description,
+        technologies: p.technologies || [],
+      }))
+    : FALLBACK_PROJECTS;
+
+  const projects = source.map((project, i) => ({
+    ...project,
+    id: i + 1,
+    ...CARD_STYLES[i % CARD_STYLES.length],
+  }));
 
   return (
     <section id="portfolio" style={{ padding: '100px 0', position: 'relative' }}>
@@ -68,7 +80,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject }) => {
           </h2>
         </div>
 
-        {/* 3 Project Cards */}
+        {/* Project Cards */}
         <div
           style={{
             display: 'grid',

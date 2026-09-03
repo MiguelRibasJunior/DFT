@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GeometricCanvas } from './components/GeometricCanvas';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -12,9 +12,15 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
+import { getProjects, type PublicProject } from './services/contentService';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
+  const [projects, setProjects] = useState<PublicProject[]>([]);
+
+  useEffect(() => {
+    getProjects().then(setProjects);
+  }, []);
 
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -67,7 +73,7 @@ export function App() {
         <Automation onAutomateClick={handleOpenQuote} />
         <Differentials />
         <Process />
-        <Portfolio onSelectProject={handleSelectProject} />
+        <Portfolio onSelectProject={handleSelectProject} projects={projects} />
         <TechStack />
         <CTASection onStartProject={handleOpenQuote} />
         <ContactForm initialSolution={selectedSolution} />
