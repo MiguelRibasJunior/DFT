@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { C, Icon, type Screen } from './shared'
 import { LoginScreen } from './LoginScreen'
 import { DashboardScreen } from './DashboardScreen'
+import { ProjectsScreen } from './ProjectsScreen'
+import { ProjectFormScreen } from './ProjectFormScreen'
 
 interface AdminDashboardProps {
   isOpen: boolean
@@ -55,6 +57,8 @@ export function AdminDashboard({ isOpen, onClose }: AdminDashboardProps) {
       ) : (
         <>
           {screen === 'dashboard' && <DashboardScreen onNav={navigate} />}
+          {screen === 'projects' && <ProjectsScreen onNav={navigate} />}
+          {screen === 'project-form' && <ProjectFormScreen onNav={navigate} />}
         </>
       )}
     </div>
