@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
+use App\Enums\Priority;
+use App\Enums\ProjectManagementStatus;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -23,7 +27,7 @@ class ProjectForm
                 Tabs::make('Projeto')
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('Principal')
+                        Tab::make('Informações')
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Título')
@@ -51,9 +55,6 @@ class ProjectForm
                                     ->required()
                                     ->rows(6)
                                     ->columnSpanFull(),
-                            ])->columns(2),
-                        Tab::make('Mídia')
-                            ->schema([
                                 FileUpload::make('cover_image')
                                     ->label('Imagem de capa')
                                     ->image()
@@ -64,11 +65,76 @@ class ProjectForm
                                     ->multiple()
                                     ->reorderable()
                                     ->directory('projects/gallery'),
-                            ]),
-                        Tab::make('Configurações')
+                            ])->columns(2),
+                        Tab::make('Gestão')
+                            ->schema([
+                                Select::make('management_status')
+                                    ->label('Status')
+                                    ->options(ProjectManagementStatus::class)
+                                    ->required()
+                                    ->default(ProjectManagementStatus::Planning),
+                                Select::make('priority')
+                                    ->label('Prioridade')
+                                    ->options(Priority::class)
+                                    ->required()
+                                    ->default(Priority::Medium),
+                                Select::make('manager_id')
+                                    ->label('Responsável')
+                                    ->relationship('manager', 'name')
+                                    ->searchable()
+                                    ->preload(),
+                                TextInput::make('progress')
+                                    ->label('Progresso (%)')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->suffix('%')
+                                    ->required(),
+                                DatePicker::make('start_date')
+                                    ->label('Início'),
+                                DatePicker::make('due_date')
+                                    ->label('Prazo'),
+                                DateTimePicker::make('completed_at')
+                                    ->label('Concluído em'),
+                            ])->columns(2),
+                        Tab::make('Links')
+                            ->schema([
+                                TextInput::make('project_url')
+                                    ->label('URL do projeto')
+                                    ->url(),
+                                TextInput::make('github_url')
+                                    ->label('URL do GitHub')
+                                    ->url(),
+                                TextInput::make('external_url')
+                                    ->label('URL externa')
+                                    ->url(),
+                                Repeater::make('external_links')
+                                    ->label('Outros links')
+                                    ->schema([
+                                        Select::make('label')
+                                            ->label('Tipo')
+                                            ->options([
+                                                'Figma' => 'Figma',
+                                                'Documentação' => 'Documentação',
+                                                'Homologação' => 'Homologação',
+                                                'Outro' => 'Outro',
+                                            ])
+                                            ->required(),
+                                        TextInput::make('url')
+                                            ->label('URL')
+                                            ->url()
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->addActionLabel('Adicionar link')
+                                    ->defaultItems(0)
+                                    ->columnSpanFull(),
+                            ])->columns(2),
+                        Tab::make('Publicação')
                             ->schema([
                                 Select::make('status')
-                                    ->label('Status')
+                                    ->label('Publicação')
                                     ->options([
                                         'draft' => 'Rascunho',
                                         'published' => 'Publicado',
@@ -85,15 +151,6 @@ class ProjectForm
                                     ->required(),
                                 DateTimePicker::make('published_at')
                                     ->label('Publicado em'),
-                                TextInput::make('external_url')
-                                    ->label('URL externa')
-                                    ->url(),
-                                TextInput::make('project_url')
-                                    ->label('URL do projeto')
-                                    ->url(),
-                                TextInput::make('github_url')
-                                    ->label('URL do GitHub')
-                                    ->url(),
                             ])->columns(2),
                         Tab::make('SEO')
                             ->schema([
