@@ -22,6 +22,8 @@ class Settings extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Site / Conteúdo';
+
     protected static ?string $navigationLabel = 'Configurações';
 
     protected static ?string $title = 'Configurações do site';

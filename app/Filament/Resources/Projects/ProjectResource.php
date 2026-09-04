@@ -23,6 +23,8 @@ class ProjectResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Gestão';
+
     protected static ?string $navigationLabel = 'Projetos';
 
     protected static ?string $modelLabel = 'projeto';

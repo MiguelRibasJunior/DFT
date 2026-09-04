@@ -19,6 +19,8 @@ class ContactSubmissionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Site / Conteúdo';
+
     protected static ?string $navigationLabel = 'Contatos';
 
     protected static ?string $modelLabel = 'contato';

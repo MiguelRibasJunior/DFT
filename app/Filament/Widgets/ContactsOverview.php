@@ -8,6 +8,10 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ContactsOverview extends StatsOverviewWidget
 {
+    protected static ?int $sort = 3;
+
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $total = ContactSubmission::count();

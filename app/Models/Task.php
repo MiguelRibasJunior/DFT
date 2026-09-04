@@ -118,4 +118,25 @@ class Task extends Model
             ->where('due_date', '<', now()->startOfDay())
             ->where('status', '!=', TaskStatus::Completed->value);
     }
+
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', '!=', TaskStatus::Completed->value);
+    }
+
+    public function scopeAssignedTo(Builder $query, int $userId): Builder
+    {
+        return $query->where('assigned_to', $userId);
+    }
+
+    /**
+     * Ordena por urgência: atrasadas/vencendo em breve primeiro, depois por prioridade.
+     */
+    public function scopePrioritized(Builder $query): Builder
+    {
+        return $query
+            ->orderByRaw('due_date IS NULL')
+            ->orderBy('due_date')
+            ->orderByRaw("CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END");
+    }
 }

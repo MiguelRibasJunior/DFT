@@ -8,6 +8,10 @@ use Illuminate\Support\Carbon;
 
 class ContactsChart extends ChartWidget
 {
+    protected static ?int $sort = 4;
+
+    protected static bool $isLazy = false;
+
     protected ?string $heading = 'Contatos recebidos';
 
     protected function getData(): array

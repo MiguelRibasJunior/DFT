@@ -20,6 +20,8 @@ class MessageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInbox;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Site / Conteúdo';
+
     protected static ?string $navigationLabel = 'Mensagens';
 
     protected static ?string $modelLabel = 'mensagem';

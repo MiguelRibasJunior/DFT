@@ -20,6 +20,8 @@ class CtaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Site / Conteúdo';
+
     protected static ?string $navigationLabel = 'CTAs';
 
     protected static ?string $modelLabel = 'CTA';
