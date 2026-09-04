@@ -87,6 +87,18 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::SIMPLE_LAYOUT_START,
                 fn () => view('filament.partials.login-visual'),
             )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => new HtmlString(<<<'HTML'
+                    <style>
+                        .dft-stat-danger .fi-wi-stats-overview-stat-value { color: var(--danger-600); }
+                        .dft-stat-warning .fi-wi-stats-overview-stat-value { color: var(--warning-600); }
+                        .dft-stat-success .fi-wi-stats-overview-stat-value { color: var(--success-600); }
+                        .dft-stat-info .fi-wi-stats-overview-stat-value { color: var(--info-600); }
+                    </style>
+                    HTML
+                ),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

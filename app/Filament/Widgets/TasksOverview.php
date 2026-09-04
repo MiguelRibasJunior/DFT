@@ -13,6 +13,8 @@ class TasksOverview extends StatsOverviewWidget
 
     protected static bool $isLazy = false;
 
+    protected ?string $heading = 'Tarefas';
+
     protected function getStats(): array
     {
         $pending = Task::where('status', TaskStatus::Todo)->count();
@@ -22,16 +24,13 @@ class TasksOverview extends StatsOverviewWidget
         $completed = Task::where('status', TaskStatus::Completed)->count();
 
         return [
-            Stat::make('Pendentes', $pending)
-                ->color('gray'),
-            Stat::make('Em andamento', $inProgress)
-                ->color('info'),
-            Stat::make('Em revisão', $review)
-                ->color('warning'),
+            Stat::make('Pendentes', $pending),
+            Stat::make('Em andamento', $inProgress),
+            Stat::make('Em revisão', $review),
             Stat::make('Atrasadas', $overdue)
-                ->color($overdue > 0 ? 'danger' : 'success'),
+                ->extraAttributes(['class' => $overdue > 0 ? 'dft-stat-danger' : 'dft-stat-success']),
             Stat::make('Concluídas', $completed)
-                ->color('success'),
+                ->extraAttributes(['class' => 'dft-stat-success']),
         ];
     }
 }

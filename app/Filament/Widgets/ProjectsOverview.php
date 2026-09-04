@@ -13,6 +13,8 @@ class ProjectsOverview extends StatsOverviewWidget
 
     protected static bool $isLazy = false;
 
+    protected ?string $heading = 'Projetos';
+
     protected function getStats(): array
     {
         $total = Project::count();
@@ -23,18 +25,14 @@ class ProjectsOverview extends StatsOverviewWidget
         $completed = Project::where('management_status', ProjectManagementStatus::Completed)->count();
 
         return [
-            Stat::make('Total de projetos', $total)
-                ->color('primary'),
-            Stat::make('Em planejamento', $planning)
-                ->color('gray'),
-            Stat::make('Em andamento', $inProgress)
-                ->color('info'),
-            Stat::make('Em revisão', $review)
-                ->color('warning'),
+            Stat::make('Total de projetos', $total),
+            Stat::make('Em planejamento', $planning),
+            Stat::make('Em andamento', $inProgress),
+            Stat::make('Em revisão', $review),
             Stat::make('Atrasados', $overdue)
-                ->color($overdue > 0 ? 'danger' : 'success'),
+                ->extraAttributes(['class' => $overdue > 0 ? 'dft-stat-danger' : 'dft-stat-success']),
             Stat::make('Concluídos', $completed)
-                ->color('success'),
+                ->extraAttributes(['class' => 'dft-stat-success']),
         ];
     }
 }

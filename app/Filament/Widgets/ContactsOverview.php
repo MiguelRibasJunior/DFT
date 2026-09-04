@@ -20,14 +20,14 @@ class ContactsOverview extends StatsOverviewWidget
 
         return [
             Stat::make('Total de Contatos', $total)
-                ->description('Submissões recebidas pelo site')
-                ->color('primary'),
+                ->description('Submissões recebidas pelo site'),
             Stat::make('Novos', $novas)
                 ->description('Aguardando atendimento')
-                ->color($novas > 0 ? 'warning' : 'success'),
+                ->descriptionColor($novas > 0 ? 'warning' : 'success')
+                ->extraAttributes(['class' => $novas > 0 ? 'dft-stat-warning' : 'dft-stat-success']),
             Stat::make('Respondidos', $respondidas)
                 ->description('Contatos já finalizados')
-                ->color('success'),
+                ->extraAttributes(['class' => 'dft-stat-success']),
         ];
     }
 }
