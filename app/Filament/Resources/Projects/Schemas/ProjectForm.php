@@ -90,7 +90,12 @@ class ProjectForm
                                     ->minValue(0)
                                     ->maxValue(100)
                                     ->suffix('%')
-                                    ->required(),
+                                    ->required()
+                                    ->disabled(fn ($record) => $record?->tasks()->exists())
+                                    ->dehydrated(fn ($record) => ! $record?->tasks()->exists())
+                                    ->helperText(fn ($record) => $record?->tasks()->exists()
+                                        ? 'Calculado automaticamente a partir das tarefas.'
+                                        : null),
                                 DatePicker::make('start_date')
                                     ->label('Início'),
                                 DatePicker::make('due_date')

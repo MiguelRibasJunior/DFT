@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Enums\Priority;
 use App\Enums\ProjectManagementStatus;
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -68,9 +70,28 @@ class Project extends Model
         return $this->belongsTo(User::class, 'manager_id');
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
     protected function setProgressAttribute(int $value): void
     {
         $this->attributes['progress'] = max(0, min(100, $value));
+    }
+
+    public function recalculateProgress(): void
+    {
+        $total = $this->tasks()->count();
+
+        if ($total === 0) {
+            return;
+        }
+
+        $completed = $this->tasks()->where('status', TaskStatus::Completed->value)->count();
+
+        $this->progress = (int) round($completed / $total * 100);
+        $this->saveQuietly();
     }
 
     public function isOverdue(): bool
