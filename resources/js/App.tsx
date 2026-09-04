@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GeometricCanvas } from './components/GeometricCanvas';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -12,14 +12,19 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { AdminAuthModal } from './components/AdminAuthModal';
-import { AdminPanel } from './components/AdminPanel';
+import { getCta, getProjects, getSiteSettings, type PublicCta, type PublicProject, type PublicSiteSettings } from './services/contentService';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
-  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState<boolean>(false);
-  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [projects, setProjects] = useState<PublicProject[]>([]);
+  const [siteSettings, setSiteSettings] = useState<PublicSiteSettings | null>(null);
+  const [cta, setCta] = useState<PublicCta | null>(null);
+
+  useEffect(() => {
+    getProjects().then(setProjects);
+    getSiteSettings().then(setSiteSettings);
+    getCta('cta_section').then(setCta);
+  }, []);
 
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
@@ -32,34 +37,6 @@ export function App() {
     description: '',
     technologies: [],
   });
-
-  useEffect(() => {
-    const authSession = sessionStorage.getItem('dft_admin_authenticated');
-    if (authSession === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleOpenAdminTrigger = () => {
-    if (isAuthenticated) {
-      setIsAdminPanelOpen(true);
-    } else {
-      setIsAdminAuthModalOpen(true);
-    }
-  };
-
-  const handleAuthenticatedSuccess = () => {
-    setIsAuthenticated(true);
-    setIsAdminAuthModalOpen(false);
-    setIsAdminPanelOpen(true);
-  };
-
-  const handleAdminLogout = () => {
-    sessionStorage.removeItem('dft_admin_authenticated');
-    sessionStorage.removeItem('dft_admin_token');
-    setIsAuthenticated(false);
-    setIsAdminPanelOpen(false);
-  };
 
   const handleOpenQuote = () => {
     const contactElem = document.getElementById('contato');
@@ -91,7 +68,7 @@ export function App() {
       <GeometricCanvas />
 
       {/* Main Header / Navbar */}
-      <Navbar onOpenQuote={handleOpenQuote} onOpenAdmin={handleOpenAdminTrigger} />
+      <Navbar onOpenQuote={handleOpenQuote} />
 
       {/* Main Content Assembly */}
       <main style={{ position: 'relative', zIndex: 1 }}>
@@ -100,14 +77,14 @@ export function App() {
         <Automation onAutomateClick={handleOpenQuote} />
         <Differentials />
         <Process />
-        <Portfolio onSelectProject={handleSelectProject} />
+        <Portfolio onSelectProject={handleSelectProject} projects={projects} />
         <TechStack />
-        <CTASection onStartProject={handleOpenQuote} />
-        <ContactForm initialSolution={selectedSolution} onOpenAdmin={handleOpenAdminTrigger} />
+        <CTASection onStartProject={handleOpenQuote} cta={cta} />
+        <ContactForm initialSolution={selectedSolution} settings={siteSettings} />
       </main>
 
       {/* Footer */}
-      <Footer onOpenAdmin={handleOpenAdminTrigger} />
+      <Footer settings={siteSettings} />
 
       {/* Detail Modal */}
       <ProjectModal
@@ -116,20 +93,6 @@ export function App() {
         title={modalData.title}
         description={modalData.description}
         technologies={modalData.technologies}
-      />
-
-      {/* Admin Auth Modal Challenge */}
-      <AdminAuthModal
-        isOpen={isAdminAuthModalOpen}
-        onClose={() => setIsAdminAuthModalOpen(false)}
-        onAuthenticated={handleAuthenticatedSuccess}
-      />
-
-      {/* Admin Panel Modal */}
-      <AdminPanel
-        isOpen={isAdminPanelOpen}
-        onClose={() => setIsAdminPanelOpen(false)}
-        onLogout={handleAdminLogout}
       />
     </div>
   );

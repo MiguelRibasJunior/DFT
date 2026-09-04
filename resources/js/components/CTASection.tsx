@@ -1,11 +1,22 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Send } from 'lucide-react';
+import type { PublicCta } from '../services/contentService';
 
 interface CTASectionProps {
   onStartProject: () => void;
+  cta?: PublicCta | null;
 }
 
-export const CTASection: React.FC<CTASectionProps> = ({ onStartProject }) => {
+const FALLBACK_CTA = {
+  title: 'Tem uma ideia? Vamos transformá-la em uma solução digital.',
+  subtitle: 'Conte um pouco sobre seu projeto, processo ou necessidade. Nossa equipe entrará em contato para entender como a tecnologia pode ajudar.',
+  button_text: 'Iniciar um projeto',
+  button_url: '#contato',
+};
+
+export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) => {
+  const content = cta || FALLBACK_CTA;
+
   return (
     <section
       style={{
@@ -32,7 +43,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject }) => {
         <svg viewBox="0 0 900 450" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
           {/* Main Large Translucent Triangle */}
           <polygon points="450,20 850,420 50,420" stroke="url(#cta-tri-grad)" strokeWidth="2" strokeDasharray="8 8" fill="rgba(40, 215, 229, 0.03)" />
-          
+
           {/* Inner Triangle */}
           <polygon points="450,110 750,380 150,380" stroke="url(#cta-tri-grad-2)" strokeWidth="1" strokeDasharray="4 4" fill="rgba(123, 77, 255, 0.04)" />
 
@@ -89,7 +100,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject }) => {
             lineHeight: 1.15,
           }}
         >
-          Tem uma ideia? Vamos transformá-la em uma <span className="text-gradient">solução digital</span>.
+          {content.title}
         </h2>
 
         <p
@@ -102,12 +113,12 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject }) => {
             margin: '0 auto 36px',
           }}
         >
-          Conte um pouco sobre seu projeto, processo ou necessidade. Nossa equipe entrará em contato para entender como a tecnologia pode ajudar.
+          {content.subtitle}
         </p>
 
-        <a href="#contato" onClick={onStartProject} className="btn btn-primary btn-glow" style={{ padding: '16px 36px', fontSize: '16px' }}>
+        <a href={content.button_url} onClick={onStartProject} className="btn btn-primary btn-glow" style={{ padding: '16px 36px', fontSize: '16px' }}>
           <Send size={18} />
-          <span>Iniciar um projeto</span>
+          <span>{content.button_text}</span>
           <ArrowRight size={18} />
         </a>
       </div>
