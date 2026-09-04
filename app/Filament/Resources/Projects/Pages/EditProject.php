@@ -15,6 +15,10 @@ class EditProject extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('overview')
+                ->label('Visão geral')
+                ->icon(Heroicon::OutlinedEye)
+                ->url(fn () => ProjectResource::getUrl('overview', ['record' => $this->getRecord()])),
             Action::make('kanban')
                 ->label('Ver Kanban')
                 ->icon(Heroicon::OutlinedViewColumns)

@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Projects\Tables;
 
 use App\Enums\Priority;
 use App\Enums\ProjectManagementStatus;
+use App\Filament\Resources\Projects\ProjectResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -89,6 +92,7 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('order')
+            ->recordUrl(fn ($record) => ProjectResource::getUrl('overview', ['record' => $record]))
             ->filters([
                 SelectFilter::make('management_status')
                     ->label('Status')
@@ -113,6 +117,10 @@ class ProjectsTable
                     ->label('Destaque'),
             ])
             ->recordActions([
+                Action::make('overview')
+                    ->label('Visão geral')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->url(fn ($record) => ProjectResource::getUrl('overview', ['record' => $record])),
                 EditAction::make(),
                 DeleteAction::make()->requiresConfirmation(),
             ])

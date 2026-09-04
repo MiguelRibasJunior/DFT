@@ -33,6 +33,10 @@ class ProjectKanban extends Page
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('overview')
+                ->label('Visão geral')
+                ->icon(Heroicon::OutlinedEye)
+                ->url(fn () => ProjectResource::getUrl('overview', ['record' => $this->getRecord()])),
             Action::make('back')
                 ->label('Editar projeto')
                 ->icon(Heroicon::OutlinedPencilSquare)

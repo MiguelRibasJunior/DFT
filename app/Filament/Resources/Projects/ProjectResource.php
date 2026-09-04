@@ -6,6 +6,7 @@ use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Filament\Resources\Projects\Pages\ProjectKanban;
+use App\Filament\Resources\Projects\Pages\ProjectOverview;
 use App\Filament\Resources\Projects\RelationManagers\TasksRelationManager;
 use App\Filament\Resources\Projects\Schemas\ProjectForm;
 use App\Filament\Resources\Projects\Tables\ProjectsTable;
@@ -50,6 +51,7 @@ class ProjectResource extends Resource
         return [
             'index' => ListProjects::route('/'),
             'create' => CreateProject::route('/create'),
+            'overview' => ProjectOverview::route('/{record}'),
             'edit' => EditProject::route('/{record}/edit'),
             'kanban' => ProjectKanban::route('/{record}/kanban'),
         ];
