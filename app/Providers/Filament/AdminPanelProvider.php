@@ -83,6 +83,10 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn () => view('filament.partials.sidebar-account'),
             )
+            ->renderHook(
+                PanelsRenderHook::SIMPLE_LAYOUT_START,
+                fn () => view('filament.partials.login-visual'),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
