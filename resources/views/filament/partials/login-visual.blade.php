@@ -1,18 +1,10 @@
 <style>
-    @media (min-width: 1024px) {
-        .fi-simple-layout {
-            flex-direction: row;
-            align-items: stretch;
-        }
-
-        .dft-login-visual {
-            width: 46%;
-            flex-shrink: 0;
-        }
-
-        .fi-simple-main-ctn {
-            width: 54%;
-        }
+    .fi-simple-layout {
+        background: #080B14;
+        background-image:
+            linear-gradient(to right, rgba(41, 50, 71, 0.25) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(41, 50, 71, 0.25) 1px, transparent 1px);
+        background-size: 40px 40px;
     }
 
     .dft-login-visual {
@@ -21,25 +13,35 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        background: #080B14;
-        background-image:
-            linear-gradient(to right, rgba(41, 50, 71, 0.25) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(41, 50, 71, 0.25) 1px, transparent 1px);
-        background-size: 40px 40px;
     }
 
     @media (min-width: 1024px) {
+        .fi-simple-layout {
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+        }
+
         .dft-login-visual {
             display: flex;
+            flex: none;
+            width: 480px;
+            height: 480px;
+        }
+
+        .fi-simple-main-ctn {
+            flex: none;
+            width: auto;
         }
     }
 
     .dft-login-visual-glow-a {
         position: absolute;
-        top: 15%;
-        left: 8%;
-        width: 320px;
-        height: 320px;
+        top: 10%;
+        left: 0%;
+        width: 260px;
+        height: 260px;
         border-radius: 9999px;
         background: radial-gradient(circle, rgba(35, 136, 255, 0.18) 0%, rgba(8, 11, 20, 0) 70%);
         pointer-events: none;
@@ -47,10 +49,10 @@
 
     .dft-login-visual-glow-b {
         position: absolute;
-        bottom: 10%;
-        right: 5%;
-        width: 340px;
-        height: 340px;
+        bottom: 5%;
+        right: 0%;
+        width: 280px;
+        height: 280px;
         border-radius: 9999px;
         background: radial-gradient(circle, rgba(123, 77, 255, 0.2) 0%, rgba(8, 11, 20, 0) 70%);
         pointer-events: none;
@@ -59,9 +61,7 @@
     .dft-login-visual-inner {
         position: relative;
         width: 100%;
-        max-width: 420px;
-        aspect-ratio: 10 / 9;
-        margin: 0 auto;
+        height: 100%;
         filter: drop-shadow(0 0 25px rgba(35, 136, 255, 0.25));
     }
 </style>
