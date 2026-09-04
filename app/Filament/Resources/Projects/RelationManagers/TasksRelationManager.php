@@ -103,10 +103,7 @@ class TasksRelationManager extends RelationManager
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
                     ->visible(fn ($record) => $record->status !== TaskStatus::Completed)
-                    ->action(fn ($record) => $record->update([
-                        'status' => TaskStatus::Completed,
-                        'completed_at' => now(),
-                    ])),
+                    ->action(fn ($record) => $record->moveToStatus(TaskStatus::Completed)),
                 EditAction::make(),
                 DeleteAction::make()->requiresConfirmation(),
             ])

@@ -76,7 +76,7 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn () => new HtmlString(
                     '<div class="fi-align-center" style="margin-top: 1.5rem; text-align: center;">'
-                    . '<a href="/" style="font-size: 0.875rem; font-weight: 600; color: rgb(var(--primary-600));">'
+                    . '<a href="/" style="font-size: 0.875rem; font-weight: 600; color: var(--primary-600);">'
                     . '&larr; Voltar ao site'
                     . '</a>'
                     . '</div>'

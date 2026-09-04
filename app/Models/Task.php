@@ -60,6 +60,20 @@ class Task extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
+    public function moveToStatus(TaskStatus $status, ?int $position = null): void
+    {
+        $this->status = $status;
+        $this->completed_at = $status === TaskStatus::Completed
+            ? ($this->completed_at ?? now())
+            : null;
+
+        if ($position !== null) {
+            $this->position = $position;
+        }
+
+        $this->save();
+    }
+
     public function isOverdue(): bool
     {
         if (! $this->due_date) {
