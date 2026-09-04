@@ -11,14 +11,7 @@
             padding: 1rem 1.25rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-widget-card {
-                background: var(--gray-900);
-                border-color: var(--gray-700);
-            }
-        }
-
-        :root[data-theme="dark"] .dft-widget-card {
+        html.dark .dft-widget-card {
             background: var(--gray-900);
             border-color: var(--gray-700);
         }
@@ -30,13 +23,7 @@
             margin-bottom: 0.125rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-widget-heading {
-                color: #fff;
-            }
-        }
-
-        :root[data-theme="dark"] .dft-widget-heading {
+        html.dark .dft-widget-heading {
             color: #fff;
         }
 
@@ -89,13 +76,7 @@
             white-space: nowrap;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-deadline-title {
-                color: #fff;
-            }
-        }
-
-        :root[data-theme="dark"] .dft-deadline-title {
+        html.dark .dft-deadline-title {
             color: #fff;
         }
 

@@ -21,14 +21,7 @@
             min-height: 8rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-kanban-column {
-                background: color-mix(in oklch, var(--gray-900) 40%, transparent);
-                border-color: var(--gray-700);
-            }
-        }
-
-        :root[data-theme="dark"] .dft-kanban-column {
+        html.dark .dft-kanban-column {
             background: color-mix(in oklch, var(--gray-900) 40%, transparent);
             border-color: var(--gray-700);
         }
@@ -43,13 +36,7 @@
             color: var(--gray-700);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-kanban-column-header {
-                color: var(--gray-200);
-            }
-        }
-
-        :root[data-theme="dark"] .dft-kanban-column-header {
+        html.dark .dft-kanban-column-header {
             color: var(--gray-200);
         }
 
@@ -88,14 +75,7 @@
             box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-kanban-card {
-                background: var(--gray-800);
-                border-color: var(--gray-700);
-            }
-        }
-
-        :root[data-theme="dark"] .dft-kanban-card {
+        html.dark .dft-kanban-card {
             background: var(--gray-800);
             border-color: var(--gray-700);
         }
@@ -115,13 +95,7 @@
             margin-bottom: 0.5rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .dft-kanban-card-title {
-                color: #fff;
-            }
-        }
-
-        :root[data-theme="dark"] .dft-kanban-card-title {
+        html.dark .dft-kanban-card-title {
             color: #fff;
         }
 
