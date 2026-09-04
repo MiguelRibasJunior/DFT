@@ -11,7 +11,6 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -70,9 +69,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-            ])
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn () => new HtmlString(
@@ -82,6 +78,10 @@ class AdminPanelProvider extends PanelProvider
                     . '</a>'
                     . '</div>'
                 ),
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn () => view('filament.partials.sidebar-account'),
             )
             ->middleware([
                 EncryptCookies::class,
