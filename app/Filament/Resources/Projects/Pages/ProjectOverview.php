@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Projects\Pages;
 
 use App\Enums\TaskStatus;
 use App\Filament\Resources\Projects\ProjectResource;
+use App\Models\Comment;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 
 class ProjectOverview extends Page
 {
@@ -16,6 +19,8 @@ class ProjectOverview extends Page
     protected static string $resource = ProjectResource::class;
 
     protected string $view = 'filament.resources.projects.pages.project-overview';
+
+    public string $newComment = '';
 
     public function mount(int|string $record): void
     {
@@ -61,5 +66,45 @@ class ProjectOverview extends Page
             'review' => $tasks->where('status', TaskStatus::Review)->count(),
             'overdue' => $tasks->filter(fn ($task) => $task->isOverdue())->count(),
         ];
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->getRecord()->comments()->with('user')->orderByDesc('id')->get();
+    }
+
+    /**
+     * @return Collection<int, \App\Models\Activity>
+     */
+    public function getActivities(): Collection
+    {
+        return $this->getRecord()->activities()->orderByDesc('id')->take(20)->get();
+    }
+
+    public function addComment(): void
+    {
+        $this->validate([
+            'newComment' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $this->getRecord()->comments()->create([
+            'user_id' => auth()->id(),
+            'content' => trim($this->newComment),
+        ]);
+
+        $this->newComment = '';
+
+        Notification::make()
+            ->title('Comentário adicionado')
+            ->success()
+            ->send();
+    }
+
+    public function deleteComment(int $commentId): void
+    {
+        $this->getRecord()->comments()->where('id', $commentId)->delete();
     }
 }

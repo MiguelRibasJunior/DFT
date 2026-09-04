@@ -206,6 +206,208 @@
         .dft-ov-links-list a:hover {
             text-decoration: underline;
         }
+
+        .dft-ov-bottom {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        @media (max-width: 900px) {
+            .dft-ov-bottom {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-bottom {
+                border-color: var(--gray-700);
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-bottom {
+            border-color: var(--gray-700);
+        }
+
+        .dft-ov-section-title {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--gray-950);
+            margin-bottom: 0.875rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-section-title {
+                color: #fff;
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-section-title {
+            color: #fff;
+        }
+
+        .dft-ov-comment-form textarea {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid var(--gray-300);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            resize: vertical;
+            min-height: 4.5rem;
+            background: #fff;
+            color: var(--gray-950);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-comment-form textarea {
+                background: var(--gray-800);
+                border-color: var(--gray-600);
+                color: #fff;
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-comment-form textarea {
+            background: var(--gray-800);
+            border-color: var(--gray-600);
+            color: #fff;
+        }
+
+        .dft-ov-comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .dft-ov-btn-primary {
+            background: var(--primary-600);
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dft-ov-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.875rem;
+            max-height: 26rem;
+            overflow-y: auto;
+        }
+
+        .dft-ov-comment {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 0.625rem 0.75rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-comment {
+                border-color: var(--gray-700);
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-comment {
+            border-color: var(--gray-700);
+        }
+
+        .dft-ov-comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .dft-ov-comment-author {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--gray-950);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-comment-author {
+                color: #fff;
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-comment-author {
+            color: #fff;
+        }
+
+        .dft-ov-comment-time {
+            font-size: 0.6875rem;
+            color: var(--gray-400);
+            white-space: nowrap;
+        }
+
+        .dft-ov-comment-content {
+            font-size: 0.8125rem;
+            color: var(--gray-700);
+            white-space: pre-line;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-comment-content {
+                color: var(--gray-300);
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-comment-content {
+            color: var(--gray-300);
+        }
+
+        .dft-ov-comment-delete {
+            background: none;
+            border: none;
+            color: var(--danger-600);
+            font-size: 0.6875rem;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 0.375rem;
+        }
+
+        .dft-ov-empty {
+            font-size: 0.8125rem;
+            color: var(--gray-400);
+        }
+
+        .dft-ov-activity-item {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--gray-700);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .dft-ov-activity-item {
+                color: var(--gray-300);
+            }
+        }
+
+        :root[data-theme="dark"] .dft-ov-activity-item {
+            color: var(--gray-300);
+        }
+
+        .dft-ov-activity-dot {
+            width: 0.375rem;
+            height: 0.375rem;
+            border-radius: 9999px;
+            background: var(--primary-500);
+            margin-top: 0.4375rem;
+            flex-shrink: 0;
+        }
+
+        .dft-ov-activity-time {
+            display: block;
+            font-size: 0.6875rem;
+            color: var(--gray-400);
+        }
     </style>
 
     <div class="dft-ov-meta">
@@ -294,6 +496,62 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+    </div>
+
+    <div class="dft-ov-bottom">
+        <div>
+            <div class="dft-ov-section-title">Comentários</div>
+
+            <form wire:submit="addComment" class="dft-ov-comment-form">
+                <textarea wire:model="newComment" placeholder="Escreva um comentário..."></textarea>
+                @error('newComment')
+                    <p class="dft-ov-comment-time" style="color: var(--danger-600)">{{ $message }}</p>
+                @enderror
+                <div class="dft-ov-comment-form-actions">
+                    <button type="submit" class="dft-ov-btn-primary">Comentar</button>
+                </div>
+            </form>
+
+            <div class="dft-ov-list" style="margin-top: 1rem;">
+                @forelse ($this->getComments() as $comment)
+                    <div class="dft-ov-comment" wire:key="comment-{{ $comment->id }}">
+                        <div class="dft-ov-comment-header">
+                            <span class="dft-ov-comment-author">{{ $comment->user?->name ?? 'Usuário removido' }}</span>
+                            <span class="dft-ov-comment-time">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <div class="dft-ov-comment-content">{{ $comment->content }}</div>
+                        <button
+                            type="button"
+                            class="dft-ov-comment-delete"
+                            wire:click="deleteComment({{ $comment->id }})"
+                            wire:confirm="Excluir este comentário?"
+                        >
+                            Excluir
+                        </button>
+                    </div>
+                @empty
+                    <p class="dft-ov-empty">Nenhum comentário ainda.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <div>
+            <div class="dft-ov-section-title">Atividade recente</div>
+
+            <div class="dft-ov-list">
+                @forelse ($this->getActivities() as $activity)
+                    <div class="dft-ov-activity-item" wire:key="activity-{{ $activity->id }}">
+                        <span class="dft-ov-activity-dot"></span>
+                        <span>
+                            {{ $activity->description }}
+                            <span class="dft-ov-activity-time">{{ $activity->created_at->diffForHumans() }}</span>
+                        </span>
+                    </div>
+                @empty
+                    <p class="dft-ov-empty">Nenhuma atividade registrada ainda.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </x-filament-panels::page>

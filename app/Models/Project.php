@@ -65,6 +65,24 @@ class Project extends Model
         'completed_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::updated(function (Project $project) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            if ($project->wasChanged('due_date')) {
+                $date = $project->due_date?->format('d/m/Y') ?? 'nenhum';
+                Activity::log($project->id, "Prazo do projeto alterado para {$date}.");
+            }
+
+            if ($project->wasChanged('management_status')) {
+                Activity::log($project->id, "Status do projeto alterado para {$project->management_status->getLabel()}.");
+            }
+        });
+    }
+
     public function manager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'manager_id');
@@ -73,6 +91,16 @@ class Project extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
     }
 
     protected function setProgressAttribute(int $value): void

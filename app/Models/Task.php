@@ -48,6 +48,34 @@ class Task extends Model
 
         static::saved(fn (Task $task) => $task->project?->recalculateProgress());
         static::deleted(fn (Task $task) => $task->project?->recalculateProgress());
+
+        static::created(function (Task $task) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            Activity::log($task->project_id, auth()->user()->name." criou a tarefa {$task->title}.", auth()->id());
+        });
+
+        static::updated(function (Task $task) {
+            if (! $task->wasChanged('status') || ! auth()->check()) {
+                return;
+            }
+
+            $message = $task->status === TaskStatus::Completed
+                ? auth()->user()->name." concluiu a tarefa {$task->title}."
+                : auth()->user()->name." alterou a tarefa {$task->title} para {$task->status->getLabel()}.";
+
+            Activity::log($task->project_id, $message, auth()->id());
+        });
+
+        static::deleted(function (Task $task) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            Activity::log($task->project_id, auth()->user()->name." excluiu a tarefa {$task->title}.", auth()->id());
+        });
     }
 
     public function project(): BelongsTo
