@@ -95,6 +95,8 @@ class AdminPanelProvider extends PanelProvider
                         .dft-stat-warning .fi-wi-stats-overview-stat-value { color: var(--warning-600); }
                         .dft-stat-success .fi-wi-stats-overview-stat-value { color: var(--success-600); }
                         .dft-stat-info .fi-wi-stats-overview-stat-value { color: var(--info-600); }
+                        .fi-resource-projects .fi-ta-text { padding-inline: calc(var(--spacing) * 1.5); }
+                        .fi-resource-projects .fi-ta-header-cell { padding-inline: calc(var(--spacing) * 1.5); }
                     </style>
                     HTML
                 ),

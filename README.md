@@ -29,6 +29,10 @@
 - **SQLite / MySQL**: Banco de dados para persistência de mensagens de orçamento e contatos.
 - **Throttle Middleware**: Proteção nativa contra spam e abuso de envios nos formulários.
 
+### Painel Administrativo
+- **Laravel Filament v4**: Painel administrativo completo (Projetos, Tarefas/Kanban, Contatos, Mensagens, CTAs, Configurações, Usuários).
+- **Spatie Laravel-Permission**: Papéis de acesso (*Super Admin*, *Admin*, *Editor*).
+
 ---
 
 ## ✨ Funcionalidades Principais
@@ -46,11 +50,12 @@
    - Seleção interativa do tipo de serviço desejado.
    - Validação em tempo real dos campos de entrada.
 
-4. **Painel Administrativo Integrado**:
-   - Modal de Autenticação com verificação de credencial.
-   - Gestão de leads com alteração de status (*Pendente*, *Em Análise*, *Concluído*, *Arquivado*).
-   - Teste de disparo de e-mails de notificação.
-   - Upload de anexos/propostas comerciais.
+4. **Painel Administrativo (Laravel Filament)**:
+   - Login com e-mail e senha, com papéis de acesso (*Super Admin*, *Admin*, *Editor*).
+   - Gestão de Projetos: status interno, prioridade, responsável, progresso calculado automaticamente pelas tarefas, prazos, Kanban, comentários e histórico de atividades.
+   - Gestão de Contatos (leads do formulário) e Mensagens recebidas pelo site.
+   - Gestão de CTAs e das Configurações gerais do site (contato, redes sociais, rodapé, SEO) — refletidas em tempo real no site público.
+   - Dashboard com indicadores de projetos/tarefas, "Minhas tarefas", próximos prazos e projetos que precisam de atenção.
 
 5. **Otimização SEO & Performance**:
    - Tags Open Graph e Twitter Cards para compartilhamento em redes sociais.
@@ -68,11 +73,14 @@ produção, o `@vite` aponta para os arquivos já compilados em `public/build/`.
 
 ```bash
 DFT/
-├── app/                        # Backend Laravel (Controllers, Models, Providers)
+├── app/                        # Backend Laravel (Controllers, Filament, Models, Providers)
+│   ├── Filament/
+│   │   ├── Resources/          # Recursos do Painel Admin (Projetos, Contatos, Mensagens, CTAs, Usuários)
+│   │   ├── Pages/              # Páginas customizadas (Configurações, Minhas tarefas)
+│   │   └── Widgets/            # Widgets do Dashboard
 │   ├── Http/Controllers/
-│   │   ├── AdminController.php
 │   │   ├── ContactController.php
-│   │   └── UploadController.php
+│   │   └── PublicContentController.php
 │   ├── Models/
 │   └── Providers/
 ├── bootstrap/                  # Bootstrap e configurações do framework Laravel
@@ -89,9 +97,8 @@ DFT/
 │   │   └── index.css          # Design System e tokens visuais
 │   ├── js/
 │   │   ├── components/        # Componentes React reutilizáveis
-│   │   │   ├── AdminAuthModal.tsx
-│   │   │   ├── AdminPanel.tsx
 │   │   │   ├── ContactForm.tsx
+│   │   │   ├── Footer.tsx
 │   │   │   ├── GeometricCanvas.tsx
 │   │   │   ├── Hero.tsx
 │   │   │   ├── Navbar.tsx
@@ -164,9 +171,17 @@ Os assets otimizados são gerados em `public/build/` (versionados via `manifest.
 
 ## 🔒 Painel Administrativo
 
-Para acessar o Painel Administrativo na aplicação web:
-- Clique no botão **"Painel Admin"** localizado no cabeçalho (Navbar) ou no rodapé (Footer).
-- Insira a senha definida na variável de ambiente `VITE_ADMIN_PASSWORD` (Padrão de exemplo: `dft2026admin`).
+O painel é construído com **Laravel Filament** e roda em `/admin` (rota própria, fora da SPA React).
+
+- Acesse `http://127.0.0.1:8000/admin` e faça login com e-mail e senha.
+- Credenciais padrão, criadas pelo seeder (`database/seeders/DatabaseSeeder.php`):
+  - **E-mail**: `admin@devsfromtomorrow.com` (ou o valor de `ADMIN_EMAIL` no `.env`)
+  - **Senha**: `dft2026admin` (ou o valor de `VITE_ADMIN_PASSWORD` no `.env`)
+- O menu lateral é organizado em três grupos:
+  - **Gestão**: Projetos, Minhas tarefas.
+  - **Site / Conteúdo**: Contatos, Mensagens, CTAs, Configurações.
+  - **Administração**: Usuários (e seus papéis: *Super Admin*, *Admin*, *Editor*).
+- Alterações feitas no painel (projetos, CTAs, configurações) refletem em tempo real no site público, consumidas pela API pública somente-leitura listada abaixo.
 
 ---
 
@@ -175,12 +190,12 @@ Para acessar o Painel Administrativo na aplicação web:
 | Método | Rota | Descrição | Autenticação / Limite |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/contact` | Envio de formulário de contato | Throttle (6 requisições/min) |
-| `POST` | `/api/admin/login` | Autenticação no Painel Admin | Pública |
-| `GET` | `/api/admin/submissions` | Listagem de orçamentos | Admin Token |
-| `PATCH` | `/api/admin/submissions/{id}` | Atualização de status do orçamento | Admin Token |
-| `DELETE` | `/api/admin/submissions/{id}` | Exclusão de orçamento | Admin Token |
-| `POST` | `/api/admin/test-email` | Disparo de e-mail de teste | Admin Token |
-| `POST` | `/api/admin/upload` | Upload de proposta/anexo | Admin Token |
+| `GET` | `/api/projects` | Lista de projetos publicados | Pública |
+| `GET` | `/api/ctas/{position}` | CTA ativo de uma posição | Pública |
+| `GET` | `/api/settings` | Configurações públicas do site | Pública |
+
+O Painel Administrativo (`/admin`) não usa essas rotas — autenticação e ações administrativas são
+tratadas diretamente pelo Filament (Livewire), sem uma API REST separada.
 
 ---
 
