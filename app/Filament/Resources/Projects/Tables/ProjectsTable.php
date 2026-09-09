@@ -5,12 +5,10 @@ namespace App\Filament\Resources\Projects\Tables;
 use App\Enums\Priority;
 use App\Enums\ProjectManagementStatus;
 use App\Filament\Resources\Projects\ProjectResource;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -32,7 +30,8 @@ class ProjectsTable
                 TextColumn::make('title')
                     ->label('Projeto')
                     ->description(fn ($record) => $record->category)
-                    ->searchable(['title', 'category']),
+                    ->searchable(['title', 'category'])
+                    ->extraAttributes(['style' => 'max-width: 115px']),
                 TextColumn::make('management_status')
                     ->label('Status')
                     ->badge()
@@ -43,12 +42,12 @@ class ProjectsTable
                     ->sortable(),
                 TextColumn::make('manager.name')
                     ->label('Responsável')
-                    ->placeholder('Sem responsável')
+                    ->placeholder('—')
                     ->searchable(),
                 TextColumn::make('due_date')
                     ->label('Prazo')
                     ->date('d/m/Y')
-                    ->placeholder('Sem prazo')
+                    ->placeholder('—')
                     ->color(fn ($record) => $record->isOverdue() ? 'danger' : null)
                     ->weight(fn ($record) => $record->isOverdue() ? 'bold' : null)
                     ->sortable(),
@@ -58,7 +57,8 @@ class ProjectsTable
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Atualização')
-                    ->dateTime('d/m/Y H:i')
+                    ->since()
+                    ->dateTimeTooltip('d/m/Y H:i')
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Publicação')
@@ -117,12 +117,8 @@ class ProjectsTable
                     ->label('Destaque'),
             ])
             ->recordActions([
-                Action::make('overview')
-                    ->label('Visão geral')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(fn ($record) => ProjectResource::getUrl('overview', ['record' => $record])),
-                EditAction::make(),
-                DeleteAction::make()->requiresConfirmation(),
+                EditAction::make()->iconButton(),
+                DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
