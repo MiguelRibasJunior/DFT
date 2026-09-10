@@ -1,11 +1,14 @@
 import React from 'react';
 import { Cpu, ArrowRight, Zap, Database, Bot, Workflow, MessageCircle, FileText, Bell, Layers } from 'lucide-react';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface AutomationProps {
   onAutomateClick: () => void;
 }
 
 export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+
   const steps = [
     { label: 'Entrada de Dados', icon: Database, color: '#2388FF' },
     { label: 'Automação n8n', icon: Workflow, color: '#28D7E5' },
@@ -28,6 +31,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
   return (
     <section
       id="automacao"
+      ref={ref}
       style={{
         padding: '100px 0',
         background: 'linear-gradient(180deg, #080B14 0%, #101524 50%, #080B14 100%)',
@@ -36,6 +40,10 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
         borderBottom: '1px solid rgba(41, 50, 71, 0.5)',
       }}
     >
+      {/* Background Triangles */}
+      <div className="triangle-decor triangle-cyan" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-purple" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
+
       {/* Glow Center Accent */}
       <div
         style={{
@@ -52,7 +60,10 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 50px' }}>
+        <div
+          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
+          style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 50px' }}
+        >
           <div
             style={{
               display: 'inline-flex',

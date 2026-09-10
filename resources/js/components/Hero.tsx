@@ -1,14 +1,18 @@
 import React from 'react';
 import { ArrowDownRight, Bot, Cpu, Code2, Sparkles, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface HeroProps {
   onOpenQuote: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+
   return (
     <section
       id="hero"
+      ref={ref}
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -20,6 +24,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
       }}
       className="bg-digital-grid"
     >
+      {/* Background Micro Triangle Accents */}
+      <div className="triangle-decor triangle-cyan" style={{ top: '15%', left: '3%', opacity: 0.25 }} />
+      <div className="triangle-decor triangle-purple" style={{ bottom: '12%', right: '4%', opacity: 0.25 }} />
+
       {/* Background Radial Glow */}
       <div
         style={{
@@ -45,7 +53,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <div className="hero-grid">
+        <div className={`hero-grid reveal-item ${isVisible ? 'reveal-visible' : ''}`}>
           {/* Left Column — Text & CTAs */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Top Pill Badge */}
