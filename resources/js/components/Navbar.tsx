@@ -148,13 +148,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
         <button
           className="mobile-toggle"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Abrir menu"
+          aria-label={mobileMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
           style={{
             background: 'none',
             border: 'none',
             color: 'var(--text-white)',
             cursor: 'pointer',
-            padding: '8px',
+            padding: '10px',
+            minWidth: '44px',
+            minHeight: '44px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

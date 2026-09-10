@@ -169,14 +169,14 @@ Os assets otimizados são gerados em `public/build/` (versionados via `manifest.
 
 ---
 
-## 🔒 Painel Administrativo
+## 🔒 Painel Administrativo & Segurança
 
 O painel é construído com **Laravel Filament** e roda em `/admin` (rota própria, fora da SPA React).
 
 - Acesse `http://127.0.0.1:8000/admin` e faça login com e-mail e senha.
 - Credenciais padrão, criadas pelo seeder (`database/seeders/DatabaseSeeder.php`):
   - **E-mail**: `admin@devsfromtomorrow.com` (ou o valor de `ADMIN_EMAIL` no `.env`)
-  - **Senha**: `dft2026admin` (ou o valor de `VITE_ADMIN_PASSWORD` no `.env`)
+  - **Senha**: `dft2026admin` (ou o valor de `ADMIN_PASSWORD` no `.env`)
 - O menu lateral é organizado em três grupos:
   - **Gestão**: Projetos, Minhas tarefas.
   - **Site / Conteúdo**: Contatos, Mensagens, CTAs, Configurações.

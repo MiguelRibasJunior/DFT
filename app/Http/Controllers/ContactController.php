@@ -37,7 +37,7 @@ class ContactController
         $tipoSolucao = strip_tags(trim($validated['tipoSolucao']));
         $descricao = strip_tags(trim($validated['descricao']));
 
-        $adminEmail = env('VITE_FORM_SUBMIT_EMAIL', 'nathalia.sampaio@aluno.unc.br');
+        $adminEmail = env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com');
         $emailTriggerStatus = 'sucesso';
         $emailTriggerError = null;
 
@@ -84,23 +84,10 @@ class ContactController
         $submission->last_email_sent_at = now();
         $submission->save();
 
+        // Safe, minimal public response (no internal email/database leak)
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => 'sub-' . $submission->id,
-                'nome' => $submission->nome,
-                'empresa' => $submission->empresa,
-                'email' => $submission->email,
-                'telefone' => $submission->telefone,
-                'tipoSolucao' => $submission->tipo_solucao,
-                'descricao' => $submission->descricao,
-                'status' => $submission->status,
-                'createdAt' => $submission->created_at->toISOString(),
-                'emailTriggerStatus' => $submission->email_trigger_status,
-                'emailTriggerError' => $submission->email_trigger_error,
-            ],
-            'adminNotificationEmail' => $adminEmail,
-            'message' => 'Mensagem de contato recebida e gravada com sucesso.'
+            'message' => 'Mensagem de contato recebida com sucesso. Em breve entraremos em contato.'
         ], 201);
     }
 }

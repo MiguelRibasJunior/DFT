@@ -1,11 +1,14 @@
 import React from 'react';
 import { Bot, Cpu, Smartphone, Globe, Layers, Share2, ArrowUpRight } from 'lucide-react';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface SolutionsProps {
   onSelectSolution: (solutionName: string) => void;
 }
 
 export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+
   const solutions = [
     {
       id: 'chatbots',
@@ -64,8 +67,9 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
   ];
 
   return (
-    <section id="solucoes" style={{ padding: '100px 0', position: 'relative' }}>
+    <section id="solucoes" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
       {/* Background Decor */}
+      <div className="triangle-decor triangle-purple" style={{ top: '8%', left: '4%', opacity: 0.2 }} />
       <div
         style={{
           position: 'absolute',
@@ -80,7 +84,10 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
 
       <div className="container">
         {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
+        <div
+          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
+          style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}
+        >
           <div
             style={{
               display: 'inline-flex',
@@ -108,7 +115,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
           </p>
         </div>
 
-        {/* 6 Cards Grid */}
+        {/* 6 Cards Grid with Stagger */}
         <div
           style={{
             display: 'grid',
@@ -116,13 +123,24 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
             gap: '24px',
           }}
         >
-          {solutions.map((item) => {
+          {solutions.map((item, index) => {
             const IconComp = item.icon;
             return (
               <div
                 key={item.id}
-                className="glass-card solution-card"
+                role="button"
+                tabIndex={0}
+                className={`glass-card solution-card reveal-item stagger-${index + 1} ${
+                  isVisible ? 'reveal-visible' : ''
+                }`}
                 onClick={() => onSelectSolution(item.title)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectSolution(item.title);
+                  }
+                }}
+                aria-label={`Ver detalhes e solicitar orçamento para ${item.title}`}
                 style={{
                   padding: '32px 28px',
                   display: 'flex',
@@ -134,11 +152,13 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
               >
                 {/* Triangular Decor in Card Background */}
                 <div
-                  className="triangle-decor triangle-cyan"
+                  className={`triangle-decor ${
+                    item.color === '#7B4DFF' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
+                  }`}
                   style={{
                     top: '-10px',
                     right: '-10px',
-                    transform: 'rotate(45deg)',
+                    opacity: 0.25,
                   }}
                 />
 

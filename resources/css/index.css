@@ -51,7 +51,16 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+/* Touch Targets Minimum Sizing on Mobile & Interactive Controls */
+a, button, input, select, textarea {
+  touch-action: manipulation;
+}
+
+.btn {
+  min-height: 44px;
 }
 
 /* Reduced Motion Accessibility */
@@ -59,8 +68,11 @@ body {
   html {
     scroll-behavior: auto;
   }
-  .animate-float, .animate-float-slow, .animate-pulse-glow, .marquee-track, .marquee-track-reverse {
+  .animate-float, .animate-float-slow, .animate-pulse-glow, .animate-triangle-float, .animate-triangle-slow, .marquee-track, .marquee-track-reverse, .reveal-item, .tech-line-pulse {
     animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 
@@ -122,9 +134,10 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-gray);
   border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
+  will-change: transform, opacity;
 }
 
 .glass-card:hover {
@@ -134,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-4px);
 }
 
-/* Geometric Triangle Decorative Accents */
+/* Geometric Triangle Decorative Accents & Continuous Movement */
 .triangle-decor {
   position: absolute;
   width: 0;
@@ -148,24 +161,71 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-bottom: 35px solid var(--accent-cyan);
+  animation: floatTriangle 7s ease-in-out infinite;
 }
 
 .triangle-purple {
   border-left: 25px solid transparent;
   border-right: 25px solid transparent;
   border-bottom: 45px solid var(--accent-purple);
+  animation: floatTriangleSlow 10s ease-in-out infinite;
 }
 
 .triangle-blue {
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
   border-bottom: 30px solid var(--accent-blue);
+  animation: floatTriangleSubtle 8s ease-in-out infinite;
 }
 
 .glass-card:hover .triangle-decor {
   opacity: 0.4;
-  transform: scale(1.1) rotate(5deg);
 }
+
+/* Continuous Keyframe Animations */
+@keyframes floatTriangle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+@keyframes floatTriangleSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-5deg); }
+}
+
+@keyframes floatTriangleSubtle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+/* Scroll Viewport Reveal & Stagger System */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-item.reveal-left {
+  transform: translateX(-40px);
+}
+
+.reveal-item.reveal-right {
+  transform: translateX(40px);
+}
+
+.reveal-item.reveal-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0);
+}
+
+/* Stagger Delay Increments */
+.stagger-1 { transition-delay: 100ms; }
+.stagger-2 { transition-delay: 200ms; }
+.stagger-3 { transition-delay: 300ms; }
+.stagger-4 { transition-delay: 400ms; }
+.stagger-5 { transition-delay: 500ms; }
+.stagger-6 { transition-delay: 600ms; }
 
 /* Buttons System */
 .btn {
@@ -240,7 +300,7 @@ h1, h2, h3, h4, h5, h6 {
   100% { background-position: 0% 50%; }
 }
 
-/* Animations */
+/* Floating Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-12px) rotate(3deg); }
@@ -305,6 +365,18 @@ h1, h2, h3, h4, h5, h6 {
   animation-play-state: paused;
 }
 
+/* Tech SVG Dash Animation */
+.tech-line-pulse {
+  stroke-dasharray: 6 6;
+  animation: dashPulse 20s linear infinite;
+}
+
+@keyframes dashPulse {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -319,3 +391,4 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-cyan);
 }
+

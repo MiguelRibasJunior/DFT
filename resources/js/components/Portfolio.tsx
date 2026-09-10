@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExternalLink, Layers, Bot, Smartphone, ArrowRight } from 'lucide-react';
 import type { PublicProject } from '../services/contentService';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface PortfolioProps {
   onSelectProject: (title: string, desc: string, tags: string[]) => void;
@@ -36,6 +37,8 @@ const CARD_STYLES = [
 ];
 
 export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects: apiProjects }) => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+
   const source = apiProjects && apiProjects.length > 0
     ? apiProjects.map((p) => ({
         title: p.title,
@@ -52,10 +55,14 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
   }));
 
   return (
-    <section id="portfolio" style={{ padding: '100px 0', position: 'relative' }}>
+    <section id="portfolio" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
+      <div className="triangle-decor triangle-cyan" style={{ top: '5%', right: '6%', opacity: 0.18 }} />
       <div className="container">
         {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
+        <div
+          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
+          style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}
+        >
           <div
             style={{
               display: 'inline-flex',
@@ -88,12 +95,14 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
             gap: '30px',
           }}
         >
-          {projects.map((project) => {
+          {projects.map((project, index) => {
             const ProjIcon = project.icon;
             return (
               <div
                 key={project.id}
-                className="glass-card project-card"
+                className={`glass-card project-card reveal-item stagger-${index + 1} ${
+                  isVisible ? 'reveal-visible' : ''
+                }`}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
