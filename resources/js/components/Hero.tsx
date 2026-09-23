@@ -1,18 +1,14 @@
 import React from 'react';
 import { ArrowDownRight, Bot, Cpu, Code2, Sparkles, MessageSquare, CheckCircle2 } from 'lucide-react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface HeroProps {
   onOpenQuote: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
-  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
-
   return (
     <section
       id="hero"
-      ref={ref}
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -53,7 +49,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <div className={`hero-grid reveal-item ${isVisible ? 'reveal-visible' : ''}`}>
+        <div className="hero-grid hero-grid-animate">
           {/* Left Column — Text & CTAs */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Top Pill Badge */}
@@ -270,6 +266,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
           .hero-grid {
             grid-template-columns: 1.15fr 0.85fr;
             gap: 48px;
+          }
+        }
+        .hero-grid-animate {
+          animation: heroReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes heroReveal {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-grid-animate {
+            animation: none;
           }
         }
       `}</style>
