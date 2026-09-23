@@ -15,6 +15,15 @@ class TasksOverview extends StatsOverviewWidget
 
     protected ?string $heading = 'Tarefas';
 
+    protected function getColumns(): array
+    {
+        return [
+            'default' => 2,
+            'md' => 3,
+            'lg' => 5,
+        ];
+    }
+
     protected function getStats(): array
     {
         $pending = Task::where('status', TaskStatus::Todo)->count();

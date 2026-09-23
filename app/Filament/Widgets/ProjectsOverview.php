@@ -15,6 +15,15 @@ class ProjectsOverview extends StatsOverviewWidget
 
     protected ?string $heading = 'Projetos';
 
+    protected function getColumns(): array
+    {
+        return [
+            'default' => 2,
+            'md' => 3,
+            'lg' => 6,
+        ];
+    }
+
     protected function getStats(): array
     {
         $total = Project::count();
