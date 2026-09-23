@@ -256,11 +256,11 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
               <span>Área Administrativa</span>
             </a>
             <span>•</span>
-            <a href={settings?.privacy_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <a href="/politica-de-privacidade" style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
               Política de privacidade
             </a>
             <span>•</span>
-            <a href={settings?.terms_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <a href="/termos-de-uso" style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
               Termos de uso
             </a>
           </div>

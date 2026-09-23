@@ -47,7 +47,7 @@ class PublicContentController
             'phone', 'whatsapp', 'email', 'address',
             'instagram', 'facebook', 'linkedin', 'youtube', 'github',
             'footer_links',
-            'copyright_text', 'privacy_url', 'terms_url',
+            'copyright_text',
         ]);
 
         return response()->json([

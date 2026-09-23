@@ -122,8 +122,24 @@ class DatabaseSeeder extends Seeder
             'linkedin' => '#',
             'github' => '#',
             'copyright_text' => '© 2026 Devs From Tomorrow. Todos os direitos reservados.',
-            'privacy_url' => '#',
-            'terms_url' => '#',
+            'privacy_policy' => '<p>A Devs From Tomorrow respeita a sua privacidade e se compromete a proteger os dados pessoais coletados através deste site.</p>'
+                .'<h2>Quais dados coletamos</h2>'
+                .'<p>Coletamos apenas os dados fornecidos voluntariamente através do formulário de contato/orçamento, como nome, e-mail, telefone e a descrição do serviço desejado.</p>'
+                .'<h2>Como usamos seus dados</h2>'
+                .'<ul><li>Para responder às suas solicitações de orçamento ou contato.</li><li>Para melhorar nossos serviços e atendimento.</li></ul>'
+                .'<h2>Compartilhamento</h2>'
+                .'<p>Não vendemos nem compartilhamos seus dados pessoais com terceiros, exceto quando exigido por lei.</p>'
+                .'<h2>Seus direitos</h2>'
+                .'<p>Você pode solicitar a atualização ou exclusão dos seus dados a qualquer momento entrando em contato pelo e-mail contato@devsfromtomorrow.com.</p>',
+            'terms_of_use' => '<p>Ao utilizar este site, você concorda com os termos descritos abaixo.</p>'
+                .'<h2>Uso do site</h2>'
+                .'<p>O conteúdo deste site é fornecido apenas para fins informativos sobre os serviços da Devs From Tomorrow.</p>'
+                .'<h2>Propriedade intelectual</h2>'
+                .'<p>Todo o conteúdo, marca e identidade visual deste site pertencem à Devs From Tomorrow e não podem ser reproduzidos sem autorização.</p>'
+                .'<h2>Limitação de responsabilidade</h2>'
+                .'<p>Envidamos esforços para manter as informações deste site atualizadas, mas não garantimos a ausência total de erros.</p>'
+                .'<h2>Alterações</h2>'
+                .'<p>Estes termos podem ser atualizados a qualquer momento, sem aviso prévio.</p>',
         ]);
     }
 }

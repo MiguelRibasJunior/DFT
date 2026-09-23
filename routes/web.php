@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LegalPageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('app');
 });
+
+Route::get('/politica-de-privacidade', [LegalPageController::class, 'privacy'])->name('legal.privacy');
+Route::get('/termos-de-uso', [LegalPageController::class, 'terms'])->name('legal.terms');
 
 Route::get('/sitemap.xml', function () {
     $path = public_path('sitemap.xml');

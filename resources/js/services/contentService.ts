@@ -37,8 +37,6 @@ export interface PublicSiteSettings {
   github: string | null;
   footer_links: { label: string; url: string }[] | null;
   copyright_text: string | null;
-  privacy_url: string | null;
-  terms_url: string | null;
 }
 
 export const getProjects = async (): Promise<PublicProject[]> => {
