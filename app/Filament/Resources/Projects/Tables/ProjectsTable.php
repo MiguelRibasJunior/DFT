@@ -31,7 +31,8 @@ class ProjectsTable
                     ->label('Projeto')
                     ->description(fn ($record) => $record->category)
                     ->searchable(['title', 'category'])
-                    ->extraAttributes(['style' => 'max-width: 115px']),
+                    ->wrap()
+                    ->extraAttributes(['style' => 'max-width: 160px']),
                 TextColumn::make('management_status')
                     ->label('Status')
                     ->badge()
