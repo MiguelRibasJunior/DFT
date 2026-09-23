@@ -20,12 +20,15 @@ class CtasTable
                 TextColumn::make('name')
                     ->label('Nome interno')
                     ->description(fn ($record) => $record->title)
-                    ->searchable(['name', 'title']),
+                    ->searchable(['name', 'title'])
+                    ->wrap()
+                    ->extraAttributes(['style' => 'max-width: 220px']),
                 TextColumn::make('position')
                     ->label('Posição')
                     ->placeholder('—'),
                 TextColumn::make('button_text')
-                    ->label('Botão'),
+                    ->label('Botão')
+                    ->wrap(),
                 IconColumn::make('active')
                     ->label('Ativo')
                     ->boolean(),
@@ -40,8 +43,8 @@ class CtasTable
                     ->label('Ativo'),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make()->requiresConfirmation(),
+                EditAction::make()->iconButton(),
+                DeleteAction::make()->iconButton()->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
