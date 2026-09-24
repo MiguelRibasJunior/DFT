@@ -79,8 +79,7 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('featured')
                     ->label('Destaque')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->boolean(),
                 TextColumn::make('order')
                     ->label('Ordem')
                     ->numeric()

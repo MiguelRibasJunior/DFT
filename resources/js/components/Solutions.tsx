@@ -17,6 +17,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Bot,
       color: '#7B4DFF',
       title: 'Chatbots Inteligentes',
+      formValue: 'Chatbot',
       description:
         'Chatbots personalizados para atendimento, suporte, vendas, captação de informações e comunicação automatizada.',
       longDescription:
@@ -34,6 +35,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Cpu,
       color: '#28D7E5',
       title: 'Automação com IA e n8n',
+      formValue: 'Automação com IA e n8n',
       description:
         'Automação de processos utilizando n8n, inteligência artificial, APIs e integrações entre diferentes plataformas.',
       longDescription:
@@ -51,6 +53,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Smartphone,
       color: '#2388FF',
       title: 'Aplicativos',
+      formValue: 'Aplicativo',
       description:
         'Desenvolvimento de aplicativos modernos, intuitivos e responsivos para dispositivos Android e iOS.',
       longDescription:
@@ -68,6 +71,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Globe,
       color: '#28D7E5',
       title: 'Sites Institucionais',
+      formValue: 'Site',
       description:
         'Sites rápidos, responsivos e profissionais, desenvolvidos para fortalecer a presença digital de empresas e projetos.',
       longDescription:
@@ -85,6 +89,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Layers,
       color: '#7B4DFF',
       title: 'Sistemas Online',
+      formValue: 'Sistema online',
       description:
         'Plataformas web personalizadas para gerenciamento de informações, processos, usuários, serviços e operações.',
       longDescription:
@@ -102,6 +107,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Share2,
       color: '#2388FF',
       title: 'Integrações e APIs',
+      formValue: 'Integração entre sistemas',
       description:
         'Integração entre sistemas, bancos de dados, serviços externos e plataformas digitais por meio de APIs.',
       longDescription:
@@ -297,7 +303,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
           onClose={() => setActiveSolution(null)}
           onRequestQuote={() => {
             setActiveSolution(null);
-            onSelectSolution(activeItem.title);
+            onSelectSolution(activeItem.formValue);
           }}
           icon={activeItem.icon}
           color={activeItem.color}

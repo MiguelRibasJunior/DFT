@@ -29,8 +29,8 @@ class SiteSetting extends Model
         'google_tag_manager_id',
         'extra_scripts',
         'copyright_text',
-        'privacy_url',
-        'terms_url',
+        'privacy_policy',
+        'terms_of_use',
     ];
 
     protected $casts = [
