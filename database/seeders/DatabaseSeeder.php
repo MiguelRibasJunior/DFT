@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
         foreach ($projects as $order => $project) {
             Project::updateOrCreate(
                 ['slug' => $project['slug']],
-                [...$project, 'status' => 'published', 'order' => $order, 'published_at' => now()]
+                [...$project, 'status' => 'published', 'featured' => true, 'order' => $order, 'published_at' => now()]
             );
         }
 

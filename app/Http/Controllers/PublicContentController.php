@@ -13,6 +13,7 @@ class PublicContentController
     {
         $projects = Project::query()
             ->where('status', 'published')
+            ->where('featured', true)
             ->orderBy('order')
             ->get([
                 'id', 'title', 'slug', 'short_description', 'description',
