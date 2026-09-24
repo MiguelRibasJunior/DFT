@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bot, Cpu, Smartphone, Globe, Layers, Share2, ArrowUpRight } from 'lucide-react';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { SolutionModal } from './SolutionModal';
 
 interface SolutionsProps {
   onSelectSolution: (solutionName: string) => void;
@@ -8,6 +9,7 @@ interface SolutionsProps {
 
 export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+  const [activeSolution, setActiveSolution] = useState<string | null>(null);
 
   const solutions = [
     {
@@ -17,6 +19,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Chatbots Inteligentes',
       description:
         'Chatbots personalizados para atendimento, suporte, vendas, captação de informações e comunicação automatizada.',
+      longDescription:
+        'Criamos chatbots com inteligência artificial que atendem, qualificam leads e tiram dúvidas 24 horas por dia, integrados ao WhatsApp, ao site ou a sistemas internos. Cada assistente é treinado com a linguagem, os processos e o tom de voz da sua empresa.',
+      highlights: [
+        'Atendimento automatizado 24 horas por dia',
+        'Integração com WhatsApp e outros canais',
+        'Qualificação automática de leads',
+        'Relatórios de conversas e desempenho',
+      ],
       badge: 'IA & Agentes',
     },
     {
@@ -26,6 +36,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Automação com IA e n8n',
       description:
         'Automação de processos utilizando n8n, inteligência artificial, APIs e integrações entre diferentes plataformas.',
+      longDescription:
+        'Conectamos suas ferramentas, sistemas e equipes por meio de fluxos automatizados no n8n, eliminando tarefas repetitivas e reduzindo erros manuais. Da geração de relatórios ao envio de notificações, cada fluxo é desenhado sob medida para o seu processo.',
+      highlights: [
+        'Fluxos de automação personalizados no n8n',
+        'Integração entre sistemas e APIs',
+        'Redução de tarefas manuais e repetitivas',
+        'Monitoramento e ajustes contínuos',
+      ],
       badge: 'Eficiência n8n',
     },
     {
@@ -35,6 +53,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Aplicativos',
       description:
         'Desenvolvimento de aplicativos modernos, intuitivos e responsivos para dispositivos Android e iOS.',
+      longDescription:
+        'Desenvolvemos aplicativos nativos e híbridos para Android e iOS, com foco em performance, usabilidade e escalabilidade — do primeiro protótipo até a publicação nas lojas.',
+      highlights: [
+        'Design de interface intuitivo',
+        'Publicação na Google Play e App Store',
+        'Integração com APIs e backend',
+        'Suporte e evolução contínua',
+      ],
       badge: 'iOS & Android',
     },
     {
@@ -44,6 +70,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Sites Institucionais',
       description:
         'Sites rápidos, responsivos e profissionais, desenvolvidos para fortalecer a presença digital de empresas e projetos.',
+      longDescription:
+        'Criamos sites rápidos, responsivos e otimizados para SEO, pensados para fortalecer a presença digital da sua marca e transformar visitantes em clientes.',
+      highlights: [
+        'Design responsivo mobile-first',
+        'Otimização de SEO e performance',
+        'Integração com formulários e analytics',
+        'Fácil atualização de conteúdo',
+      ],
       badge: 'Alta Performance',
     },
     {
@@ -53,6 +87,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Sistemas Online',
       description:
         'Plataformas web personalizadas para gerenciamento de informações, processos, usuários, serviços e operações.',
+      longDescription:
+        'Desenvolvemos plataformas web sob medida — dashboards, portais e sistemas de gestão — para organizar processos, dados e equipes em um único lugar.',
+      highlights: [
+        'Painéis e dashboards personalizados',
+        'Gestão de usuários e permissões',
+        'Relatórios e indicadores em tempo real',
+        'Arquitetura pensada para escalar',
+      ],
       badge: 'SaaS & Dashboards',
     },
     {
@@ -62,9 +104,19 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       title: 'Integrações e APIs',
       description:
         'Integração entre sistemas, bancos de dados, serviços externos e plataformas digitais por meio de APIs.',
+      longDescription:
+        'Conectamos sistemas, bancos de dados e plataformas externas por meio de APIs REST e GraphQL, garantindo que suas ferramentas troquem informações de forma segura e automática.',
+      highlights: [
+        'Integração entre múltiplos sistemas',
+        'APIs REST e GraphQL',
+        'Sincronização automática de dados',
+        'Segurança e monitoramento de acessos',
+      ],
       badge: 'Conectividade Total',
     },
   ];
+
+  const activeItem = solutions.find((item) => item.id === activeSolution) ?? null;
 
   return (
     <section id="solucoes" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
@@ -133,14 +185,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                 className={`glass-card solution-card reveal-item stagger-${index + 1} ${
                   isVisible ? 'reveal-visible' : ''
                 }`}
-                onClick={() => onSelectSolution(item.title)}
+                onClick={() => setActiveSolution(item.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onSelectSolution(item.title);
+                    setActiveSolution(item.id);
                   }
                 }}
-                aria-label={`Ver detalhes e solicitar orçamento para ${item.title}`}
+                aria-label={`Ver detalhes de ${item.title}`}
                 style={{
                   padding: '32px 28px',
                   display: 'flex',
@@ -238,6 +290,23 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
           transform: scale(1.1) rotate(-4deg);
         }
       `}</style>
+
+      {activeItem && (
+        <SolutionModal
+          isOpen
+          onClose={() => setActiveSolution(null)}
+          onRequestQuote={() => {
+            setActiveSolution(null);
+            onSelectSolution(activeItem.title);
+          }}
+          icon={activeItem.icon}
+          color={activeItem.color}
+          badge={activeItem.badge}
+          title={activeItem.title}
+          longDescription={activeItem.longDescription}
+          highlights={activeItem.highlights}
+        />
+      )}
     </section>
   );
 };
