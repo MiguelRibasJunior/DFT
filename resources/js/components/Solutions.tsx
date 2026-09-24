@@ -15,6 +15,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Bot,
       color: '#7B4DFF',
       title: 'Chatbots Inteligentes',
+      formValue: 'Chatbot',
       description:
         'Chatbots personalizados para atendimento, suporte, vendas, captação de informações e comunicação automatizada.',
       badge: 'IA & Agentes',
@@ -24,6 +25,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Cpu,
       color: '#28D7E5',
       title: 'Automação com IA e n8n',
+      formValue: 'Automação com IA e n8n',
       description:
         'Automação de processos utilizando n8n, inteligência artificial, APIs e integrações entre diferentes plataformas.',
       badge: 'Eficiência n8n',
@@ -33,6 +35,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Smartphone,
       color: '#2388FF',
       title: 'Aplicativos',
+      formValue: 'Aplicativo',
       description:
         'Desenvolvimento de aplicativos modernos, intuitivos e responsivos para dispositivos Android e iOS.',
       badge: 'iOS & Android',
@@ -42,6 +45,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Globe,
       color: '#28D7E5',
       title: 'Sites Institucionais',
+      formValue: 'Site',
       description:
         'Sites rápidos, responsivos e profissionais, desenvolvidos para fortalecer a presença digital de empresas e projetos.',
       badge: 'Alta Performance',
@@ -51,6 +55,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Layers,
       color: '#7B4DFF',
       title: 'Sistemas Online',
+      formValue: 'Sistema online',
       description:
         'Plataformas web personalizadas para gerenciamento de informações, processos, usuários, serviços e operações.',
       badge: 'SaaS & Dashboards',
@@ -60,6 +65,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       icon: Share2,
       color: '#2388FF',
       title: 'Integrações e APIs',
+      formValue: 'Integração entre sistemas',
       description:
         'Integração entre sistemas, bancos de dados, serviços externos e plataformas digitais por meio de APIs.',
       badge: 'Conectividade Total',
@@ -133,11 +139,11 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                 className={`glass-card solution-card reveal-item stagger-${index + 1} ${
                   isVisible ? 'reveal-visible' : ''
                 }`}
-                onClick={() => onSelectSolution(item.title)}
+                onClick={() => onSelectSolution(item.formValue)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onSelectSolution(item.title);
+                    onSelectSolution(item.formValue);
                   }
                 }}
                 aria-label={`Ver detalhes e solicitar orçamento para ${item.title}`}

@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowUp, ShieldCheck } from 'lucide-react';
 import type { PublicSiteSettings } from '../services/contentService';
+import { LegalModal } from './LegalModal';
 
 interface FooterProps {
   settings?: PublicSiteSettings | null;
 }
 
 export const Footer: React.FC<FooterProps> = ({ settings }) => {
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const linkButtonStyle: React.CSSProperties = {
+    color: 'var(--text-gray)',
+    textDecoration: 'none',
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    font: 'inherit',
+    cursor: 'pointer',
   };
 
   return (
@@ -256,13 +269,13 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
               <span>Área Administrativa</span>
             </a>
             <span>•</span>
-            <a href={settings?.privacy_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <button type="button" onClick={() => setLegalModal('privacy')} style={linkButtonStyle}>
               Política de privacidade
-            </a>
+            </button>
             <span>•</span>
-            <a href={settings?.terms_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <button type="button" onClick={() => setLegalModal('terms')} style={linkButtonStyle}>
               Termos de uso
-            </a>
+            </button>
           </div>
 
           <button
@@ -286,6 +299,19 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
           </button>
         </div>
       </div>
+
+      <LegalModal
+        isOpen={legalModal === 'privacy'}
+        onClose={() => setLegalModal(null)}
+        title="Política de privacidade"
+        content={settings?.privacy_policy ?? null}
+      />
+      <LegalModal
+        isOpen={legalModal === 'terms'}
+        onClose={() => setLegalModal(null)}
+        title="Termos de uso"
+        content={settings?.terms_of_use ?? null}
+      />
     </footer>
   );
 };

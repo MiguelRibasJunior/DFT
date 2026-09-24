@@ -148,7 +148,8 @@ class ProjectForm
                                     ->required()
                                     ->default('draft'),
                                 Toggle::make('featured')
-                                    ->label('Projeto em destaque'),
+                                    ->label('Projeto em destaque')
+                                    ->helperText('Só projetos publicados e marcados como destaque aparecem na Home do site.'),
                                 TextInput::make('order')
                                     ->label('Ordem de exibição')
                                     ->numeric()

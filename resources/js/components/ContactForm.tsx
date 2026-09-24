@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, MessageSquare, Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { addSubmission, ADMIN_NOTIFICATION_EMAIL } from '../services/submissionService';
 import { sanitizeInput, validateEmail, validatePhone, checkRateLimit } from '../utils/security';
@@ -22,6 +22,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
     descricao: '',
     website_hp: '', // Honeypot field
   });
+
+  useEffect(() => {
+    if (initialSolution) {
+      setFormData((prev) => ({ ...prev, tipoSolucao: initialSolution }));
+    }
+  }, [initialSolution]);
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);

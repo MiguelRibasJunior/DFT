@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -93,9 +94,16 @@ class Settings extends Page
                         Tab::make('Rodapé')
                             ->schema([
                                 TextInput::make('copyright_text')->label('Texto de copyright')->columnSpanFull(),
-                                TextInput::make('privacy_url')->label('URL da política de privacidade'),
-                                TextInput::make('terms_url')->label('URL dos termos de uso'),
                             ])->columns(2),
+                        Tab::make('Jurídico')
+                            ->schema([
+                                RichEditor::make('privacy_policy')
+                                    ->label('Política de privacidade')
+                                    ->columnSpanFull(),
+                                RichEditor::make('terms_of_use')
+                                    ->label('Termos de uso')
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
             ])
             ->statePath('data');
