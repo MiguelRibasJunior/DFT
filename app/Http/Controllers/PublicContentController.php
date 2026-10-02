@@ -7,6 +7,7 @@ use App\Models\Cta;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class PublicContentController
 {
@@ -62,13 +63,17 @@ class PublicContentController
 
     public function settings()
     {
-        $settings = Arr::only(SiteSetting::current()->toArray(), [
-            'site_name', 'description', 'logo', 'favicon',
-            'phone', 'whatsapp', 'email', 'address',
-            'instagram', 'facebook', 'linkedin', 'youtube', 'github',
-            'footer_links',
-            'copyright_text', 'privacy_policy', 'terms_of_use',
+        $current = SiteSetting::current();
+
+        $settings = Arr::only($current->toArray(), [
+            'site_name', 'description', 'logo', 'favicon', 'copyright_text',
         ]);
+
+        $settings['footer_links'] = $current->footerLinks();
+
+        // Qualquer usuário do painel pode editar estes textos; o HTML é sanitizado na saída.
+        $settings['privacy_policy'] = $current->privacy_policy ? Str::sanitizeHtml($current->privacy_policy) : null;
+        $settings['terms_of_use'] = $current->terms_of_use ? Str::sanitizeHtml($current->terms_of_use) : null;
 
         return response()->json([
             'success' => true,

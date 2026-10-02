@@ -26,16 +26,7 @@ export interface PublicSiteSettings {
   description: string | null;
   logo: string | null;
   favicon: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  address: string | null;
-  instagram: string | null;
-  facebook: string | null;
-  linkedin: string | null;
-  youtube: string | null;
-  github: string | null;
-  footer_links: { label: string; url: string }[] | null;
+  footer_links: { label: string; url: string }[];
   copyright_text: string | null;
   privacy_policy: string | null;
   terms_of_use: string | null;

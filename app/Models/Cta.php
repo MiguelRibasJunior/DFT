@@ -19,11 +19,6 @@ class Cta extends Model
         'cta_section' => 'Seção final da Home',
     ];
 
-    /**
-     * Aceita URL completa, caminho relativo, âncora, e-mail ou telefone.
-     */
-    public const URL_PATTERN = '/^(https?:\/\/\S+|\/\S*|#[\w-]+|mailto:\S+|tel:\+?[\d\s().-]+)$/i';
-
     protected $fillable = [
         'name',
         'title',

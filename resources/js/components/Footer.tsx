@@ -10,6 +10,17 @@ interface FooterProps {
   contactLinks?: PublicContactLink[] | null;
 }
 
+const isExternal = (url: string) => /^https?:\/\//i.test(url);
+
+const FALLBACK_NAV_LINKS = [
+  { label: 'Início', url: '#hero' },
+  { label: 'Soluções Digitais', url: '#solucoes' },
+  { label: 'Automação n8n & IA', url: '#automacao' },
+  { label: 'Diferenciais', url: '#diferenciais' },
+  { label: 'Processo', url: '#processo' },
+  { label: 'Tecnologias', url: '#tecnologias' },
+];
+
 const FALLBACK_SOCIAL_LINKS: PublicContactLink[] = [
   { id: -1, type: 'instagram', label: 'Instagram', value: '', href: 'https://www.instagram.com/devsfromtomorrow/' },
   { id: -2, type: 'linkedin', label: 'LinkedIn', value: '', href: 'https://www.linkedin.com/company/devs-from-tomorrow' },
@@ -18,6 +29,7 @@ const FALLBACK_SOCIAL_LINKS: PublicContactLink[] = [
 
 export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+  const navLinks = settings?.footer_links ?? FALLBACK_NAV_LINKS;
   const socialLinks = contactLinks === null ? FALLBACK_SOCIAL_LINKS : contactLinks ?? [];
 
   const scrollToTop = () => {
@@ -96,22 +108,17 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
               Navegação
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {[
-                { name: 'Início', href: '#hero' },
-                { name: 'Soluções Digitais', href: '#solucoes' },
-                { name: 'Automação n8n & IA', href: '#automacao' },
-                { name: 'Diferenciais', href: '#diferenciais' },
-                { name: 'Processo', href: '#processo' },
-                { name: 'Tecnologias', href: '#tecnologias' },
-              ].map((link) => (
-                <li key={link.name}>
+              {navLinks.map((link, index) => (
+                <li key={`${link.url}-${index}`}>
                   <a
-                    href={link.href}
+                    href={link.url}
+                    target={isExternal(link.url) ? '_blank' : undefined}
+                    rel={isExternal(link.url) ? 'noopener noreferrer' : undefined}
                     style={{ fontSize: '14px', color: 'var(--text-gray)', textDecoration: 'none', transition: 'color 0.2s ease' }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = '#28D7E5')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-gray)')}
                   >
-                    {link.name}
+                    {link.label}
                   </a>
                 </li>
               ))}

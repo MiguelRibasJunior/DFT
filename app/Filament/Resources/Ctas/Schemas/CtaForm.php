@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ctas\Schemas;
 
 use App\Models\Cta;
+use App\Support\LinkTarget;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -48,11 +49,7 @@ class CtaForm
                             ->label('Destino do botão')
                             ->placeholder('#contato, https://…, mailto:… ou tel:…')
                             ->helperText('Use #contato para rolar até o formulário, uma URL completa, mailto: ou tel:.')
-                            ->rule(fn () => function (string $attribute, mixed $value, \Closure $fail): void {
-                                if (! preg_match(Cta::URL_PATTERN, (string) $value)) {
-                                    $fail('Informe uma URL (https://…), uma âncora (#contato), um caminho (/…), mailto: ou tel:.');
-                                }
-                            })
+                            ->rule(LinkTarget::rule())
                             ->required(),
                         Toggle::make('active')
                             ->label('Ativo')

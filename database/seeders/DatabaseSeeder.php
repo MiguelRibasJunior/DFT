@@ -117,11 +117,6 @@ class DatabaseSeeder extends Seeder
         SiteSetting::updateOrCreate(['id' => 1], [
             'site_name' => 'Devs From Tomorrow',
             'description' => 'Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, aplicativos mobile, automação n8n e inteligência artificial.',
-            'email' => 'contato@devsfromtomorrow.com',
-            'whatsapp' => '+55 (11) 99999-9999',
-            'instagram' => '#',
-            'linkedin' => '#',
-            'github' => '#',
             'copyright_text' => '© 2026 Devs From Tomorrow. Todos os direitos reservados.',
             'privacy_policy' => '<p>A Devs From Tomorrow respeita a sua privacidade e se compromete a proteger os dados pessoais coletados através deste site.</p>'
                 .'<h2>Quais dados coletamos</h2>'
