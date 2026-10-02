@@ -19,11 +19,21 @@ class DatabaseSeeder extends Seeder
             Role::firstOrCreate(['name' => $role]);
         }
 
+        $password = env('ADMIN_PASSWORD');
+
+        if (blank($password)) {
+            if (app()->isProduction()) {
+                throw new \RuntimeException('Defina ADMIN_PASSWORD no .env antes de rodar o seeder em produção.');
+            }
+
+            $password = 'dft2026admin';
+        }
+
         $admin = User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@devsfromtomorrow.com')],
             [
                 'name' => 'Administrador',
-                'password' => env('VITE_ADMIN_PASSWORD', 'dft2026admin'),
+                'password' => $password,
             ]
         );
 
