@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContactLink;
 use App\Models\Cta;
 use App\Models\Message;
 use App\Models\Project;
@@ -18,11 +19,21 @@ class DatabaseSeeder extends Seeder
             Role::firstOrCreate(['name' => $role]);
         }
 
+        $password = env('ADMIN_PASSWORD');
+
+        if (blank($password)) {
+            if (app()->isProduction()) {
+                throw new \RuntimeException('Defina ADMIN_PASSWORD no .env antes de rodar o seeder em produção.');
+            }
+
+            $password = 'dft2026admin';
+        }
+
         $admin = User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@devsfromtomorrow.com')],
             [
                 'name' => 'Administrador',
-                'password' => env('VITE_ADMIN_PASSWORD', 'dft2026admin'),
+                'password' => $password,
             ]
         );
 
@@ -116,11 +127,6 @@ class DatabaseSeeder extends Seeder
         SiteSetting::updateOrCreate(['id' => 1], [
             'site_name' => 'Devs From Tomorrow',
             'description' => 'Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, aplicativos mobile, automação n8n e inteligência artificial.',
-            'email' => 'contato@devsfromtomorrow.com',
-            'whatsapp' => '+55 (11) 99999-9999',
-            'instagram' => '#',
-            'linkedin' => '#',
-            'github' => '#',
             'copyright_text' => '© 2026 Devs From Tomorrow. Todos os direitos reservados.',
             'privacy_policy' => '<p>A Devs From Tomorrow respeita a sua privacidade e se compromete a proteger os dados pessoais coletados através deste site.</p>'
                 .'<h2>Quais dados coletamos</h2>'
@@ -141,5 +147,25 @@ class DatabaseSeeder extends Seeder
                 .'<h2>Alterações</h2>'
                 .'<p>Estes termos podem ser atualizados a qualquer momento, sem aviso prévio.</p>',
         ]);
+
+        $this->seedContactLinks();
+    }
+
+    private function seedContactLinks(): void
+    {
+        $links = [
+            ['whatsapp', 'WhatsApp', '+55 (11) 99999-9999'],
+            ['email', 'E-mail', 'contato@devsfromtomorrow.com'],
+            ['instagram', 'Instagram', 'https://www.instagram.com/devsfromtomorrow/'],
+            ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/devs-from-tomorrow'],
+            ['github', 'GitHub', 'https://github.com/devs-from-tomorrow'],
+        ];
+
+        foreach ($links as $order => [$type, $label, $value]) {
+            ContactLink::firstOrCreate(
+                ['type' => $type, 'value' => $value],
+                ['label' => $label, 'order' => $order, 'active' => true],
+            );
+        }
     }
 }

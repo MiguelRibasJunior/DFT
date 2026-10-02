@@ -26,19 +26,18 @@ export interface PublicSiteSettings {
   description: string | null;
   logo: string | null;
   favicon: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  email: string | null;
-  address: string | null;
-  instagram: string | null;
-  facebook: string | null;
-  linkedin: string | null;
-  youtube: string | null;
-  github: string | null;
-  footer_links: { label: string; url: string }[] | null;
+  footer_links: { label: string; url: string }[];
   copyright_text: string | null;
   privacy_policy: string | null;
   terms_of_use: string | null;
+}
+
+export interface PublicContactLink {
+  id: number;
+  type: string;
+  label: string;
+  value: string;
+  href: string;
 }
 
 export const getProjects = async (): Promise<PublicProject[]> => {
@@ -66,6 +65,18 @@ export const getCta = async (position: string): Promise<PublicCta | null> => {
 export const getSiteSettings = async (): Promise<PublicSiteSettings | null> => {
   try {
     const res = await fetch(`${ENV.API_BASE_URL}/settings`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.success ? json.data : null;
+  } catch {
+    return null;
+  }
+};
+
+// null = falha de rede/servidor (o site usa o conteúdo padrão); [] = nenhum canal ativo.
+export const getContactLinks = async (): Promise<PublicContactLink[] | null> => {
+  try {
+    const res = await fetch(`${ENV.API_BASE_URL}/contact-links`);
     if (!res.ok) return null;
     const json = await res.json();
     return json.success ? json.data : null;

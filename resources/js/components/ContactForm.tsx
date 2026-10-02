@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { addSubmission, SubmissionError } from '../services/submissionService';
 import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../utils/security';
-import type { PublicSiteSettings } from '../services/contentService';
+import type { PublicContactLink } from '../services/contentService';
+import { CONTACT_COLORS, ContactIcon } from './ContactIcon';
 
 interface ContactFormProps {
   initialSolution?: string;
-  settings?: PublicSiteSettings | null;
+  // undefined = carregando, null = falha na API (usa os canais padrão), lista = canais ativos do admin
+  contactLinks?: PublicContactLink[] | null;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', settings }) => {
-  const contactEmail = settings?.email || 'contato@devsfromtomorrow.com';
-  const contactWhatsapp = settings?.whatsapp || '+55 (11) 99999-9999';
-  const whatsappDigits = contactWhatsapp.replace(/\D/g, '');
+// Canais de contato direto exibidos ao lado do formulário; redes e perfis ficam só no rodapé.
+const DIRECT_TYPES = ['whatsapp', 'email', 'phone', 'address'];
+
+const FALLBACK_DIRECT_LINKS: PublicContactLink[] = [
+  { id: -1, type: 'email', label: 'E-mail corporativo', value: 'contato@devsfromtomorrow.com', href: 'mailto:contato@devsfromtomorrow.com' },
+  { id: -2, type: 'whatsapp', label: 'WhatsApp Oficial', value: '+55 (11) 99999-9999', href: 'https://wa.me/5511999999999' },
+];
+
+export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', contactLinks }) => {
+  const directLinks = contactLinks === null
+    ? FALLBACK_DIRECT_LINKS
+    : (contactLinks ?? []).filter((link) => DIRECT_TYPES.includes(link.type));
   const [formData, setFormData] = useState({
     nome: '',
     empresa: '',
@@ -346,59 +356,56 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
             </div>
 
             {/* Direct Channels */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <a
-                href={`mailto:${contactEmail}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  padding: '14px 18px',
-                  borderRadius: '12px',
-                  background: 'rgba(16, 21, 36, 0.7)',
-                  border: '1px solid var(--border-gray)',
-                  color: '#F5F7FA',
-                  textDecoration: 'none',
-                  transition: 'border-color 0.2s ease',
-                }}
-                className="contact-link"
-              >
-                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(35, 136, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Mail size={20} color="#2388FF" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>E-mail corporativo</div>
-                  <div style={{ fontSize: '15px', fontWeight: 600 }}>{contactEmail}</div>
-                </div>
-              </a>
+            {directLinks.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {directLinks.map((link) => {
+                  const accent = CONTACT_COLORS[link.type] ?? '#28D7E5';
+                  const external = /^https?:\/\//i.test(link.href);
 
-              <a
-                href={`https://wa.me/${whatsappDigits}`}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  padding: '14px 18px',
-                  borderRadius: '12px',
-                  background: 'rgba(16, 21, 36, 0.7)',
-                  border: '1px solid var(--border-gray)',
-                  color: '#F5F7FA',
-                  textDecoration: 'none',
-                  transition: 'border-color 0.2s ease',
-                }}
-                className="contact-link"
-              >
-                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(40, 215, 229, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MessageSquare size={20} color="#28D7E5" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>WhatsApp Oficial</div>
-                  <div style={{ fontSize: '15px', fontWeight: 600 }}>{contactWhatsapp}</div>
-                </div>
-              </a>
-            </div>
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.href}
+                      target={external ? '_blank' : undefined}
+                      rel={external ? 'noopener noreferrer' : undefined}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px',
+                        padding: '14px 18px',
+                        borderRadius: '12px',
+                        background: 'rgba(16, 21, 36, 0.7)',
+                        border: '1px solid var(--border-gray)',
+                        color: '#F5F7FA',
+                        textDecoration: 'none',
+                        transition: 'border-color 0.2s ease',
+                      }}
+                      className="contact-link"
+                    >
+                      <div
+                        style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '10px',
+                          background: `${accent}26`,
+                          color: accent,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <ContactIcon type={link.type} size={20} />
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>{link.label}</div>
+                        <div style={{ fontSize: '15px', fontWeight: 600, overflowWrap: 'anywhere' }}>{link.value}</div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
