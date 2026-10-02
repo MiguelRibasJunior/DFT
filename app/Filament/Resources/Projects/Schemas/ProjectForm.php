@@ -57,13 +57,24 @@ class ProjectForm
                                     ->columnSpanFull(),
                                 FileUpload::make('cover_image')
                                     ->label('Imagem de capa')
+                                    ->helperText('JPG, PNG ou WebP, até 2 MB. Aparece no card do projeto na Home.')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(2048)
+                                    ->disk('public')
+                                    ->visibility('public')
                                     ->directory('projects'),
                                 FileUpload::make('gallery')
                                     ->label('Galeria de imagens')
+                                    ->helperText('Até 8 imagens JPG, PNG ou WebP, de até 2 MB cada.')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(2048)
+                                    ->maxFiles(8)
                                     ->multiple()
                                     ->reorderable()
+                                    ->disk('public')
+                                    ->visibility('public')
                                     ->directory('projects/gallery'),
                             ])->columns(2),
                         Tab::make('Gestão')

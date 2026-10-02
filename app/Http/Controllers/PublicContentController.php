@@ -19,7 +19,14 @@ class PublicContentController
                 'id', 'title', 'slug', 'short_description', 'description',
                 'category', 'technologies', 'cover_image',
                 'project_url', 'github_url', 'external_url',
-            ]);
+            ])
+            ->map(function (Project $project) {
+                $project->cover_image = $project->cover_image
+                    ? '/storage/'.ltrim($project->cover_image, '/')
+                    : null;
+
+                return $project;
+            });
 
         return response()->json([
             'success' => true,
