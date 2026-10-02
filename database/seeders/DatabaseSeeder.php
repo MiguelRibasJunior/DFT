@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContactLink;
 use App\Models\Cta;
 use App\Models\Message;
 use App\Models\Project;
@@ -141,5 +142,25 @@ class DatabaseSeeder extends Seeder
                 .'<h2>Alterações</h2>'
                 .'<p>Estes termos podem ser atualizados a qualquer momento, sem aviso prévio.</p>',
         ]);
+
+        $this->seedContactLinks();
+    }
+
+    private function seedContactLinks(): void
+    {
+        $links = [
+            ['whatsapp', 'WhatsApp', '+55 (11) 99999-9999'],
+            ['email', 'E-mail', 'contato@devsfromtomorrow.com'],
+            ['instagram', 'Instagram', 'https://www.instagram.com/devsfromtomorrow/'],
+            ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/devs-from-tomorrow'],
+            ['github', 'GitHub', 'https://github.com/devs-from-tomorrow'],
+        ];
+
+        foreach ($links as $order => [$type, $label, $value]) {
+            ContactLink::firstOrCreate(
+                ['type' => $type, 'value' => $value],
+                ['label' => $label, 'order' => $order, 'active' => true],
+            );
+        }
     }
 }

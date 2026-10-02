@@ -16,4 +16,5 @@ Route::middleware('throttle:6,1')->post('/contact', [ContactController::class, '
 // Public read-only content served by the site (managed via the Filament admin panel)
 Route::get('/projects', [PublicContentController::class, 'projects']);
 Route::get('/ctas/{position}', [PublicContentController::class, 'cta']);
+Route::get('/contact-links', [PublicContentController::class, 'contactLinks']);
 Route::get('/settings', [PublicContentController::class, 'settings']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactLink;
 use App\Models\Cta;
 use App\Models\Project;
 use App\Models\SiteSetting;
@@ -34,6 +35,28 @@ class PublicContentController
         return response()->json([
             'success' => true,
             'data' => $cta,
+        ]);
+    }
+
+    public function contactLinks()
+    {
+        $links = ContactLink::query()
+            ->active()
+            ->ordered()
+            ->get()
+            ->map(fn (ContactLink $link) => [
+                'id' => $link->id,
+                'type' => $link->type->value,
+                'label' => $link->label,
+                'value' => $link->value,
+                'href' => $link->href,
+            ])
+            ->filter(fn (array $link) => $link['href'] !== null)
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $links,
         ]);
     }
 
