@@ -92,6 +92,7 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('order')
+            ->reorderable('order')
             ->recordUrl(fn ($record) => ProjectResource::getUrl('overview', ['record' => $record]))
             ->filters([
                 SelectFilter::make('management_status')
