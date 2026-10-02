@@ -12,18 +12,20 @@ import { CTASection } from './components/CTASection';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
-import { getCta, getProjects, getSiteSettings, type PublicCta, type PublicProject, type PublicSiteSettings } from './services/contentService';
+import { getContactLinks, getCta, getProjects, getSiteSettings, type PublicContactLink, type PublicCta, type PublicProject, type PublicSiteSettings } from './services/contentService';
 
 export function App() {
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
   const [projects, setProjects] = useState<PublicProject[]>([]);
   const [siteSettings, setSiteSettings] = useState<PublicSiteSettings | null>(null);
   const [cta, setCta] = useState<PublicCta | null>(null);
+  const [contactLinks, setContactLinks] = useState<PublicContactLink[] | null | undefined>(undefined);
 
   useEffect(() => {
     getProjects().then(setProjects);
     getSiteSettings().then(setSiteSettings);
     getCta('cta_section').then(setCta);
+    getContactLinks().then(setContactLinks);
   }, []);
 
   const [modalData, setModalData] = useState<{
@@ -80,11 +82,11 @@ export function App() {
         <Portfolio onSelectProject={handleSelectProject} projects={projects} />
         <TechStack />
         <CTASection onStartProject={handleOpenQuote} cta={cta} />
-        <ContactForm initialSolution={selectedSolution} settings={siteSettings} />
+        <ContactForm initialSolution={selectedSolution} contactLinks={contactLinks} />
       </main>
 
       {/* Footer */}
-      <Footer settings={siteSettings} />
+      <Footer settings={siteSettings} contactLinks={contactLinks} />
 
       {/* Detail Modal */}
       <ProjectModal
