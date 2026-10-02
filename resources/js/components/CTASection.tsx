@@ -116,7 +116,14 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) =
           {content.subtitle}
         </p>
 
-        <a href={content.button_url} onClick={onStartProject} className="btn btn-primary btn-glow" style={{ padding: '16px 36px', fontSize: '16px' }}>
+        <a
+          href={content.button_url}
+          onClick={content.button_url === '#contato' ? onStartProject : undefined}
+          target={/^https?:\/\//i.test(content.button_url) ? '_blank' : undefined}
+          rel={/^https?:\/\//i.test(content.button_url) ? 'noopener noreferrer' : undefined}
+          className="btn btn-primary btn-glow"
+          style={{ padding: '16px 36px', fontSize: '16px' }}
+        >
           <Send size={18} />
           <span>{content.button_text}</span>
           <ArrowRight size={18} />

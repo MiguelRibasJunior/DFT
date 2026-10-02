@@ -29,11 +29,7 @@ class PublicContentController
 
     public function cta(string $position)
     {
-        $cta = Cta::query()
-            ->where('position', $position)
-            ->where('active', true)
-            ->orderBy('order')
-            ->first(['title', 'subtitle', 'button_text', 'button_url']);
+        $cta = Cta::currentFor($position)?->only(['title', 'subtitle', 'button_text', 'button_url']);
 
         return response()->json([
             'success' => true,
