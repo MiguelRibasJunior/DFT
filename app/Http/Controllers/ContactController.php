@@ -27,6 +27,18 @@ class ContactController
             'telefone' => 'required|string|max:30',
             'tipoSolucao' => 'required|string|max:100',
             'descricao' => 'required|string|max:3000',
+        ], [
+            'required' => 'Preencha o campo :attribute.',
+            'email' => 'Informe um :attribute válido.',
+            'string' => 'O campo :attribute é inválido.',
+            'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
+        ], [
+            'nome' => 'nome',
+            'empresa' => 'empresa',
+            'email' => 'e-mail',
+            'telefone' => 'telefone',
+            'tipoSolucao' => 'tipo de solução',
+            'descricao' => 'descrição',
         ]);
 
         // 3. Input Sanitization (strip tags against XSS)

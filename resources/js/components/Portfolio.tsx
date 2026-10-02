@@ -14,18 +14,21 @@ const FALLBACK_PROJECTS = [
     category: 'Sistema Web & Dashboard',
     description: 'Sistema online para gerenciamento de processos, usuários, documentos e indicadores.',
     technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
+    coverImage: null as string | null,
   },
   {
     title: 'Assistente Virtual com IA',
     category: 'Chatbot & Automação n8n',
     description: 'Chatbot inteligente integrado a dados e ferramentas de automação.',
     technologies: ['Python', 'n8n', 'OpenAI', 'WhatsApp API'],
+    coverImage: null as string | null,
   },
   {
     title: 'Aplicativo Personalizado',
     category: 'Mobile iOS & Android',
     description: 'Aplicativo desenvolvido para facilitar serviços, comunicação e acesso a informações.',
     technologies: ['React Native', 'TypeScript', 'Node.js', 'Docker'],
+    coverImage: null as string | null,
   },
 ];
 
@@ -45,6 +48,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
         category: p.category,
         description: p.short_description,
         technologies: p.technologies || [],
+        coverImage: p.cover_image,
       }))
     : FALLBACK_PROJECTS;
 
@@ -125,6 +129,15 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                     padding: '20px',
                   }}
                 >
+                  {project.coverImage && (
+                    <img
+                      src={project.coverImage}
+                      alt={`Capa do projeto ${project.title}`}
+                      loading="lazy"
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
+
                   {/* Decorative Mock Interface Graphics */}
                   <div
                     style={{

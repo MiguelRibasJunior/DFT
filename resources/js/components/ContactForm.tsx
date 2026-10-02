@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
-import { addSubmission, ADMIN_NOTIFICATION_EMAIL } from '../services/submissionService';
-import { sanitizeInput, validateEmail, validatePhone, checkRateLimit } from '../utils/security';
+import { addSubmission, SubmissionError } from '../services/submissionService';
+import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../utils/security';
 import type { PublicContactLink } from '../services/contentService';
 import { CONTACT_COLORS, ContactIcon } from './ContactIcon';
 
@@ -41,7 +41,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [triggerNotice, setTriggerNotice] = useState<string>('');
   const [errorNotice, setErrorNotice] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,19 +85,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
         descricao: sanitizeInput(formData.descricao),
       };
 
-      const created = await addSubmission(cleanData);
+      await addSubmission(cleanData);
 
       setLoading(false);
       setSubmitted(true);
-      setTriggerNotice(
-        created.emailTriggerStatus === 'sucesso'
-          ? `Notificação por e-mail enviada para ${ADMIN_NOTIFICATION_EMAIL}!`
-          : `Resposta armazenada no Painel Admin.`
-      );
     } catch (err) {
-      console.error('Erro ao enviar questionário:', err);
+      clearRateLimit('contact_form');
       setLoading(false);
-      setSubmitted(true);
+      setErrorNotice(
+        err instanceof SubmissionError
+          ? err.message
+          : 'Não foi possível enviar sua mensagem agora. Tente novamente em instantes.'
+      );
     }
   };
 
@@ -155,25 +153,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                   Mensagem enviada com sucesso!
                 </h3>
                 <p style={{ fontSize: '15px', color: 'var(--text-gray)', maxWidth: '420px', margin: '0 auto 16px', lineHeight: 1.6 }}>
-                  Obrigado pelo contato! Sua resposta foi gravada no banco de dados e a notificação foi enviada.
+                  Obrigado pelo contato! Recebemos sua mensagem e nossa equipe responderá em até um dia útil.
                 </p>
-                {triggerNotice && (
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: 'var(--accent-cyan)',
-                      background: 'rgba(40, 215, 229, 0.1)',
-                      border: '1px solid rgba(40, 215, 229, 0.25)',
-                      padding: '8px 14px',
-                      borderRadius: '10px',
-                      maxWidth: '420px',
-                      margin: '0 auto 24px',
-                    }}
-                  >
-                    ✉️ {triggerNotice}
-                  </div>
-                )}
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => {
