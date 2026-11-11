@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'contact' => [
+        'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com'),
+    ],
+
 ];

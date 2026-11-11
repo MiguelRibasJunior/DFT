@@ -81,7 +81,7 @@ export const Process: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: '24px',
             position: 'relative',
           }}
@@ -149,6 +149,7 @@ export const Process: React.FC = () => {
                 {/* Decorative bottom corner triangle */}
                 <div
                   className="triangle-decor triangle-purple"
+                  aria-hidden="true"
                   style={{
                     bottom: '8px',
                     right: '8px',

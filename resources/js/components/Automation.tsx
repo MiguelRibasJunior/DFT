@@ -41,8 +41,8 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
       }}
     >
       {/* Background Triangles */}
-      <div className="triangle-decor triangle-cyan" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
-      <div className="triangle-decor triangle-purple" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
 
       {/* Glow Center Accent */}
       <div
@@ -187,7 +187,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))',
               gap: '16px',
             }}
           >

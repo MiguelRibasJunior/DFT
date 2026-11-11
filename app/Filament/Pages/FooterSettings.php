@@ -34,6 +34,11 @@ class FooterSettings extends Page
 
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
+
     public function mount(): void
     {
         $settings = SiteSetting::current();

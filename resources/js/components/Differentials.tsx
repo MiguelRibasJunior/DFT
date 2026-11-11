@@ -80,7 +80,7 @@ export const Differentials: React.FC = () => {
             }}
             className="connecting-lines-desktop"
           >
-            <svg viewBox="0 0 800 300" fill="none" style={{ width: '100%', height: '100%' }}>
+            <svg viewBox="0 0 800 300" fill="none" aria-hidden="true" role="img" style={{ width: '100%', height: '100%' }}>
               <polygon points="400,20 750,280 50,280" stroke="url(#diff-tri)" strokeWidth="1.5" strokeDasharray="6 6" fill="none" opacity="0.3" />
               <line x1="200" y1="80" x2="600" y2="80" stroke="#28D7E5" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
               <line x1="200" y1="220" x2="600" y2="220" stroke="#7B4DFF" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
@@ -96,7 +96,7 @@ export const Differentials: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 270px), 1fr))',
               gap: '28px',
               position: 'relative',
               zIndex: 1,
@@ -117,6 +117,7 @@ export const Differentials: React.FC = () => {
                   {/* Floating Micro-Triangle Accent */}
                   <div
                     className="triangle-decor triangle-cyan"
+                    aria-hidden="true"
                     style={{
                       bottom: '15px',
                       right: '15px',

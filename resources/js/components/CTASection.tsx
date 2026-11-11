@@ -40,7 +40,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) =
           opacity: 0.6,
         }}
       >
-        <svg viewBox="0 0 900 450" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+        <svg viewBox="0 0 900 450" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" style={{ width: '100%', height: '100%' }}>
           {/* Main Large Translucent Triangle */}
           <polygon points="450,20 850,420 50,420" stroke="url(#cta-tri-grad)" strokeWidth="2" strokeDasharray="8 8" fill="rgba(40, 215, 229, 0.03)" />
 

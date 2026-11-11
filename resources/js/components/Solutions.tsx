@@ -127,7 +127,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
   return (
     <section id="solucoes" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
       {/* Background Decor */}
-      <div className="triangle-decor triangle-purple" style={{ top: '8%', left: '4%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ top: '8%', left: '4%', opacity: 0.2 }} />
       <div
         style={{
           position: 'absolute',
@@ -177,7 +177,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
             gap: '24px',
           }}
         >
@@ -213,6 +213,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                   className={`triangle-decor ${
                     item.color === '#7B4DFF' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
                   }`}
+                  aria-hidden="true"
                   style={{
                     top: '-10px',
                     right: '-10px',
@@ -292,7 +293,8 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       </div>
 
       <style>{`
-        .solution-card:hover .icon-box {
+        .solution-card:hover .icon-box,
+        .solution-card:focus-visible .icon-box {
           transform: scale(1.1) rotate(-4deg);
         }
       `}</style>
