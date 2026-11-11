@@ -96,15 +96,19 @@ DFT/
 │   ├── css/
 │   │   └── index.css          # Design System e tokens visuais
 │   ├── js/
-│   │   ├── components/        # Componentes React reutilizáveis
-│   │   │   ├── ContactForm.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── GeometricCanvas.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   ├── Navbar.tsx
-│   │   │   └── Portfolio.tsx
+│   │   ├── components/
+│   │   │   ├── layout/        # OnePageLayout, Footer, GeometricCanvas e header/ (Header, DesktopNav, MobileMenu)
+│   │   │   ├── sections/      # Uma seção por arquivo: Hero, Solutions, Automation, Differentials,
+│   │   │   │                  #   Process, Portfolio, TechStack, CTASection, ContactForm
+│   │   │   ├── modals/        # ProjectModal, SolutionModal, LegalModal
+│   │   │   └── ui/            # Peças reutilizáveis: Logo, SectionHeading, ContactCTAButton, ContactIcon
+│   │   ├── config/
+│   │   │   └── sections.ts    # IDs das âncoras e itens do menu (fonte única para header, rodapé e seções)
+│   │   ├── hooks/             # useScrolled, useActiveSection, usePublicContent, useIntersectionObserver
+│   │   ├── pages/
+│   │   │   └── HomePage.tsx   # Composição da one page (ordem das seções + conteúdo do admin)
 │   │   ├── services/          # Camada de requisições HTTP e API
-│   │   ├── types/             # Definições de tipos TypeScript
+│   │   ├── utils/             # scroll.ts (rolagem suave entre seções), security.ts
 │   │   ├── App.tsx            # Componente principal da aplicação
 │   │   └── main.tsx           # Entry point do React
 │   └── views/

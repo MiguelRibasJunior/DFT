@@ -1,12 +1,11 @@
 import React from 'react';
 import { Cpu, ArrowRight, Zap, Database, Bot, Workflow, MessageCircle, FileText, Bell, Layers } from 'lucide-react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { SECTION_IDS, sectionHref } from '../../config/sections';
+import { handleAnchorClick } from '../../utils/scroll';
+import { SectionHeading } from '../ui/SectionHeading';
 
-interface AutomationProps {
-  onAutomateClick: () => void;
-}
-
-export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
+export const Automation: React.FC = () => {
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
 
   const steps = [
@@ -30,7 +29,8 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
 
   return (
     <section
-      id="automacao"
+      id={SECTION_IDS.automacao}
+      aria-labelledby="automacao-titulo"
       ref={ref}
       style={{
         padding: '100px 0',
@@ -59,40 +59,16 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        {/* Header */}
-        <div
-          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
-          style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 50px' }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '20px',
-              background: 'rgba(123, 77, 255, 0.12)',
-              border: '1px solid rgba(123, 77, 255, 0.35)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-purple)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            <Cpu size={14} color="#7B4DFF" />
-            <span>Ecossistema n8n & IA</span>
-          </div>
-
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: '16px' }}>
-            Automatize processos e ganhe eficiência
-          </h2>
-
-          <p style={{ fontSize: '16px', color: 'var(--text-gray)', lineHeight: 1.6 }}>
-            Conectamos sistemas, ferramentas e inteligências artificiais para reduzir atividades repetitivas, organizar informações e acelerar processos.
-          </p>
-        </div>
+        <SectionHeading
+          id="automacao-titulo"
+          eyebrow="Ecossistema n8n & IA"
+          eyebrowIcon={Cpu}
+          accent="purple"
+          title="Automatize processos e ganhe eficiência"
+          subtitle="Conectamos sistemas, ferramentas e inteligências artificiais para reduzir atividades repetitivas, organizar informações e acelerar processos."
+          revealed={isVisible}
+          className="section-heading--wide"
+        />
 
         {/* Visual Flow Diagram */}
         <div
@@ -218,7 +194,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
 
         {/* Bottom Action Button */}
         <div style={{ textAlign: 'center' }}>
-          <a href="#contato" onClick={onAutomateClick} className="btn btn-primary btn-glow">
+          <a href={sectionHref(SECTION_IDS.contato)} onClick={handleAnchorClick} className="btn btn-primary btn-glow">
             <Zap size={18} />
             <span>Quero automatizar um processo</span>
           </a>

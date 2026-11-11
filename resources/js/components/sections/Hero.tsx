@@ -1,14 +1,13 @@
 import React from 'react';
 import { ArrowDownRight, Bot, Cpu, Code2, Sparkles, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { SECTION_IDS, sectionHref } from '../../config/sections';
+import { handleAnchorClick } from '../../utils/scroll';
 
-interface HeroProps {
-  onOpenQuote: () => void;
-}
-
-export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
+export const Hero: React.FC = () => {
   return (
     <section
-      id="hero"
+      id={SECTION_IDS.hero}
+      aria-labelledby="hero-titulo"
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -74,6 +73,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
 
             {/* Main Title */}
             <h1
+              id="hero-titulo"
               style={{
                 fontSize: 'clamp(32px, 5vw, 56px)',
                 fontWeight: 800,
@@ -100,12 +100,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
 
             {/* CTAs */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '12px' }}>
-              <a href="#solucoes" className="btn btn-primary">
+              <a href={sectionHref(SECTION_IDS.solucoes)} onClick={handleAnchorClick} className="btn btn-primary">
                 <span>Conheça nossas soluções</span>
                 <ArrowDownRight size={18} />
               </a>
 
-              <a href="#contato" onClick={onOpenQuote} className="btn btn-secondary">
+              <a href={sectionHref(SECTION_IDS.contato)} onClick={handleAnchorClick} className="btn btn-secondary">
                 <MessageSquare size={18} className="text-cyan" />
                 <span>Fale com nossa equipe</span>
               </a>
