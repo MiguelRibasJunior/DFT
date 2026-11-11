@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreContactRequest;
 use App\Models\ContactSubmission;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ContactController
 {
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
         // 1. Honeypot check for spam bots
         if (!empty($request->input('website_hp'))) {
@@ -19,27 +19,8 @@ class ContactController
             ], 422);
         }
 
-        // 2. Strict Input Validation
-        $validated = $request->validate([
-            'nome' => 'required|string|max:150',
-            'empresa' => 'nullable|string|max:150',
-            'email' => 'required|email:filter|max:200',
-            'telefone' => 'required|string|max:30',
-            'tipoSolucao' => 'required|string|max:100',
-            'descricao' => 'required|string|max:3000',
-        ], [
-            'required' => 'Preencha o campo :attribute.',
-            'email' => 'Informe um :attribute válido.',
-            'string' => 'O campo :attribute é inválido.',
-            'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
-        ], [
-            'nome' => 'nome',
-            'empresa' => 'empresa',
-            'email' => 'e-mail',
-            'telefone' => 'telefone',
-            'tipoSolucao' => 'tipo de solução',
-            'descricao' => 'descrição',
-        ]);
+        // 2. Strict Input Validation (provided by StoreContactRequest)
+        $validated = $request->validated();
 
         // 3. Input Sanitization (strip tags against XSS)
         $nome = strip_tags(trim($validated['nome']));
@@ -49,7 +30,7 @@ class ContactController
         $tipoSolucao = strip_tags(trim($validated['tipoSolucao']));
         $descricao = strip_tags(trim($validated['descricao']));
 
-        $adminEmail = env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com');
+        $adminEmail = config('services.contact.admin_notification_email', env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com'));
         $emailTriggerStatus = 'sucesso';
         $emailTriggerError = null;
 
@@ -82,19 +63,30 @@ class ContactController
             $emailTriggerStatus = 'sucesso';
         }
 
-        // 5. Save to Database (SQLite / SQL)
-        $submission = new ContactSubmission();
-        $submission->nome = $nome;
-        $submission->empresa = $empresa;
-        $submission->email = $email;
-        $submission->telefone = $telefone;
-        $submission->tipo_solucao = $tipoSolucao;
-        $submission->descricao = $descricao;
-        $submission->status = 'nova';
-        $submission->email_trigger_status = $emailTriggerStatus;
-        $submission->email_trigger_error = $emailTriggerError;
-        $submission->last_email_sent_at = now();
-        $submission->save();
+        // 5. Save to Database with secure error handling
+        try {
+            $submission = new ContactSubmission();
+            $submission->nome = $nome;
+            $submission->empresa = $empresa;
+            $submission->email = $email;
+            $submission->telefone = $telefone;
+            $submission->tipo_solucao = $tipoSolucao;
+            $submission->descricao = $descricao;
+            $submission->status = 'nova';
+            $submission->email_trigger_status = $emailTriggerStatus;
+            $submission->email_trigger_error = $emailTriggerError;
+            $submission->last_email_sent_at = now();
+            $submission->save();
+        } catch (\Throwable $e) {
+            Log::error("Falha ao salvar submissão de contato no banco: " . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocorreu um erro ao salvar sua mensagem. Por favor, tente novamente mais tarde.'
+            ], 500);
+        }
 
         // Safe, minimal public response (no internal email/database leak)
         return response()->json([

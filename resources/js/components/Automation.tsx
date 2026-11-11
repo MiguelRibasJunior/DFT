@@ -10,10 +10,10 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
   const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
 
   const steps = [
-    { label: 'Entrada de Dados', icon: Database, color: '#2388FF' },
+    { label: 'Entrada de Dados', icon: Database, color: '#60A5FA' },
     { label: 'Automação n8n', icon: Workflow, color: '#28D7E5' },
-    { label: 'Inteligência Artificial', icon: Bot, color: '#7B4DFF' },
-    { label: 'Sistema Interno', icon: Layers, color: '#2388FF' },
+    { label: 'Inteligência Artificial', icon: Bot, color: '#A78BFA' },
+    { label: 'Sistema Interno', icon: Layers, color: '#60A5FA' },
     { label: 'Resultado Rápido', icon: Zap, color: '#28D7E5' },
   ];
 
@@ -41,8 +41,8 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
       }}
     >
       {/* Background Triangles */}
-      <div className="triangle-decor triangle-cyan" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
-      <div className="triangle-decor triangle-purple" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
 
       {/* Glow Center Accent */}
       <div
@@ -81,7 +81,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
               marginBottom: '16px',
             }}
           >
-            <Cpu size={14} color="#7B4DFF" />
+            <Cpu size={14} color="#A78BFA" />
             <span>Ecossistema n8n & IA</span>
           </div>
 
@@ -143,7 +143,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
                       background: 'rgba(8, 11, 20, 0.8)',
                       border: '1px solid rgba(41, 50, 71, 0.8)',
                       textAlign: 'center',
-                      transition: 'all 0.3s ease',
+                      transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
                     }}
                     className="flow-node"
                   >
@@ -153,7 +153,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
                         height: '42px',
                         borderRadius: '50%',
                         background: `rgba(${
-                          step.color === '#7B4DFF' ? '123, 77, 255' : step.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          step.color === '#A78BFA' ? '167, 139, 250' : step.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
                         }, 0.15)`,
                         border: `1px solid ${step.color}`,
                         display: 'flex',
@@ -168,7 +168,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
                   </div>
 
                   {idx < steps.length - 1 && (
-                    <div className="flow-arrow" style={{ color: 'var(--accent-cyan)', opacity: 0.6 }}>
+                    <div className="flow-arrow" style={{ color: 'var(--accent-cyan)', opacity: 0.85 }}>
                       <ArrowRight size={22} />
                     </div>
                   )}
@@ -187,7 +187,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))',
               gap: '16px',
             }}
           >
@@ -204,7 +204,7 @@ export const Automation: React.FC<AutomationProps> = ({ onAutomateClick }) => {
                     borderRadius: '12px',
                     background: 'rgba(16, 21, 36, 0.65)',
                     border: '1px solid rgba(41, 50, 71, 0.6)',
-                    transition: 'all 0.25s ease',
+                    transition: 'transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease',
                   }}
                   className="example-pill"
                 >

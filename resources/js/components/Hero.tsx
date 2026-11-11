@@ -21,8 +21,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
       className="bg-digital-grid"
     >
       {/* Background Micro Triangle Accents */}
-      <div className="triangle-decor triangle-cyan" style={{ top: '15%', left: '3%', opacity: 0.25 }} />
-      <div className="triangle-decor triangle-purple" style={{ bottom: '12%', right: '4%', opacity: 0.25 }} />
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ top: '15%', left: '3%', opacity: 0.25 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ bottom: '12%', right: '4%', opacity: 0.25 }} />
 
       {/* Background Radial Glow */}
       <div
@@ -130,35 +130,70 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
           </div>
 
           {/* Right Column — Abstract Interactive Geometric Composition */}
-          <div style={{ position: 'relative', minHeight: '440px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            className="hero-interactive-zone"
+            style={{
+              position: 'relative',
+              minHeight: 'clamp(320px, 75vw, 440px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              overflow: 'visible',
+            }}
+          >
             {/* Outer Geometric Frame & Triangles */}
-            <div style={{ position: 'relative', width: '100%', maxWidth: '520px', height: '440px' }}>
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: '480px',
+                height: 'clamp(320px, 75vw, 440px)',
+                overflow: 'visible',
+              }}
+            >
               
               {/* Central Glowing Triangle Composite SVG */}
-              <svg viewBox="0 0 500 450" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 25px rgba(35, 136, 255, 0.25))' }}>
+              <svg viewBox="0 0 500 450" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 25px rgba(35, 136, 255, 0.25))' }}>
                 {/* Background Grid Mesh Lines */}
-                <line x1="50" y1="225" x2="450" y2="225" stroke="#293247" strokeWidth="1" strokeDasharray="4 4" />
-                <line x1="250" y1="50" x2="250" y2="400" stroke="#293247" strokeWidth="1" strokeDasharray="4 4" />
+                <line x1="50" y1="225" x2="450" y2="225" stroke="#293247" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
+                <line x1="250" y1="50" x2="250" y2="400" stroke="#293247" strokeWidth="1" strokeDasharray="4 4" opacity="0.6" />
                 
-                {/* Outer Large Triangular Contour */}
-                <polygon points="250,30 450,390 50,390" stroke="url(#hero-tri-grad-1)" strokeWidth="2" fill="none" opacity="0.6" />
+                {/* Floating Central Triangle Structure */}
+                <g className="hero-triangle-group">
+                  {/* Outer Large Triangular Contour */}
+                  <polygon points="250,30 450,390 50,390" stroke="url(#hero-tri-grad-1)" strokeWidth="2" fill="none" opacity="0.6" />
 
-                {/* Inner Layer Triangle 2 */}
-                <polygon points="250,90 400,360 100,360" stroke="url(#hero-tri-grad-2)" strokeWidth="1.5" strokeDasharray="6 6" fill="rgba(123, 77, 255, 0.03)" />
+                  {/* Connecting Vertex Nodes */}
+                  <circle cx="250" cy="30" r="5" fill="#28D7E5" />
+                  <circle cx="450" cy="390" r="5" fill="#7B4DFF" />
+                  <circle cx="50" cy="390" r="5" fill="#2388FF" />
+                  <circle cx="250" cy="150" r="4" fill="#FFFFFF" />
 
-                {/* Inner Small Solid Triangle */}
-                <polygon points="250,150 330,310 170,310" fill="url(#hero-tri-grad-3)" opacity="0.25" />
+                  {/* Internal Floating Layers & Dynamic Lines */}
+                  <g className="hero-triangle-internal">
+                    {/* Inner Triangles Group — Flutuação suave vertical (respiração) */}
+                    <g className="hero-inner-triangles">
+                      {/* Inner Layer Triangle 2 */}
+                      <polygon
+                        className="hero-flow-triangle"
+                        points="250,90 400,360 100,360"
+                        stroke="url(#hero-tri-grad-2)"
+                        strokeWidth="1.5"
+                        strokeDasharray="6 6"
+                        fill="rgba(123, 77, 255, 0.03)"
+                      />
 
-                {/* Connecting Vertex Nodes */}
-                <circle cx="250" cy="30" r="5" fill="#28D7E5" />
-                <circle cx="450" cy="390" r="5" fill="#7B4DFF" />
-                <circle cx="50" cy="390" r="5" fill="#2388FF" />
-                <circle cx="250" cy="150" r="4" fill="#FFFFFF" />
+                      {/* Inner Small Solid Triangle */}
+                      <polygon points="250,150 330,310 170,310" fill="url(#hero-tri-grad-3)" opacity="0.25" />
+                    </g>
 
-                {/* Rays & Data Lines */}
-                <line x1="250" y1="30" x2="250" y2="150" stroke="#28D7E5" strokeWidth="1.5" strokeDasharray="3 3" />
-                <line x1="50" y1="390" x2="170" y2="310" stroke="#2388FF" strokeWidth="1.5" strokeDasharray="3 3" />
-                <line x1="450" y1="390" x2="330" y2="310" stroke="#7B4DFF" strokeWidth="1.5" strokeDasharray="3 3" />
+                    {/* Rays & Data Lines */}
+                    <line className="hero-flow-ray" x1="250" y1="30" x2="250" y2="150" stroke="#28D7E5" strokeWidth="1.5" strokeDasharray="3 3" />
+                    <line className="hero-flow-ray" x1="50" y1="390" x2="170" y2="310" stroke="#2388FF" strokeWidth="1.5" strokeDasharray="3 3" />
+                    <line className="hero-flow-ray" x1="450" y1="390" x2="330" y2="310" stroke="#7B4DFF" strokeWidth="1.5" strokeDasharray="3 3" />
+                  </g>
+                </g>
 
                 <defs>
                   <linearGradient id="hero-tri-grad-1" x1="50" y1="30" x2="450" y2="390">
@@ -177,77 +212,46 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
                 </defs>
               </svg>
 
-              {/* Floating UI Card 1 — n8n & IA Workflow */}
+              {/* Floating UI Card 1 — Automação n8n & IA */}
               <div
-                className="glass-card animate-float"
+                className="hero-floating-card hero-floating-card-1 rounded-full"
                 style={{
-                  position: 'absolute',
-                  top: '40px',
-                  right: '-10px',
-                  padding: '12px 18px',
-                  borderRadius: '14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-                  background: 'rgba(16, 21, 36, 0.88)',
-                  borderColor: 'rgba(40, 215, 229, 0.4)',
+                  top: '30px',
+                  right: '10px',
+                  borderRadius: '9999px',
                 }}
               >
-                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(40, 215, 229, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Cpu size={20} color="#28D7E5" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>Automação n8n & IA</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#FFFFFF' }}>Fluxo Ativo • 99.9%</div>
-                </div>
+                <Cpu size={16} color="#28D7E5" />
+                <span>Automação n8n & IA</span>
+                <span className="hero-neon-dot" />
               </div>
 
-              {/* Floating UI Card 2 — Chatbot Inteligente */}
+              {/* Floating UI Card 2 — Agente IA WhatsApp */}
               <div
-                className="glass-card animate-float-slow"
+                className="hero-floating-card hero-floating-card-2 rounded-full"
                 style={{
-                  position: 'absolute',
-                  bottom: '50px',
-                  left: '-20px',
-                  padding: '12px 18px',
-                  borderRadius: '14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-                  background: 'rgba(16, 21, 36, 0.88)',
-                  borderColor: 'rgba(123, 77, 255, 0.4)',
+                  bottom: '55px',
+                  left: '10px',
+                  borderRadius: '9999px',
                 }}
               >
-                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(123, 77, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Bot size={20} color="#7B4DFF" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-gray)' }}>Agente IA WhatsApp</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#FFFFFF' }}>+1.450 Atendimentos/dia</div>
-                </div>
+                <Bot size={16} color="#A78BFA" />
+                <span>Agente IA WhatsApp</span>
+                <span className="hero-neon-dot" />
               </div>
 
-              {/* Floating UI Card 3 — High Speed APIs & Code */}
+              {/* Floating UI Card 3 — REST & GraphQL APIs */}
               <div
-                className="glass-card"
+                className="hero-floating-card hero-floating-card-3 rounded-full"
                 style={{
-                  position: 'absolute',
-                  bottom: '15px',
-                  right: '20px',
-                  padding: '10px 16px',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  background: 'rgba(16, 21, 36, 0.85)',
-                  borderColor: 'rgba(35, 136, 255, 0.35)',
+                  bottom: '12px',
+                  right: '30px',
+                  borderRadius: '9999px',
                 }}
               >
-                <Code2 size={16} color="#2388FF" />
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#F5F7FA' }}>REST & GraphQL APIs</span>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#28D7E5', boxShadow: '0 0 8px #28D7E5' }} />
+                <Code2 size={16} color="#60A5FA" />
+                <span>REST & GraphQL APIs</span>
+                <span className="hero-neon-dot" />
               </div>
 
             </div>

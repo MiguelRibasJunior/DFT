@@ -424,6 +424,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
         }
         .form-input {
           width: 100%;
+          min-height: 44px;
           padding: 12px 16px;
           border-radius: 10px;
           background: rgba(8, 11, 20, 0.8);
@@ -434,12 +435,23 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
           outline: none;
           transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
-        .form-input:focus {
+        .form-input::placeholder {
+          color: #94A3B8;
+          opacity: 1;
+        }
+        .form-input:focus,
+        .form-input:focus-visible {
           border-color: #28D7E5;
           box-shadow: 0 0 12px rgba(40, 215, 229, 0.25);
+          outline: 2px solid #28D7E5;
+          outline-offset: 1px;
         }
-        .contact-link:hover {
+        .contact-link:hover,
+        .contact-link:focus-visible {
           border-color: #28D7E5;
+          box-shadow: 0 0 15px rgba(40, 215, 229, 0.2);
+          outline: 2px solid #28D7E5;
+          outline-offset: 2px;
         }
       `}</style>
     </section>

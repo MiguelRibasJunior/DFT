@@ -60,7 +60,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
 
   return (
     <section id="portfolio" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
-      <div className="triangle-decor triangle-cyan" style={{ top: '5%', right: '6%', opacity: 0.18 }} />
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ top: '5%', right: '6%', opacity: 0.18 }} />
       <div className="container">
         {/* Header */}
         <div
@@ -95,7 +95,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
             gap: '30px',
           }}
         >
@@ -104,6 +104,16 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
             return (
               <div
                 key={project.id}
+                tabIndex={0}
+                role="button"
+                aria-label={`Ver detalhes do projeto ${project.title}`}
+                onClick={() => onSelectProject(project.title, project.description, project.technologies)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectProject(project.title, project.description, project.technologies);
+                  }
+                }}
                 className={`glass-card project-card reveal-item stagger-${index + 1} ${
                   isVisible ? 'reveal-visible' : ''
                 }`}
@@ -114,6 +124,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                   position: 'relative',
                   overflow: 'hidden',
                   borderRadius: '16px',
+                  cursor: 'pointer',
                 }}
               >
                 {/* Visual Preview Banner */}
@@ -129,52 +140,55 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                     padding: '20px',
                   }}
                 >
-                  {project.coverImage && (
+                  {project.coverImage ? (
                     <img
                       src={project.coverImage}
                       alt={`Capa do projeto ${project.title}`}
                       loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={210}
                       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
+                  ) : (
+                    /* Decorative Mock Interface Graphics (Fallback Placeholder) */
+                    <div
+                      style={{
+                        width: '85%',
+                        height: '85%',
+                        background: 'rgba(8, 11, 20, 0.75)',
+                        borderRadius: '10px',
+                        border: `1px solid ${project.borderColor}`,
+                        padding: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF5F56' }} />
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFBD2E' }} />
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27C93F' }} />
+                        </div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Devs Tomorrow v2.4</span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
+                        <ProjIcon size={24} color="#28D7E5" />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ height: '8px', width: '60%', background: 'rgba(40, 215, 229, 0.4)', borderRadius: '4px' }} />
+                          <div style={{ height: '6px', width: '35%', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '4px', marginTop: '4px' }} />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '4px' }}>
+                        <div style={{ height: '28px', background: 'rgba(35, 136, 255, 0.15)', borderRadius: '6px' }} />
+                        <div style={{ height: '28px', background: 'rgba(123, 77, 255, 0.15)', borderRadius: '6px' }} />
+                      </div>
+                    </div>
                   )}
-
-                  {/* Decorative Mock Interface Graphics */}
-                  <div
-                    style={{
-                      width: '85%',
-                      height: '85%',
-                      background: 'rgba(8, 11, 20, 0.75)',
-                      borderRadius: '10px',
-                      border: `1px solid ${project.borderColor}`,
-                      padding: '16px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '10px',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF5F56' }} />
-                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFBD2E' }} />
-                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27C93F' }} />
-                      </div>
-                      <span style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Devs Tomorrow v2.4</span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
-                      <ProjIcon size={24} color="#28D7E5" />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ height: '8px', width: '60%', background: 'rgba(40, 215, 229, 0.4)', borderRadius: '4px' }} />
-                        <div style={{ height: '6px', width: '35%', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '4px', marginTop: '4px' }} />
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '4px' }}>
-                      <div style={{ height: '28px', background: 'rgba(35, 136, 255, 0.15)', borderRadius: '6px' }} />
-                      <div style={{ height: '28px', background: 'rgba(123, 77, 255, 0.15)', borderRadius: '6px' }} />
-                    </div>
-                  </div>
 
                   {/* Hover Overlay Button */}
                   <div className="project-overlay">
@@ -264,7 +278,8 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
           opacity: 0;
           transition: opacity 0.3s ease;
         }
-        .project-card:hover .project-overlay {
+        .project-card:hover .project-overlay,
+        .project-card:focus-within .project-overlay {
           opacity: 1;
         }
       `}</style>

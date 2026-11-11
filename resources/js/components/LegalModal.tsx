@@ -63,22 +63,23 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, 
           aria-label="Fechar"
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
+            top: '16px',
+            right: '16px',
             background: 'rgba(255, 255, 255, 0.06)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             color: 'var(--text-gray)',
-            width: '36px',
-            height: '36px',
+            width: '44px',
+            height: '44px',
             borderRadius: '50%',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
+            transition: 'all 0.2s ease',
           }}
         >
-          <X size={18} />
+          <X size={20} />
         </button>
 
         {/* Modal Header */}

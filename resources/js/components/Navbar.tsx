@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
         left: 0,
         right: 0,
         zIndex: 100,
-        transition: 'all 0.3s ease',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease',
         background: scrolled
           ? 'rgba(8, 11, 20, 0.92)'
           : 'linear-gradient(to bottom, rgba(8, 11, 20, 0.9), rgba(8, 11, 20, 0))',
@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
         <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
           {/* SVG Symbol: Connected Triangles */}
           <div style={{ position: 'relative', width: '36px', height: '36px' }}>
-            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={{ width: '100%', height: '100%' }}>
               <polygon points="20,4 6,34 34,34" stroke="url(#logo-grad-1)" strokeWidth="2.5" fill="none" />
               <polygon points="20,12 12,28 28,28" fill="url(#logo-grad-2)" opacity="0.8" />
               <circle cx="20" cy="4" r="2.5" fill="#28D7E5" />
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
             <span
               style={{
                 fontSize: '9px',
-                color: 'var(--accent-blue)',
+                color: 'var(--accent-cyan)',
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
@@ -104,11 +104,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
             <a
               key={link.name}
               href={link.href}
+              className="nav-link"
               style={{
                 color: 'var(--text-gray)',
                 fontSize: '14px',
                 fontWeight: 500,
                 textDecoration: 'none',
+                padding: '8px 4px',
+                borderRadius: '6px',
                 transition: 'color 0.2s ease',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = '#28D7E5')}
@@ -148,6 +151,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
         <button
           className="mobile-toggle"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation-drawer"
           aria-label={mobileMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
           style={{
             background: 'none',
@@ -160,6 +165,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            borderRadius: '8px',
           }}
         >
           {mobileMenuOpen ? <X size={26} color="#28D7E5" /> : <Menu size={26} color="#F5F7FA" />}
@@ -169,6 +175,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
         <div
+          id="mobile-navigation-drawer"
+          role="navigation"
+          aria-label="Menu móvel"
           style={{
             position: 'absolute',
             top: '100%',
@@ -194,7 +203,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
                 fontSize: '16px',
                 fontWeight: 600,
                 textDecoration: 'none',
-                padding: '8px 0',
+                padding: '12px 8px',
+                minHeight: '44px',
+                display: 'flex',
+                alignItems: 'center',
                 borderBottom: '1px solid rgba(41, 50, 71, 0.3)',
               }}
             >
@@ -205,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
             href="/admin"
             onClick={() => setMobileMenuOpen(false)}
             className="btn btn-secondary"
-            style={{ width: '100%', marginTop: '4px', justifyContent: 'center', textDecoration: 'none' }}
+            style={{ width: '100%', minHeight: '44px', marginTop: '4px', justifyContent: 'center', textDecoration: 'none' }}
           >
             <ShieldCheck size={18} color="#28D7E5" />
             <span>Painel Admin</span>
@@ -216,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
               onOpenQuote();
             }}
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '4px' }}
+            style={{ width: '100%', minHeight: '44px', marginTop: '4px' }}
           >
             <span>Solicitar orçamento</span>
             <ArrowRight size={16} />

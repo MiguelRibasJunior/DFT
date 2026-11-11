@@ -58,8 +58,8 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
       }}
     >
       {/* Background Micro Geometric Accents */}
-      <div className="triangle-decor triangle-cyan" style={{ bottom: '20px', left: '4%', transform: 'rotate(15deg)', opacity: 0.08 }} />
-      <div className="triangle-decor triangle-purple" style={{ top: '30px', right: '5%', transform: 'rotate(-30deg)', opacity: 0.08 }} />
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ bottom: '20px', left: '4%', transform: 'rotate(15deg)', opacity: 0.08 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ top: '30px', right: '5%', transform: 'rotate(-30deg)', opacity: 0.08 }} />
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div
@@ -74,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ position: 'relative', width: '32px', height: '32px' }}>
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={{ width: '100%', height: '100%' }}>
                   <polygon points="20,4 6,34 34,34" stroke="url(#ft-grad-1)" strokeWidth="2.5" fill="none" />
                   <polygon points="20,12 12,28 28,28" fill="url(#ft-grad-2)" opacity="0.8" />
                   <circle cx="20" cy="4" r="2.5" fill="#28D7E5" />
@@ -104,9 +104,9 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
 
           {/* Col 2 — Navigation */}
           <div>
-            <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
               Navegação
-            </h4>
+            </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {navLinks.map((link, index) => (
                 <li key={`${link.url}-${index}`}>
@@ -127,9 +127,9 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
 
           {/* Col 3 — Soluções */}
           <div>
-            <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
               Soluções
-            </h4>
+            </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {['Chatbots Inteligentes', 'Automação n8n', 'Aplicativos Android & iOS', 'Sites Institucionais', 'Sistemas Online', 'Integrações via APIs'].map(
                 (item) => (
@@ -150,9 +150,9 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
 
           {/* Col 4 — Redes & Contato */}
           <div>
-            <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '20px', color: '#F5F7FA' }}>
               Conecte-se
-            </h4>
+            </h3>
             <p style={{ fontSize: '14px', color: 'var(--text-gray)', marginBottom: '16px' }}>
               Acompanhe nossas novidades e soluções em nossas redes oficiais.
             </p>
@@ -180,7 +180,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'var(--text-gray)',
-                        transition: 'all 0.2s ease',
+                        transition: 'color 0.2s ease, border-color 0.2s ease',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = accent;
@@ -216,7 +216,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
         >
           <div>{settings?.copyright_text || '© 2026 Devs From Tomorrow. Todos os direitos reservados.'}</div>
 
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
             <a
               href="/admin"
               style={{
@@ -227,39 +227,41 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
+                minHeight: '44px',
               }}
             >
               <ShieldCheck size={14} />
               <span>Área Administrativa</span>
             </a>
             <span>•</span>
-            <button type="button" onClick={() => setLegalModal('privacy')} style={linkButtonStyle}>
+            <button type="button" onClick={() => setLegalModal('privacy')} style={{ ...linkButtonStyle, minHeight: '44px' }}>
               Política de privacidade
             </button>
             <span>•</span>
-            <button type="button" onClick={() => setLegalModal('terms')} style={linkButtonStyle}>
+            <button type="button" onClick={() => setLegalModal('terms')} style={{ ...linkButtonStyle, minHeight: '44px' }}>
               Termos de uso
             </button>
           </div>
 
           <button
             onClick={scrollToTop}
+            aria-label="Voltar ao topo da página"
             style={{
               background: 'rgba(16, 21, 36, 0.9)',
               border: '1px solid var(--border-gray)',
               color: '#F5F7FA',
-              width: '36px',
-              height: '36px',
+              minWidth: '44px',
+              minHeight: '44px',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              transition: 'border-color 0.2s ease',
+              transition: 'border-color 0.2s ease, transform 0.2s ease',
             }}
             title="Voltar ao topo"
           >
-            <ArrowUp size={16} color="#28D7E5" />
+            <ArrowUp size={18} color="#28D7E5" />
           </button>
         </div>
       </div>
