@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -37,7 +38,8 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  // Portal no <body>: fora do <main> (z-index 1), o modal fica acima do header fixo.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -166,6 +168,7 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

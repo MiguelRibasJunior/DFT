@@ -1,5 +1,7 @@
 import React from 'react';
 import { Cpu, Code, Database, Cloud, Terminal, Workflow, Server, Shield } from 'lucide-react';
+import { SECTION_IDS } from '../../config/sections';
+import { SectionHeading } from '../ui/SectionHeading';
 
 export const TechStack: React.FC = () => {
   const row1 = [
@@ -50,7 +52,8 @@ export const TechStack: React.FC = () => {
 
   return (
     <section
-      id="tecnologias"
+      id={SECTION_IDS.tecnologias}
+      aria-labelledby="tecnologias-titulo"
       style={{
         padding: '90px 0',
         background: 'linear-gradient(180deg, #101524 0%, #080B14 100%)',
@@ -59,30 +62,14 @@ export const TechStack: React.FC = () => {
         borderBottom: '1px solid rgba(41, 50, 71, 0.4)',
       }}
     >
-      <div className="container" style={{ marginBottom: '44px', textAlign: 'center' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '4px 14px',
-            borderRadius: '20px',
-            background: 'rgba(40, 215, 229, 0.1)',
-            border: '1px solid rgba(40, 215, 229, 0.3)',
-            fontSize: '12px',
-            fontWeight: 600,
-            color: 'var(--accent-cyan)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            marginBottom: '14px',
-          }}
-        >
-          Tech Stack Moderna
-        </div>
-
-        <h2 style={{ fontSize: 'clamp(26px, 3.5vw, 38px)', fontWeight: 800 }}>
-          Tecnologias que conectam nossas soluções
-        </h2>
+      <div className="container">
+        <SectionHeading
+          id="tecnologias-titulo"
+          eyebrow="Tech Stack Moderna"
+          accent="cyan"
+          title="Tecnologias que conectam nossas soluções"
+          className="section-heading--compact"
+        />
       </div>
 
       {/* Row 1 — Moving Left */}

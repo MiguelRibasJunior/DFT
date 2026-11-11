@@ -1,7 +1,9 @@
 import React from 'react';
 import { ExternalLink, Layers, Bot, Smartphone, ArrowRight } from 'lucide-react';
-import type { PublicProject } from '../services/contentService';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import type { PublicProject } from '../../services/contentService';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { SECTION_IDS } from '../../config/sections';
+import { SectionHeading } from '../ui/SectionHeading';
 
 interface PortfolioProps {
   onSelectProject: (title: string, desc: string, tags: string[]) => void;
@@ -59,37 +61,20 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
   }));
 
   return (
-    <section id="portfolio" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
+    <section id={SECTION_IDS.projetos} aria-labelledby="projetos-titulo" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
       <div className="triangle-decor triangle-cyan" style={{ top: '5%', right: '6%', opacity: 0.18 }} />
       <div className="container">
-        {/* Header */}
-        <div
-          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
-          style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(35, 136, 255, 0.1)',
-              border: '1px solid rgba(35, 136, 255, 0.3)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-blue)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            Cases em Destaque
-          </div>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800 }}>
-            Tecnologia aplicada a <span className="text-gradient">resultados reais</span>
-          </h2>
-        </div>
+        <SectionHeading
+          id="projetos-titulo"
+          eyebrow="Cases em Destaque"
+          accent="blue"
+          title={
+            <>
+              Tecnologia aplicada a <span className="text-gradient">resultados reais</span>
+            </>
+          }
+          revealed={isVisible}
+        />
 
         {/* Project Cards */}
         <div

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Bot, Cpu, Smartphone, Globe, Layers, Share2, ArrowUpRight } from 'lucide-react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { SolutionModal } from './SolutionModal';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { SolutionModal } from '../modals/SolutionModal';
+import { SectionHeading } from '../ui/SectionHeading';
+import { SECTION_IDS } from '../../config/sections';
 
 interface SolutionsProps {
   onSelectSolution: (solutionName: string) => void;
@@ -125,7 +127,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
   const activeItem = solutions.find((item) => item.id === activeSolution) ?? null;
 
   return (
-    <section id="solucoes" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
+    <section id={SECTION_IDS.solucoes} aria-labelledby="solucoes-titulo" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
       {/* Background Decor */}
       <div className="triangle-decor triangle-purple" style={{ top: '8%', left: '4%', opacity: 0.2 }} />
       <div
@@ -141,37 +143,14 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
       />
 
       <div className="container">
-        {/* Section Header */}
-        <div
-          className={`reveal-item ${isVisible ? 'reveal-visible' : ''}`}
-          style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(35, 136, 255, 0.1)',
-              border: '1px solid rgba(35, 136, 255, 0.3)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-blue)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            Serviços Especializados
-          </div>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: '16px' }}>
-            Soluções digitais para diferentes desafios
-          </h2>
-          <p style={{ fontSize: '16px', color: 'var(--text-gray)', lineHeight: 1.6 }}>
-            Desenvolvemos produtos personalizados, conectando tecnologia, estratégia e experiência do usuário.
-          </p>
-        </div>
+        <SectionHeading
+          id="solucoes-titulo"
+          eyebrow="Serviços Especializados"
+          accent="blue"
+          title="Soluções digitais para diferentes desafios"
+          subtitle="Desenvolvemos produtos personalizados, conectando tecnologia, estratégia e experiência do usuário."
+          revealed={isVisible}
+        />
 
         {/* 6 Cards Grid with Stagger */}
         <div

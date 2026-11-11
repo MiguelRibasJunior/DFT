@@ -1,5 +1,7 @@
 import React from 'react';
 import { Target, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
+import { SECTION_IDS } from '../../config/sections';
+import { SectionHeading } from '../ui/SectionHeading';
 
 export const Differentials: React.FC = () => {
   const items = [
@@ -34,33 +36,18 @@ export const Differentials: React.FC = () => {
   ];
 
   return (
-    <section id="diferenciais" style={{ padding: '100px 0', position: 'relative' }}>
+    <section id={SECTION_IDS.diferenciais} aria-labelledby="diferenciais-titulo" style={{ padding: '100px 0', position: 'relative' }}>
       <div className="container">
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(40, 215, 229, 0.1)',
-              border: '1px solid rgba(40, 215, 229, 0.3)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-cyan)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            Nossas Vantagens
-          </div>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800 }}>
-            Por que escolher a <span className="text-gradient">Devs From Tomorrow</span>?
-          </h2>
-        </div>
+        <SectionHeading
+          id="diferenciais-titulo"
+          eyebrow="Nossas Vantagens"
+          accent="cyan"
+          title={
+            <>
+              Por que escolher a <span className="text-gradient">Devs From Tomorrow</span>?
+            </>
+          }
+        />
 
         {/* 4 Differentials Grid with Triangular Connectors */}
         <div style={{ position: 'relative' }}>

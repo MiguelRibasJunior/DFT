@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { ArrowUp, ShieldCheck } from 'lucide-react';
-import type { PublicContactLink, PublicSiteSettings } from '../services/contentService';
-import { CONTACT_COLORS, ContactIcon } from './ContactIcon';
-import { LegalModal } from './LegalModal';
+import type { PublicContactLink, PublicSiteSettings } from '../../services/contentService';
+import { CONTACT_COLORS, ContactIcon } from '../ui/ContactIcon';
+import { LegalModal } from '../modals/LegalModal';
+import { Logo } from '../ui/Logo';
+import { SECTION_IDS, sectionHref } from '../../config/sections';
+import { handleAnchorClick, prefersReducedMotion } from '../../utils/scroll';
 
 interface FooterProps {
   settings?: PublicSiteSettings | null;
@@ -12,13 +15,14 @@ interface FooterProps {
 
 const isExternal = (url: string) => /^https?:\/\//i.test(url);
 
+// Espelha SiteSetting::DEFAULT_FOOTER_LINKS (usado quando a API não responde).
 const FALLBACK_NAV_LINKS = [
-  { label: 'Início', url: '#hero' },
-  { label: 'Soluções Digitais', url: '#solucoes' },
-  { label: 'Automação n8n & IA', url: '#automacao' },
-  { label: 'Diferenciais', url: '#diferenciais' },
-  { label: 'Processo', url: '#processo' },
-  { label: 'Tecnologias', url: '#tecnologias' },
+  { label: 'Início', url: sectionHref(SECTION_IDS.hero) },
+  { label: 'Soluções Digitais', url: sectionHref(SECTION_IDS.solucoes) },
+  { label: 'Automação n8n & IA', url: sectionHref(SECTION_IDS.automacao) },
+  { label: 'Diferenciais', url: sectionHref(SECTION_IDS.diferenciais) },
+  { label: 'Processo', url: sectionHref(SECTION_IDS.processo) },
+  { label: 'Tecnologias', url: sectionHref(SECTION_IDS.tecnologias) },
 ];
 
 const FALLBACK_SOCIAL_LINKS: PublicContactLink[] = [
@@ -33,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
   const socialLinks = contactLinks === null ? FALLBACK_SOCIAL_LINKS : contactLinks ?? [];
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
 
   const linkButtonStyle: React.CSSProperties = {
@@ -72,30 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
         >
           {/* Col 1 — Logo & Summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ position: 'relative', width: '32px', height: '32px' }}>
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-                  <polygon points="20,4 6,34 34,34" stroke="url(#ft-grad-1)" strokeWidth="2.5" fill="none" />
-                  <polygon points="20,12 12,28 28,28" fill="url(#ft-grad-2)" opacity="0.8" />
-                  <circle cx="20" cy="4" r="2.5" fill="#28D7E5" />
-                  <circle cx="6" cy="34" r="2.5" fill="#2388FF" />
-                  <circle cx="34" cy="34" r="2.5" fill="#7B4DFF" />
-                  <defs>
-                    <linearGradient id="ft-grad-1" x1="0" y1="0" x2="40" y2="40">
-                      <stop offset="0%" stopColor="#28D7E5" />
-                      <stop offset="100%" stopColor="#7B4DFF" />
-                    </linearGradient>
-                    <linearGradient id="ft-grad-2" x1="0" y1="0" x2="40" y2="40">
-                      <stop offset="0%" stopColor="#7B4DFF" />
-                      <stop offset="100%" stopColor="#28D7E5" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '18px', color: '#FFFFFF' }}>
-                Devs From <span className="text-cyan">Tomorrow</span>
-              </span>
-            </div>
+            <Logo size={32} showTagline={false} />
 
             <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: 1.6, maxWidth: '300px' }}>
               {settings?.description || 'Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, aplicativos mobile, automação n8n e inteligência artificial.'}
@@ -112,6 +93,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
                 <li key={`${link.url}-${index}`}>
                   <a
                     href={link.url}
+                    onClick={handleAnchorClick}
                     target={isExternal(link.url) ? '_blank' : undefined}
                     rel={isExternal(link.url) ? 'noopener noreferrer' : undefined}
                     style={{ fontSize: '14px', color: 'var(--text-gray)', textDecoration: 'none', transition: 'color 0.2s ease' }}
@@ -135,7 +117,8 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
                 (item) => (
                   <li key={item}>
                     <a
-                      href="#solucoes"
+                      href={sectionHref(SECTION_IDS.solucoes)}
+                      onClick={handleAnchorClick}
                       style={{ fontSize: '14px', color: 'var(--text-gray)', textDecoration: 'none', transition: 'color 0.2s ease' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#28D7E5')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-gray)')}
