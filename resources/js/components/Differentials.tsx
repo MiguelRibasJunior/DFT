@@ -6,7 +6,7 @@ export const Differentials: React.FC = () => {
     {
       num: '01',
       icon: Target,
-      color: '#2388FF',
+      color: '#60A5FA',
       title: 'Soluções personalizadas',
       description: 'Cada projeto é desenvolvido de acordo com as necessidades, processos e objetivos do cliente.',
     },
@@ -20,14 +20,14 @@ export const Differentials: React.FC = () => {
     {
       num: '03',
       icon: Sparkles,
-      color: '#7B4DFF',
+      color: '#A78BFA',
       title: 'Experiência do usuário',
       description: 'Criamos interfaces simples, intuitivas e agradáveis, facilitando a utilização dos produtos digitais.',
     },
     {
       num: '04',
       icon: TrendingUp,
-      color: '#2388FF',
+      color: '#60A5FA',
       title: 'Evolução contínua',
       description: 'Os sistemas podem crescer e receber novas funcionalidades conforme as necessidades do negócio.',
     },
@@ -83,11 +83,11 @@ export const Differentials: React.FC = () => {
             <svg viewBox="0 0 800 300" fill="none" aria-hidden="true" role="img" style={{ width: '100%', height: '100%' }}>
               <polygon points="400,20 750,280 50,280" stroke="url(#diff-tri)" strokeWidth="1.5" strokeDasharray="6 6" fill="none" opacity="0.3" />
               <line x1="200" y1="80" x2="600" y2="80" stroke="#28D7E5" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
-              <line x1="200" y1="220" x2="600" y2="220" stroke="#7B4DFF" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
+              <line x1="200" y1="220" x2="600" y2="220" stroke="#A78BFA" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
               <defs>
                 <linearGradient id="diff-tri" x1="0" y1="0" x2="800" y2="300">
                   <stop offset="0%" stopColor="#28D7E5" />
-                  <stop offset="100%" stopColor="#7B4DFF" />
+                  <stop offset="100%" stopColor="#A78BFA" />
                 </linearGradient>
               </defs>
             </svg>
@@ -133,7 +133,7 @@ export const Differentials: React.FC = () => {
                         height: '48px',
                         borderRadius: '12px',
                         background: `rgba(${
-                          diff.color === '#7B4DFF' ? '123, 77, 255' : diff.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          diff.color === '#A78BFA' ? '167, 139, 250' : diff.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
                         }, 0.12)`,
                         border: `1px solid ${diff.color}`,
                         display: 'flex',
@@ -145,11 +145,12 @@ export const Differentials: React.FC = () => {
                     </div>
 
                     <span
+                      aria-hidden="true"
                       style={{
                         fontFamily: 'var(--font-heading)',
                         fontSize: '28px',
                         fontWeight: 800,
-                        color: 'rgba(41, 50, 71, 0.7)',
+                        color: 'rgba(148, 163, 184, 0.55)',
                       }}
                     >
                       {diff.num}

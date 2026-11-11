@@ -137,7 +137,7 @@ export const Process: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <StepIcon size={22} color="#2388FF" />
+                  <StepIcon size={22} color="#60A5FA" />
                 </div>
 
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#F5F7FA' }}>{step.title}</h3>

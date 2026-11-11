@@ -180,7 +180,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'var(--text-gray)',
-                        transition: 'all 0.2s ease',
+                        transition: 'color 0.2s ease, border-color 0.2s ease',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = accent;

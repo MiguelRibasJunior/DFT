@@ -6,12 +6,13 @@
   --bg-card: rgba(16, 21, 36, 0.7);
   --bg-card-hover: rgba(22, 30, 52, 0.95);
   
-  --accent-blue: #2388FF;
+  --accent-blue: #60A5FA;
   --accent-cyan: #28D7E5;
-  --accent-purple: #7B4DFF;
+  --accent-purple: #A78BFA;
   
-  --text-white: #F5F7FA;
-  --text-gray: #AAB2C0;
+  --text-white: #FFFFFF;
+  --text-gray: #CBD5E1;
+  --text-muted: #94A3B8;
   --border-gray: #293247;
   --border-glow: rgba(40, 215, 229, 0.4);
   
@@ -19,8 +20,8 @@
   --font-body: 'Manrope', sans-serif;
   
   --gradient-main: linear-gradient(135deg, #2388FF 0%, #28D7E5 50%, #7B4DFF 100%);
-  --gradient-text: linear-gradient(135deg, #F5F7FA 0%, #28D7E5 50%, #2388FF 100%);
-  --gradient-purple-cyan: linear-gradient(135deg, #7B4DFF 0%, #28D7E5 100%);
+  --gradient-text: linear-gradient(135deg, #FFFFFF 0%, #28D7E5 50%, #60A5FA 100%);
+  --gradient-purple-cyan: linear-gradient(135deg, #A78BFA 0%, #28D7E5 100%);
   --gradient-card: linear-gradient(180deg, rgba(35, 136, 255, 0.08) 0%, rgba(123, 77, 255, 0.03) 100%);
 }
 
@@ -87,14 +88,38 @@ a, button, input, select, textarea {
   color: var(--accent-cyan);
 }
 
-/* Smooth GPU rendering without flicker */
+/* Input & Placeholder High Contrast Styling (WCAG AA) */
+input::placeholder,
+textarea::placeholder,
+.form-input::placeholder {
+  color: #94A3B8;
+  opacity: 1;
+}
+
+/* Smooth GPU rendering with Compositor acceleration */
 .hero-triangle-group,
+.hero-triangle-internal,
+.hero-inner-triangles,
 .hero-floating-card,
+.hero-floating-card-1,
+.hero-floating-card-2,
+.hero-floating-card-3,
+.hero-neon-dot,
+.hero-flow-triangle,
+.hero-flow-ray,
+.marquee-track,
+.marquee-track-reverse,
+.triangle-decor,
+.triangle-cyan,
+.triangle-purple,
+.triangle-blue,
 .animate-float,
 .animate-float-slow,
-.triangle-decor {
+.animate-pulse-glow {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
 }
 
 /* Reduced Motion Accessibility */
@@ -287,7 +312,8 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 15px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform, opacity;
   text-decoration: none;
   border: none;
   outline: none;
@@ -337,15 +363,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-glow {
-  background: linear-gradient(90deg, #2388FF, #28D7E5, #7B4DFF);
-  background-size: 200% auto;
-  animation: shine 4s linear infinite;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes shine {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  animation: shineComposited 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+@keyframes shineComposited {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
 }
 
 /* Floating Animations */
@@ -412,18 +450,23 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Continuous Dash Flow Animation for Internal Triangle Lines */
+/* Continuous Flow Pulse for Internal Triangle Lines (GPU Composited) */
 .hero-flow-triangle {
-  animation: heroFlowLine 16s linear infinite;
+  animation: heroFlowOpacity 4s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 .hero-flow-ray {
-  animation: heroFlowLine 10s linear infinite;
+  animation: heroFlowOpacity 3s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
-@keyframes heroFlowLine {
-  to {
-    stroke-dashoffset: -120;
+@keyframes heroFlowOpacity {
+  0% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0.95;
   }
 }
 
@@ -511,7 +554,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Hero Luminous Neon Dot */
+/* Hero Luminous Neon Dot (GPU Composited) */
 .hero-neon-dot {
   width: 8px;
   height: 8px;
@@ -520,16 +563,18 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 8px #28D7E5;
   flex-shrink: 0;
   display: inline-block;
+  will-change: transform, opacity;
+  transform: translateZ(0);
   animation: heroDotPulse 2.8s ease-in-out infinite;
 }
 
 @keyframes heroDotPulse {
   0%, 100% {
-    box-shadow: 0 0 6px #28D7E5;
-    opacity: 0.9;
+    transform: scale(0.85);
+    opacity: 0.75;
   }
   50% {
-    box-shadow: 0 0 12px #28D7E5, 0 0 16px rgba(40, 215, 229, 0.45);
+    transform: scale(1.15);
     opacity: 1;
   }
 }
@@ -594,16 +639,16 @@ h1, h2, h3, h4, h5, h6 {
   animation-play-state: paused;
 }
 
-/* Tech SVG Dash Animation */
+/* Tech SVG Pulse (GPU Composited) */
 .tech-line-pulse {
   stroke-dasharray: 6 6;
-  animation: dashPulse 20s linear infinite;
+  animation: techPulseOpacity 3s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
-@keyframes dashPulse {
-  to {
-    stroke-dashoffset: -120;
-  }
+@keyframes techPulseOpacity {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 
 /* Custom Scrollbar */

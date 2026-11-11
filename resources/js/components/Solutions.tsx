@@ -15,7 +15,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
     {
       id: 'chatbots',
       icon: Bot,
-      color: '#7B4DFF',
+      color: '#A78BFA',
       title: 'Chatbots Inteligentes',
       formValue: 'Chatbot',
       description:
@@ -51,7 +51,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
     {
       id: 'aplicativos',
       icon: Smartphone,
-      color: '#2388FF',
+      color: '#60A5FA',
       title: 'Aplicativos',
       formValue: 'Aplicativo',
       description:
@@ -87,7 +87,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
     {
       id: 'sistemas',
       icon: Layers,
-      color: '#7B4DFF',
+      color: '#A78BFA',
       title: 'Sistemas Online',
       formValue: 'Sistema online',
       description:
@@ -105,7 +105,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
     {
       id: 'integracoes',
       icon: Share2,
-      color: '#2388FF',
+      color: '#60A5FA',
       title: 'Integrações e APIs',
       formValue: 'Integração entre sistemas',
       description:
@@ -211,7 +211,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                 {/* Triangular Decor in Card Background */}
                 <div
                   className={`triangle-decor ${
-                    item.color === '#7B4DFF' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
+                    item.color === '#A78BFA' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
                   }`}
                   aria-hidden="true"
                   style={{
@@ -231,10 +231,10 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                         height: '52px',
                         borderRadius: '14px',
                         background: `rgba(${
-                          item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          item.color === '#A78BFA' ? '167, 139, 250' : item.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
                         }, 0.12)`,
                         border: `1px solid rgba(${
-                          item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          item.color === '#A78BFA' ? '167, 139, 250' : item.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
                         }, 0.3)`,
                         display: 'flex',
                         alignItems: 'center',

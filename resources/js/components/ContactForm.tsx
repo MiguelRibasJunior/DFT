@@ -435,6 +435,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
           outline: none;
           transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
+        .form-input::placeholder {
+          color: #94A3B8;
+          opacity: 1;
+        }
         .form-input:focus,
         .form-input:focus-visible {
           border-color: #28D7E5;

@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
         left: 0,
         right: 0,
         zIndex: 100,
-        transition: 'all 0.3s ease',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease',
         background: scrolled
           ? 'rgba(8, 11, 20, 0.92)'
           : 'linear-gradient(to bottom, rgba(8, 11, 20, 0.9), rgba(8, 11, 20, 0))',
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
             <span
               style={{
                 fontSize: '9px',
-                color: 'var(--accent-blue)',
+                color: 'var(--accent-cyan)',
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',

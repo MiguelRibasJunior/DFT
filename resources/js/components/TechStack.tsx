@@ -22,12 +22,12 @@ export const TechStack: React.FC = () => {
       name: 'React Native',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ width: '18px', height: '18px', flexShrink: 0, display: 'block' }} aria-hidden="true">
-          <rect x="5" y="2" width="14" height="20" rx="3" stroke="#2388FF" strokeWidth="1.8" />
+          <rect x="5" y="2" width="14" height="20" rx="3" stroke="#60A5FA" strokeWidth="1.8" />
           <ellipse cx="12" cy="11" rx="4.5" ry="1.8" stroke="#28D7E5" strokeWidth="1.2" />
           <ellipse cx="12" cy="11" rx="4.5" ry="1.8" stroke="#28D7E5" strokeWidth="1.2" transform="rotate(60 12 11)" />
           <ellipse cx="12" cy="11" rx="4.5" ry="1.8" stroke="#28D7E5" strokeWidth="1.2" transform="rotate(120 12 11)" />
           <circle cx="12" cy="11" r="1.2" fill="#28D7E5" />
-          <circle cx="12" cy="18.5" r="1" fill="#2388FF" />
+          <circle cx="12" cy="18.5" r="1" fill="#60A5FA" />
         </svg>
       ),
     },
@@ -85,8 +85,8 @@ export const TechStack: React.FC = () => {
     {
       name: 'Inteligência Artificial',
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7B4DFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', flexShrink: 0, display: 'block' }} aria-hidden="true">
-          <rect x="5" y="5" width="14" height="14" rx="3" fill="rgba(123, 77, 255, 0.25)" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', flexShrink: 0, display: 'block' }} aria-hidden="true">
+          <rect x="5" y="5" width="14" height="14" rx="3" fill="rgba(167, 139, 250, 0.25)" />
           <path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4M9 12h6M12 9v6" />
         </svg>
       ),

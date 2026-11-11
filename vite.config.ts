@@ -18,18 +18,22 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
+    minify: true,
+    cssMinify: true,
     cssCodeSplit: true,
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+            if (id.includes('react-dom') || id.includes('react/') || id.includes('scheduler')) {
               return 'vendor-react';
             }
             if (id.includes('lucide-react')) {
-              return 'vendor-icons';
+              return 'vendor-ui-icons';
             }
-            return 'vendor';
+            return 'vendor-core';
           }
         },
       },

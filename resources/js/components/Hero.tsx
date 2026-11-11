@@ -235,7 +235,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
                   borderRadius: '9999px',
                 }}
               >
-                <Bot size={16} color="#7B4DFF" />
+                <Bot size={16} color="#A78BFA" />
                 <span>Agente IA WhatsApp</span>
                 <span className="hero-neon-dot" />
               </div>
@@ -249,7 +249,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenQuote }) => {
                   borderRadius: '9999px',
                 }}
               >
-                <Code2 size={16} color="#2388FF" />
+                <Code2 size={16} color="#60A5FA" />
                 <span>REST & GraphQL APIs</span>
                 <span className="hero-neon-dot" />
               </div>
