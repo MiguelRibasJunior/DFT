@@ -2,7 +2,7 @@
  * Breakpoints:
  *   < 640px      celular: logo + hambúrguer (CTA dentro do menu)
  *   640–1199px   tablet / notebook pequeno: logo + CTA + hambúrguer
- *   >= 1200px    desktop: logo + navegação + painel admin + CTA
+ *   >= 1200px    desktop: logo + navegação + CTA
  * O breakpoint de desktop precisa bater com DESKTOP_QUERY em components/layout/header/Header.tsx.
  */
 
@@ -111,7 +111,7 @@
   transform: scaleX(1);
 }
 
-/* Ações (admin, CTA, hambúrguer) */
+/* Ações (CTA, hambúrguer) */
 .site-header__actions {
   display: flex;
   align-items: center;
@@ -120,12 +120,6 @@
 }
 
 /* Seletores com .btn: este arquivo é importado antes das regras de .btn do index.css. */
-.btn.site-header__admin {
-  display: none;
-  width: 44px;
-  padding: 0;
-}
-
 .btn.site-header__cta {
   display: none;
 }
@@ -228,10 +222,6 @@
   margin-top: 20px;
 }
 
-.mobile-menu__admin {
-  width: 100%;
-}
-
 /* Tablet: CTA visível ao lado do hambúrguer */
 @media (min-width: 640px) {
   .btn.site-header__cta {
@@ -251,10 +241,6 @@
 @media (min-width: 1200px) {
   .site-header__nav {
     display: block;
-  }
-
-  .btn.site-header__admin {
-    display: inline-flex;
   }
 
   .site-header__toggle,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Send, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import { addSubmission, SubmissionError } from '../../services/submissionService';
 import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../../utils/security';
 import type { PublicContactLink } from '../../services/contentService';
@@ -152,10 +152,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                   >
                     Enviar outra mensagem
                   </button>
-                  <a href="/admin" className="btn btn-primary" style={{ fontSize: '13px', textDecoration: 'none' }}>
-                    <ShieldCheck size={16} />
-                    <span>Ver no Painel Admin</span>
-                  </a>
                 </div>
               </div>
             ) : (

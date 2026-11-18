@@ -1,5 +1,4 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { ShieldCheck } from 'lucide-react';
 import { sectionHref, type NavItem } from '../../../config/sections';
 import { handleAnchorClick } from '../../../utils/scroll';
 import { ContactCTAButton } from '../../ui/ContactCTAButton';
@@ -113,10 +112,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ id, open, items, activeI
 
         <div className="mobile-menu__actions">
           <ContactCTAButton fullWidth onNavigate={closeWithoutFocus} />
-          <a href="/admin" className="btn btn-secondary mobile-menu__admin">
-            <ShieldCheck size={18} color="#28D7E5" aria-hidden="true" />
-            <span>Painel Admin</span>
-          </a>
         </div>
       </div>
     </>
