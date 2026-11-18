@@ -14,6 +14,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
+        "inertiajs/inertia-laravel": "^3.7",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^8.3"
@@ -49,7 +50,14 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#fdba74\" \"php artisan serve\" \"npm run dev\" --names=laravel,vite --kill-others"
+            "npx concurrently -c \"#93c5fd,#fdba74\" \"php artisan serve --port=8000\" \"npm run dev:laravel\" --names=laravel,vite --kill-others"
+        ],
+        "setup": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --force --ansi",
+            "@php artisan db:seed --force --ansi"
         ],
         "test": [
             "@php artisan config:clear --ansi",

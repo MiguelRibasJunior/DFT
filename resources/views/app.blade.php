@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#080B14" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Devs From Tomorrow" />
 
@@ -16,7 +18,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Open Graph / Facebook / LinkedIn -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://devsfromtomorrow.com/" />
     <meta property="og:title" content="Devs From Tomorrow — Soluções Digitais, Automação &amp; IA" />
@@ -37,7 +39,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Schema.org Structured Data (JSON-LD) -->
+    <!-- Schema.org -->
     <script type="application/ld+json">
     @verbatim
     {
@@ -66,8 +68,11 @@
 
     @viteReactRefresh
     @vite(['resources/js/main.tsx', 'resources/css/index.css'])
+
+    <x-inertia::head />
   </head>
+
   <body>
-    <div id="root"></div>
+    <x-inertia::app />
   </body>
 </html>

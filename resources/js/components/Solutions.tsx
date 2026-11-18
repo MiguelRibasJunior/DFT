@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bot, Cpu, Smartphone, Globe, Layers, Share2, ArrowUpRight } from 'lucide-react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 interface SolutionsProps {
   onSelectSolution: (solutionName: string) => void;
@@ -130,9 +130,8 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                 key={item.id}
                 role="button"
                 tabIndex={0}
-                className={`glass-card solution-card reveal-item stagger-${index + 1} ${
-                  isVisible ? 'reveal-visible' : ''
-                }`}
+                className={`glass-card solution-card reveal-item stagger-${index + 1} ${isVisible ? 'reveal-visible' : ''
+                  }`}
                 onClick={() => onSelectSolution(item.title)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -152,9 +151,8 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
               >
                 {/* Triangular Decor in Card Background */}
                 <div
-                  className={`triangle-decor ${
-                    item.color === '#7B4DFF' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
-                  }`}
+                  className={`triangle-decor ${item.color === '#7B4DFF' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
+                    }`}
                   style={{
                     top: '-10px',
                     right: '-10px',
@@ -171,12 +169,10 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                         width: '52px',
                         height: '52px',
                         borderRadius: '14px',
-                        background: `rgba(${
-                          item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
-                        }, 0.12)`,
-                        border: `1px solid rgba(${
-                          item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
-                        }, 0.3)`,
+                        background: `rgba(${item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          }, 0.12)`,
+                        border: `1px solid rgba(${item.color === '#7B4DFF' ? '123, 77, 255' : item.color === '#28D7E5' ? '40, 215, 229' : '35, 136, 255'
+                          }, 0.3)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

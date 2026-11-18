@@ -3,9 +3,11 @@ import { Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   onOpenQuote: () => void;
+  onOpenAdmin: () => void;
+  isLoggedIn?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote, onOpenAdmin, isLoggedIn }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -121,8 +123,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
 
         {/* Desktop CTA Button & Admin Button */}
         <div style={{ display: 'none', alignItems: 'center', gap: '12px' }} className="desktop-nav">
-          <a
-            href="/admin"
+          <button
+            type="button"
+            onClick={onOpenAdmin}
             className="btn btn-secondary"
             style={{
               padding: '9px 16px',
@@ -130,13 +133,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              textDecoration: 'none',
+              position: 'relative',
+              cursor: 'pointer',
             }}
             title="Abrir Painel Administrativo"
           >
-            <ShieldCheck size={16} color="#28D7E5" />
+            <ShieldCheck size={16} color={isLoggedIn ? '#10B981' : '#28D7E5'} />
             <span>Painel Admin</span>
-          </a>
+            {isLoggedIn && (
+              <span
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: '#10B981',
+                  boxShadow: '0 0 8px #10B981',
+                }}
+              />
+            )}
+          </button>
 
           <button onClick={onOpenQuote} className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '14px' }}>
             <span>Solicitar orçamento</span>
@@ -201,15 +216,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuote }) => {
               {link.name}
             </a>
           ))}
-          <a
-            href="/admin"
-            onClick={() => setMobileMenuOpen(false)}
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenAdmin();
+            }}
             className="btn btn-secondary"
-            style={{ width: '100%', marginTop: '4px', justifyContent: 'center', textDecoration: 'none' }}
+            style={{ width: '100%', marginTop: '4px', justifyContent: 'center', cursor: 'pointer' }}
           >
-            <ShieldCheck size={18} color="#28D7E5" />
-            <span>Painel Admin</span>
-          </a>
+            <ShieldCheck size={18} color={isLoggedIn ? '#10B981' : '#28D7E5'} />
+            <span>Painel Admin {isLoggedIn ? '(Conectado)' : ''}</span>
+          </button>
           <button
             onClick={() => {
               setMobileMenuOpen(false);

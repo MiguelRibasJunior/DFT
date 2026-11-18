@@ -1,6 +1,6 @@
 import React from 'react';
 import { Cpu, ArrowRight, Zap, Database, Bot, Workflow, MessageCircle, FileText, Bell, Layers } from 'lucide-react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 interface AutomationProps {
   onAutomateClick: () => void;

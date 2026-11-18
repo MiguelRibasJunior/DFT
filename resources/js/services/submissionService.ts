@@ -1,5 +1,5 @@
-import type { ContactSubmission } from '../types/contact';
-import { ENV } from '../config/env';
+import type { ContactSubmission } from '@/types';
+import { ENV } from '@/config/env';
 
 const STORAGE_KEY = 'devs_contact_submissions';
 export const ADMIN_NOTIFICATION_EMAIL = ENV.DEFAULT_NOTIFICATION_EMAIL;
@@ -103,7 +103,7 @@ export const sendEmailTrigger = async (submission: Omit<ContactSubmission, 'id' 
         error: data.message || `HTTP status ${response.status}`,
       };
     }
-  } catch (err: any) {
+  } catch {
     return {
       success: true, // Fallback gracefully with simulated delivery confirmation in local admin trace
     };
@@ -115,9 +115,21 @@ export const addSubmission = async (
 ): Promise<ContactSubmission> => {
   // Try sending to Laravel Backend API first
   try {
+    const csrfToken = typeof document !== 'undefined'
+      ? document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      : null;
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+    if (csrfToken) {
+      headers['X-CSRF-TOKEN'] = csrfToken;
+    }
+
     const apiRes = await fetch(`${ENV.API_BASE_URL}/contact`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers,
       body: JSON.stringify(formData),
     });
 

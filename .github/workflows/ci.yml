@@ -1,0 +1,74 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+      - homolog
+      - develop
+  push:
+    branches:
+      - main
+      - homolog
+      - develop
+
+jobs:
+  frontend-check:
+    name: Frontend Lint, Type-Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Type-Check
+        run: npm run type-check
+
+      - name: Run Linter (oxlint)
+        run: npm run lint
+
+      - name: Run Production Build
+        run: npm run build
+
+  backend-check:
+    name: Backend Tests & Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, sqlite3, intl, curl, fileinfo, openssl
+          coverage: none
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Generate App Key
+        run: php artisan key:generate
+
+      - name: Create SQLite Database
+        run: touch database/database.sqlite
+
+      - name: Run Migrations & Seeders
+        run: php artisan migrate --force && php artisan db:seed --force
+
+      - name: Run PHPUnit Tests
+        run: php artisan test
+

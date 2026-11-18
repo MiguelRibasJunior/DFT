@@ -1,220 +1,344 @@
-# 🚀 Devs From Tomorrow — Soluções Digitais & Inteligência Artificial
+# Devs From Tomorrow (DFT)
 
-> Plataforma web oficial da **Devs From Tomorrow**, desenvolvida para apresentar soluções tecnológicas de alta performance, automações com n8n e IA, sistemas web sob medida e aplicativo mobile, com Painel Administrativo integrado para gestão de orçamentos e leads.
+Plataforma web oficial da Devs From Tomorrow, composta por um site institucional desenvolvido em React e um painel administrativo integrado em Laravel Filament.
 
----
-
-## 📋 Sumário
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Funcionalidades Principais](#-funcionalidades-principais)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Como Executar o Projeto](#-como-executar-o-projeto)
-- [Painel Administrativo](#-painel-administrativo)
-- [Endpoints da API](#-endpoints-da-api)
-- [Padronização de Git & Branches](#-padronização-de-git--branches)
+O projeto reúne:
+- Frontend institucional em React com TypeScript, CSS modular e animações fluidas.
+- Backend em Laravel 12 com APIs REST e proteção contra requisições abusivas (throttling).
+- Painel administrativo em Laravel Filament para gestão de projetos, tarefas (Kanban), contatos, mensagens, banners de chamada para ação (CTAs) e configurações gerais do site.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Sumário
 
-### Frontend
-- **React 19 & TypeScript 6**: Interface reativa, modular e fortemente tipada.
-- **Vite 8**: Build tool ultra-rápida com HMR (Hot Module Replacement).
-- **Vanilla CSS / Design System**: CSS3 moderno utilizando variáveis HSL, glassmorphism, temas escuros com neons customizados e responsividade mobile-first.
-- **Lucide React**: Biblioteca de ícones modernos e leves.
-- **HTML5 Canvas**: Animação de background geométrica interativa de alta performance.
-
-### Backend (API RESTful)
-- **PHP 8.2+ & Laravel 12**: Estrutura robusta para controle de rotas, API REST e envio de e-mails.
-- **SQLite / MySQL**: Banco de dados para persistência de mensagens de orçamento e contatos.
-- **Throttle Middleware**: Proteção nativa contra spam e abuso de envios nos formulários.
-
-### Painel Administrativo
-- **Laravel Filament v4**: Painel administrativo completo (Projetos, Tarefas/Kanban, Contatos, Mensagens, CTAs, Configurações, Usuários).
-- **Spatie Laravel-Permission**: Papéis de acesso (*Super Admin*, *Admin*, *Editor*).
+1. [Requisitos do Sistema](#requisitos-do-sistema)
+2. [Início Rápido (Passo a Passo)](#início-rápido-passo-a-passo)
+3. [Modos de Execução](#modos-de-execução)
+4. [Credenciais de Acesso](#credenciais-de-acesso)
+5. [Estrutura do Projeto](#estrutura-do-projeto)
+6. [Convenções de Componentes React](#convenções-de-componentes-react)
+7. [Endpoints da API](#endpoints-da-api)
+8. [Comandos Úteis](#comandos-úteis)
+9. [Solução de Problemas Comuns](#solução-de-problemas-comuns)
+10. [Padronização de Git e Branches](#padronização-de-git-e-branches)
 
 ---
 
-## ✨ Funcionalidades Principais
+## Requisitos do Sistema
 
-1. **Hero Section Dinâmica & Canvas Interativo**:
-   - Background animado em tempo real com partículas geométricas interativas.
-   - Chamadas para ação (CTA) diretas para cotação e agendamento.
+Antes de iniciar, certifique-se de que os programas abaixo estão instalados no seu ambiente de desenvolvimento:
 
-2. **Apresentação de Serviços & Soluções**:
-   - Automação de Processos com n8n & IA.
-   - Sistemas Web & SaaS Sob Medida.
-   - Aplicativos Mobile Nativos e Híbridos.
+| Ferramenta | Versão Mínima | Versão Utilizada no Projeto | Finalidade |
+| :--- | :--- | :--- | :--- |
+| PHP | 8.2+ | 8.4.24 | Execução do backend Laravel e do painel Filament |
+| Composer | 2.7+ | 2.10.3 | Gerenciamento de dependências do ecossistema PHP |
+| Node.js | 20.x+ | 22.x LTS ou 24.x | Execução das ferramentas de frontend e Vite |
+| npm | 10.x+ | 10.x+ | Gerenciamento de pacotes do Node.js |
+| Banco de Dados | SQLite 3 (nativo) ou MySQL 8.0+ | SQLite 3 | Persistência de dados local |
 
-3. **Formulário Inteligente de Orçamentos**:
-   - Seleção interativa do tipo de serviço desejado.
-   - Validação em tempo real dos campos de entrada.
+### Extensões PHP Obrigatórias
+No arquivo `php.ini` da sua instalação do PHP, certifique-se de que as seguintes extensões estão habilitadas (sem o caractere `;` no início da linha):
 
-4. **Painel Administrativo (Laravel Filament)**:
-   - Login com e-mail e senha, com papéis de acesso (*Super Admin*, *Admin*, *Editor*).
-   - Gestão de Projetos: status interno, prioridade, responsável, progresso calculado automaticamente pelas tarefas, prazos, Kanban, comentários e histórico de atividades.
-   - Gestão de Contatos (leads do formulário) e Mensagens recebidas pelo site.
-   - Gestão de CTAs e das Configurações gerais do site (contato, redes sociais, rodapé, SEO) — refletidas em tempo real no site público.
-   - Dashboard com indicadores de projetos/tarefas, "Minhas tarefas", próximos prazos e projetos que precisam de atenção.
-
-5. **Otimização SEO & Performance**:
-   - Tags Open Graph e Twitter Cards para compartilhamento em redes sociais.
-   - Dados Estruturados em JSON-LD (Schema.org ProfessionalService).
-   - Arquivos `sitemap.xml` e `robots.txt` configurados na pasta `public/`.
-
----
-
-## 📂 Estrutura do Projeto
-
-O frontend vive dentro do próprio projeto Laravel — não é um app separado. O Laravel serve a
-SPA React através de uma única view Blade ([resources/views/app.blade.php](resources/views/app.blade.php)),
-que carrega os assets via `@vite`. Em desenvolvimento, o Vite injeta os módulos com HMR real; em
-produção, o `@vite` aponta para os arquivos já compilados em `public/build/`.
-
-```bash
-DFT/
-├── app/                        # Backend Laravel (Controllers, Filament, Models, Providers)
-│   ├── Filament/
-│   │   ├── Resources/          # Recursos do Painel Admin (Projetos, Contatos, Mensagens, CTAs, Usuários)
-│   │   ├── Pages/              # Páginas customizadas (Configurações, Minhas tarefas)
-│   │   └── Widgets/            # Widgets do Dashboard
-│   ├── Http/Controllers/
-│   │   ├── ContactController.php
-│   │   └── PublicContentController.php
-│   ├── Models/
-│   └── Providers/
-├── bootstrap/                  # Bootstrap e configurações do framework Laravel
-├── config/                     # Configuração do Laravel (app, database, session, etc.)
-├── database/                   # Migrações e configurações do SQLite/MySQL
-│   └── migrations/
-├── public/                     # Front controller do Laravel + assets públicos e SEO
-│   ├── index.php               # Front controller (todas as requisições passam por aqui)
-│   ├── build/                  # Assets compilados pelo Vite (gerado, não versionado)
-│   ├── robots.txt
-│   └── sitemap.xml
-├── resources/                  # Código Fonte do Frontend (React + CSS) + a view Blade
-│   ├── css/
-│   │   └── index.css          # Design System e tokens visuais
-│   ├── js/
-│   │   ├── components/        # Componentes React reutilizáveis
-│   │   │   ├── ContactForm.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── GeometricCanvas.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   ├── Navbar.tsx
-│   │   │   └── Portfolio.tsx
-│   │   ├── services/          # Camada de requisições HTTP e API
-│   │   ├── types/             # Definições de tipos TypeScript
-│   │   ├── App.tsx            # Componente principal da aplicação
-│   │   └── main.tsx           # Entry point do React
-│   └── views/
-│       └── app.blade.php      # View única que monta a SPA via @vite
-├── routes/                     # Rotas de API, Web e Console
-│   ├── api.php
-│   ├── console.php
-│   └── web.php
-├── storage/                     # Cache, sessões, logs e uploads do Laravel
-├── .env.example                # Modelo de variáveis de ambiente
-├── .gitignore                  # Regras de exclusão do Git
-├── composer.json               # Dependências PHP e scripts (composer run dev)
-├── package.json                # Dependências Node.js
-├── tsconfig.json               # Configurações do TypeScript
-└── vite.config.ts              # Plugin Laravel + React + alias do Vite
+```ini
+extension=curl
+extension=fileinfo
+extension=mbstring
+extension=openssl
+extension=pdo_sqlite
+extension=sqlite3
+extension=intl
 ```
 
+> **Aviso para usuários Windows (Device Guard / AppLocker):**
+> Se o seu Windows bloquear a execução do `php.exe` na pasta `%LOCALAPPDATA%` (quando instalado via Winget), instale o PHP em um diretório do sistema como `C:\Program Files\PHP` ou `C:\php`, ou utilize pacotes como Laragon ou XAMPP, adicionando o diretório à variável `PATH`.
+
 ---
 
-## ⚙️ Como Executar o Projeto
+## Início Rápido (Passo a Passo)
 
-### Pré-requisitos
-- **Node.js**: `v20.x` ou superior
-- **PHP**: `v8.2` ou superior com as extensões `fileinfo` e `pdo_sqlite` habilitadas
-- **Composer**: `v2.x`
+Siga o passo a passo abaixo para clonar, configurar e rodar o projeto na sua máquina:
 
-### 1. Clonar o Repositório
+### 1. Clonar o repositório
 ```bash
 git clone https://github.com/MiguelRibasJunior/DFT.git
 cd DFT
 ```
 
-### 2. Instalar Dependências (Backend + Frontend)
+### 2. Instalar as dependências do projeto
 ```bash
+# Dependências do backend (Laravel e Filament)
 composer install
+
+# Dependências do frontend (React, TypeScript e Vite)
 npm install
 ```
 
-### 3. Configurar Variáveis de Ambiente
-Crie um arquivo `.env` baseado no `.env.example`, gere a chave da aplicação e prepare o banco SQLite:
+### 3. Configurar o ambiente com comando único
+Execute o script de inicialização padronizado:
 ```bash
-cp .env.example .env
-php artisan key:generate
-touch database/database.sqlite
-php artisan migrate
+composer run setup
 ```
 
-### 4. Executar em Modo de Desenvolvimento
-Sobe o servidor Laravel (`http://127.0.0.1:8000`) e o Vite (HMR) juntos, com um único comando:
+Esse comando executa automaticamente as seguintes tarefas:
+1. Cria o arquivo `.env` a partir de `.env.example` (se ainda não existir).
+2. Gera a chave de criptografia da aplicação (`php artisan key:generate`).
+3. Inicializa o arquivo de banco de dados SQLite em `database/database.sqlite`.
+4. Executa todas as 12 migrações de tabelas (`php artisan migrate --force`).
+5. Popula o banco com os dados iniciais do portfólio e cria o usuário Super Admin (`php artisan db:seed --force`).
+
+### 4. Iniciar a aplicação
 ```bash
 composer run dev
 ```
-Abra `http://127.0.0.1:8000` — é essa URL que serve a SPA, não a porta do Vite. Se preferir rodar
-cada processo separadamente, use dois terminais: `php artisan serve` e `npm run dev`.
 
-### 5. Compilar para Produção (Build)
+Após iniciar, acesse no seu navegador:
+- **Site Institucional:** http://localhost:8000
+- **Painel Administrativo Filament:** http://localhost:8000/admin
+- **Painel Administrativo React (SPA):** http://localhost:8000/#admin
+
+---
+
+## Modos de Execução
+
+Você pode executar o projeto de acordo com a necessidade da sua tarefa:
+
+### Modo 1: Fullstack Completo (Recomendado)
+Inicia o servidor backend do Laravel e o servidor de desenvolvimento do Vite simultaneamente com Hot Module Replacement (HMR):
+
 ```bash
-npm run build
+composer run dev
 ```
-Os assets otimizados são gerados em `public/build/` (versionados via `manifest.json`, lido pelo
-`@vite` do Blade) — não é preciso servir nada separado, o próprio Laravel já serve tudo em produção.
+
+Caso prefira rodar os serviços em dois terminais separados para facilitar a visualização de logs:
+- **Terminal 1 (Backend Laravel):**
+  ```bash
+  php artisan serve --port=8000
+  ```
+- **Terminal 2 (Frontend Vite):**
+  ```bash
+  npm run dev:laravel
+  ```
+
+### Modo 2: Apenas Frontend (SPA Isolado)
+Se for trabalhar exclusivamente na interface visual, em componentes ou no CSS, sem dependência do backend PHP:
+
+```bash
+npm run dev
+```
+Acessível diretamente em: http://localhost:8000
 
 ---
 
-## 🔒 Painel Administrativo & Segurança
+## Credenciais de Acesso
 
-O painel é construído com **Laravel Filament** e roda em `/admin` (rota própria, fora da SPA React).
+Ao inicializar o banco de dados localmente pela primeira vez, utilize as credenciais padrão:
 
-- Acesse `http://127.0.0.1:8000/admin` e faça login com e-mail e senha.
-- Credenciais padrão, criadas pelo seeder (`database/seeders/DatabaseSeeder.php`):
-  - **E-mail**: `admin@devsfromtomorrow.com` (ou o valor de `ADMIN_EMAIL` no `.env`)
-  - **Senha**: `dft2026admin` (ou o valor de `ADMIN_PASSWORD` no `.env`)
-- O menu lateral é organizado em três grupos:
-  - **Gestão**: Projetos, Minhas tarefas.
-  - **Site / Conteúdo**: Contatos, Mensagens, CTAs, Configurações.
-  - **Administração**: Usuários (e seus papéis: *Super Admin*, *Admin*, *Editor*).
-- Alterações feitas no painel (projetos, CTAs, configurações) refletem em tempo real no site público, consumidas pela API pública somente-leitura listada abaixo.
+| Campo | Valor Padrão |
+| :--- | :--- |
+| E-mail | admin@devsfromtomorrow.com |
+| Senha | admin123 |
+| Perfil | Super Admin |
+
+No modal de login do site há também um botão "Preencher credenciais" que preenche esses dados automaticamente para testes rápidos.
 
 ---
 
-## 🌐 Endpoints da API (`routes/api.php`)
+## Estrutura do Projeto
 
-| Método | Rota | Descrição | Autenticação / Limite |
+O frontend React vive dentro do próprio repositório Laravel e é servido através da view principal `resources/views/app.blade.php`:
+
+```
+DFT/
+├── app/
+│   ├── Filament/Resources/       # Recursos do painel (Projetos, Contatos, Mensagens, CTAs, Usuários)
+│   ├── Http/Controllers/         # Controladores da API REST
+│   └── Models/                   # Modelos de dados Eloquent
+├── config/                       # Configurações do framework Laravel
+├── database/
+│   ├── migrations/               # Migrações das tabelas do banco de dados
+│   └── seeders/                  # Dados iniciais para testes locais
+├── public/                       # Arquivos públicos e ponto de entrada da aplicação
+├── resources/
+│   ├── css/
+│   │   └── index.css             # Estilos globais e tokens visuais do Design System
+│   ├── js/
+│   │   ├── Pages/                # Páginas entregues via Inertia (Home, Privacy, Terms, Error)
+│   │   ├── components/           # Componentes visuais reutilizáveis
+│   │   ├── motion/               # Módulo de animações declarativas com suporte a acessibilidade
+│   │   ├── services/             # Funções de requisição HTTP para a API
+│   │   ├── types/                # Definições de tipos TypeScript
+│   │   ├── App.tsx               # Componente principal da Home React
+│   │   └── main.tsx              # Ponto de entrada do Inertia.js
+│   └── views/
+│       └── app.blade.php         # View Blade única que carrega o React via Vite
+├── routes/
+│   ├── api.php                   # Rotas da API REST
+│   └── web.php                   # Rotas de navegação da aplicação
+└── vite.config.ts                # Configuração do Vite integrada ao Laravel
+```
+
+---
+
+## Convenções de Componentes React
+
+Para manter o código uniforme e de fácil manutenção, todos os componentes do frontend seguem as seguintes diretrizes:
+
+1. **Nomenclatura em PascalCase:**
+   Arquivos e funções de componentes utilizam obrigatoriamente PascalCase (ex.: `Hero.tsx`, `Navbar.tsx`, `ContactForm.tsx`, `ProjectModal.tsx`).
+
+2. **Tipagem Estrita com TypeScript:**
+   Cada componente declara uma interface dedicada para suas propriedades (ex.: `interface ContactFormProps { ... }`), evitando o uso de `any`.
+
+3. **Separação de Camadas:**
+   - Componentes visuais e interativos ficam em `resources/js/components/`.
+   - Chamadas HTTP à API ficam em `resources/js/services/`.
+   - Tipos e modelos compartilhados ficam em `resources/js/types/`.
+
+4. **Padrão Barrel Export (`index.ts`):**
+   O arquivo `resources/js/components/index.ts` centraliza as exportações dos componentes reutilizáveis, permitindo importações simplificadas:
+   ```tsx
+   import { Navbar, Hero, ContactForm, Footer } from '@/components';
+   ```
+
+5. **Animações com Suporte a Acessibilidade:**
+   Ao adicionar animações, utilize o módulo em `resources/js/motion/`. Ele detecta a preferência do sistema operacional (`prefers-reduced-motion`) e reduz automaticamente deslocamentos e rotações para usuários com sensibilidade a movimentos.
+
+### Configuração do TypeScript e Aliases
+
+O projeto utiliza TypeScript com verificação estrita em todo o código do frontend:
+- **Modo Estrito:** Ativado no arquivo `tsconfig.app.json` (`"strict": true`, `"noUnusedLocals": true`, `"noUnusedParameters": true`).
+- **Path Alias (`@/*`):** Configurado de forma sincronizada no `vite.config.ts` e no `tsconfig.app.json`, apontando para a raiz de scripts em `resources/js/*`:
+  ```tsx
+  import { Hero, Navbar } from '@/components';
+  import { motion, VARIANTS } from '@/motion';
+  import { getProjects } from '@/services/contentService';
+  ```
+
+### Tipos Compartilhados
+
+As interfaces de domínio e tipos reutilizáveis da aplicação ficam centralizados na pasta `resources/js/types/` e são exportados através do arquivo `resources/js/types/index.ts`:
+
+- `ContactSubmission` e `SubmissionStatus`: Dados de submissões de contato e orçamento (`resources/js/types/contact.ts`).
+- `PublicProject`: Estrutura dos projetos do portfólio exibidos no site (`resources/js/types/models.ts`).
+- `PublicCta`: Dados dinâmicos de chamadas para ação (`resources/js/types/models.ts`).
+- `PublicSiteSettings`: Configurações públicas do site, contatos e redes sociais (`resources/js/types/models.ts`).
+- `AdminUser`: Modelo do usuário administrador logado (`resources/js/types/models.ts`).
+
+Exemplo de importação dos tipos compartilhados via alias:
+```tsx
+import type { PublicProject, ContactSubmission, AdminUser } from '@/types';
+```
+
+Para a documentação completa com detalhes de interfaces e arquitetura do compilador, consulte o guia oficial em [docs/TYPESCRIPT.md](docs/TYPESCRIPT.md).
+
+---
+
+## Comunicação Inertia.js (Laravel & React)
+
+A plataforma utiliza o **Inertia.js** como camada de conexão direta entre o backend Laravel 12 e o frontend React 19:
+
+1. **Ciclo de Entrega e Respostas Inertia:**
+   - O Laravel entrega as páginas React via `Inertia::render('NomeDaPagina', $props)`.
+   - Na primeira visita (HTML inicial), a view Blade `resources/views/app.blade.php` inicializa o container `<div id="app">` e os dados do payload via `<x-inertia::head />` e `<x-inertia::app />`.
+   - Nas transições subsequentes, as requisições AJAX do Inertia (`X-Inertia: true`) recebem respostas em JSON com o componente e as props atualizadas, alterando a URL sem reload completo da página.
+
+2. **Middleware `HandleInertiaRequests`:**
+   - Localizado em `app/Http/Middleware/HandleInertiaRequests.php` e anexado ao grupo `web` no `bootstrap/app.php`.
+   - Gerencia a versão de assets com base no hash do manifesto compilado (`manifest.json`), disparando recarregamento automático em caso de nova versão publicada.
+   - Compartilha props globais com todos os componentes:
+     - `auth.user`: Usuário autenticado na sessão.
+     - `flash`: Mensagens de retorno temporárias (`success`, `error`, `message`).
+     - `app`: Metadados do ambiente (`name`, `env`, `debug`).
+
+3. **Navegação SPA sem Reload Completo:**
+   - Links entre páginas utilizam o componente `<Link href="...">` de `@inertiajs/react`.
+   - Páginas disponíveis:
+     - `/`: Página principal (`Home.tsx`) com Hero, Soluções, Portfólio, Diferenciais e Contato.
+     - `/privacidade`: Política de privacidade (`Privacy.tsx`) com conformidade LGPD.
+     - `/termos`: Termos e condições de uso (`Terms.tsx`).
+   - Barra de progresso visual de transição (`progress: { color: '#28D7E5' }`) configurada no `resources/js/main.tsx`.
+
+4. **Tratamento de Erros e Diagnósticos Locais:**
+   - Rota de fallback e manipulador de exceções em `bootstrap/app.php` capturam status 403, 404, 500 e 503, renderizando o componente de página dedicado `resources/js/Pages/Error.tsx`.
+   - Em ambiente local (`APP_ENV=local` ou `APP_DEBUG=true`), detalhes do erro e pilha de rastreamento são exibidos na tela para facilitar o diagnóstico rápido.
+   - O ponto de entrada `resources/js/main.tsx` escuta eventos `httpException` e `networkError` do roteador Inertia, registrando diagnósticos no console do navegador.
+
+---
+
+## Endpoints da API
+
+Endpoints disponíveis no arquivo `routes/api.php`:
+
+| Método | Rota | Descrição | Acesso / Limite |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/contact` | Envio de formulário de contato | Throttle (6 requisições/min) |
-| `GET` | `/api/projects` | Lista de projetos publicados | Pública |
-| `GET` | `/api/ctas/{position}` | CTA ativo de uma posição | Pública |
-| `GET` | `/api/settings` | Configurações públicas do site | Pública |
-
-O Painel Administrativo (`/admin`) não usa essas rotas — autenticação e ações administrativas são
-tratadas diretamente pelo Filament (Livewire), sem uma API REST separada.
+| POST | /api/contact | Envio do formulário de orçamento | Público (limite de 6 req/min) |
+| GET | /api/projects | Listagem de projetos publicados no portfólio | Público |
+| GET | /api/ctas/{position} | Conteúdo do banner CTA ativo por posição | Público |
+| GET | /api/settings | Configurações públicas (redes sociais, contatos, rodapé) | Público |
+| POST | /api/admin/login | Autenticação administrativa via API | Público |
+| GET | /api/admin/submissions | Listagem de leads e mensagens recebidas | Administrativo |
+| GET/POST/PUT/DELETE | /api/admin/projects | Gerenciamento de projetos do portfólio | Administrativo |
+| PUT | /api/admin/settings | Atualização das configurações institucionais | Administrativo |
 
 ---
 
-## 📌 Padronização de Git & Branches
+## Comandos Úteis
 
-Para manter o fluxo de trabalho limpo e organizado no GitHub, siga obrigatoriamente os padrões de branches estabelecidos:
-
-- **Novas Funcionalidades**: `FEATURE/SITE-01`, `FEATURE/SITE-02`, etc.
-- **Correções de Bugs**: `BUGFIX/SITE-X`
-- **Correções Urgentes (Hotfix)**: `HOTFIX/SITE-Y`
-
-### Exemplo de criação de branch e push:
+### Comandos do Composer
 ```bash
-git checkout -b FEATURE/SITE-01
-git add .
-git commit -m "feat: implementa nova funcionalidade para a plataforma"
-git push origin FEATURE/SITE-01
+composer run setup    # Executa a configuração completa do ambiente local
+composer run dev      # Inicia o Laravel e o Vite simultaneamente
+composer run test     # Limpa cache e executa os testes do PHPUnit
+```
+
+### Comandos do npm
+```bash
+npm run dev           # Inicia apenas o frontend em modo SPA (porta 8000)
+npm run dev:laravel   # Inicia o Vite em modo integrado ao Laravel (porta 3000)
+npm run build         # Compila e otimiza os assets para produção
+npm run type-check    # Executa a verificação estrita de tipos com TypeScript (tsc -b)
+npm run lint          # Executa a verificação estática de código com oxlint
+npm run preview       # Visualiza o build de produção localmente
 ```
 
 ---
 
-*Desenvolvido pela equipe **Devs From Tomorrow**.*
+## Solução de Problemas Comuns
+
+### 1. Erro: Failed to listen on 127.0.0.1:8000 (reason: ?) ou erro de concurrently
+- **Causa:** A porta 8000 já está ocupada por outra aplicação ou por uma execução anterior do `npm run dev` (modo SPA) que permaneceu rodando em segundo plano.
+- **Solução no PowerShell:**
+  ```powershell
+  # Encerra qualquer processo ativo nas portas 8000 e 3000
+  Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000).OwningProcess -Force -ErrorAction SilentlyContinue
+  Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -Force -ErrorAction SilentlyContinue
+  ```
+  Depois de liberar a porta, execute `composer run dev` novamente.
+
+### 2. Erro: Uma política de Controle de Aplicativo bloqueou este arquivo php.exe
+- **Causa:** O PHP foi instalado via Winget na pasta `%LOCALAPPDATA%`, bloqueada pelo Windows Device Guard ou políticas locais de segurança.
+- **Solução:** Mova ou instale o PHP em um diretório como `C:\Program Files\PHP` ou `C:\php`, ou use suítes como Laragon ou XAMPP, adicionando o caminho nas Variáveis de Ambiente do Sistema (`PATH`).
+
+### 3. Erro: could not find driver (SQL: select ...)
+- **Causa:** A extensão `pdo_sqlite` não está habilitada no seu `php.ini`.
+- **Solução:** Abra o arquivo `php.ini`, remova o ponto e vírgula `;` antes de `extension=pdo_sqlite` e salve o arquivo.
+
+---
+
+## Padronização de Git e Branches
+
+O projeto segue um fluxo estruturado com 3 ambientes e branches principais:
+- **develop:** Integração contínua de novas funcionalidades durante as sprints.
+- **homolog:** Ambiente de testes e validação pré-produção.
+- **main:** Código estável refletindo rigorosamente o ambiente de produção.
+
+### Diretrizes de Contribuição
+1. **Revisão Obrigatória:** Todo merge nas branches `main` e `homolog` exige aprovação formal via Pull Request. O envio direto (`push`) para essas branches é bloqueado.
+2. **Padrão de Branches:** Use o formato `<tipo>/<codigo-tarefa>-<descricao-em-kebab-case>`:
+   - Novas funcionalidades: `feature/SITE-12-painel-orcamentos`
+   - Correções de bugs: `bugfix/SITE-14-ajuste-responsividade`
+   - Correções críticas em produção: `hotfix/SITE-99-falha-envio`
+   - Fechamento de versões: `release/v1.2.0`
+3. **Template de Pull Request:** Ao abrir um PR, utilize o modelo padronizado disponível em `.github/pull_request_template.md`.
+
+Para consultar diagramas visuais, regras completas e configuração de proteção de branches, consulte o guia oficial em [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md).

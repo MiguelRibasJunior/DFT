@@ -12,8 +12,30 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Global middleware setup
+    $middleware->web(append: [
+        \App\Http\Middleware\HandleInertiaRequests::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->respond(function ($response, \Throwable $e, \Illuminate\Http\Request $request) {
+            if ($response->getStatusCode() === 419) {
+                return back()->with([
+                    'error' => 'A sessão expirou. Por favor, tente novamente.',
+                ]);
+            }
+
+            if ($request->header('X-Inertia')) {
+                $status = $response->getStatusCode();
+
+                if (in_array($status, [403, 404, 500, 503])) {
+                    return \Inertia\Inertia::render('Error', [
+                        'status' => $status,
+                        'message' => app()->environment('local') ? $e->getMessage() : null,
+                        'trace' => app()->environment('local') ? $e->getTraceAsString() : null,
+                    ])->toResponse($request)->setStatusCode($status);
+                }
+            }
+
+            return $response;
+        });
     })->create();

@@ -5,16 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "dev:laravel": "vite --mode laravel",
+    "build": "tsc -b && vite build --mode laravel",
+    "build:spa": "tsc -b && vite build",
+    "type-check": "tsc -b",
+    "lint": "oxlint resources/js",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inertiajs/react": "^3.11.0",
+    "@inertiajs/vite": "^3.11.0",
     "lucide-react": "^1.33.0",
+    "motion": "^12.4.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -22,6 +29,7 @@
     "concurrently": "^10.0.5",
     "laravel-vite-plugin": "^3.2.0",
     "oxlint": "^1.75.0",
+    "tailwindcss": "^4.1.1",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Send } from 'lucide-react';
-import type { PublicCta } from '../services/contentService';
+import type { PublicCta } from '@/types';
 
 interface CTASectionProps {
   onStartProject: () => void;

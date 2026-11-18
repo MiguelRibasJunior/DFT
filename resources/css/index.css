@@ -392,3 +392,92 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--accent-cyan);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Accessibility: Fallback global para redução de movimento (WCAG 2.1) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .triangle-decor,
+  .hero-grid-animate {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ==============================================================================
+ * Utilitários Tecnológicos Cyber & Neon (Compatíveis com Figma)
+ * ============================================================================== */
+
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(40, 215, 229, 0.35);
+}
+
+.glow-cyan-lg {
+  box-shadow: 0 0 45px rgba(40, 215, 229, 0.5);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px rgba(35, 136, 255, 0.35);
+}
+
+.glow-purple {
+  box-shadow: 0 0 25px rgba(123, 77, 255, 0.35);
+}
+
+.glow-text {
+  text-shadow: 0 0 12px rgba(40, 215, 229, 0.6);
+}
+
+.glass-panel {
+  background: rgba(8, 11, 20, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(40, 215, 229, 0.2);
+}
+
+.text-gradient-tech {
+  background: linear-gradient(135deg, #F5F7FA 0%, #28D7E5 50%, #2388FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #7B4DFF 0%, #28D7E5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge-neon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(40, 215, 229, 0.1);
+  border: 1px solid rgba(40, 215, 229, 0.3);
+  color: var(--accent-cyan);
+}
+
+
+

@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             ['email' => env('ADMIN_EMAIL', 'admin@devsfromtomorrow.com')],
             [
                 'name' => 'Administrador',
-                'password' => env('VITE_ADMIN_PASSWORD', 'dft2026admin'),
+                'password' => env('ADMIN_PASSWORD', env('VITE_ADMIN_PASSWORD', 'admin123')),
             ]
         );
 

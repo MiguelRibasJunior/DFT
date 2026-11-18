@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExternalLink, Layers, Bot, Smartphone, ArrowRight } from 'lucide-react';
-import type { PublicProject } from '../services/contentService';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import type { PublicProject } from '@/types';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 interface PortfolioProps {
   onSelectProject: (title: string, desc: string, tags: string[]) => void;

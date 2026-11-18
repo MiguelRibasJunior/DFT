@@ -1,12 +1,14 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
 import { ArrowUp, ShieldCheck } from 'lucide-react';
-import type { PublicSiteSettings } from '../services/contentService';
+import type { PublicSiteSettings } from '@/types';
 
 interface FooterProps {
   settings?: PublicSiteSettings | null;
+  onOpenAdmin?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ settings }) => {
+export const Footer: React.FC<FooterProps> = ({ settings, onOpenAdmin }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -240,29 +242,33 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
           <div>{settings?.copyright_text || '© 2026 Devs From Tomorrow. Todos os direitos reservados.'}</div>
 
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <a
-              href="/admin"
+            <button
+              type="button"
+              onClick={onOpenAdmin}
               style={{
+                background: 'none',
+                border: 'none',
                 color: 'var(--accent-cyan)',
-                textDecoration: 'none',
                 fontSize: '13px',
                 fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
+                cursor: 'pointer',
+                padding: 0,
               }}
             >
               <ShieldCheck size={14} />
               <span>Área Administrativa</span>
-            </a>
+            </button>
             <span>•</span>
-            <a href={settings?.privacy_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <Link href="/privacidade" style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
               Política de privacidade
-            </a>
+            </Link>
             <span>•</span>
-            <a href={settings?.terms_url || '#'} style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
+            <Link href="/termos" style={{ color: 'var(--text-gray)', textDecoration: 'none' }}>
               Termos de uso
-            </a>
+            </Link>
           </div>
 
           <button

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
-import { addSubmission, ADMIN_NOTIFICATION_EMAIL } from '../services/submissionService';
-import { sanitizeInput, validateEmail, validatePhone, checkRateLimit } from '../utils/security';
-import type { PublicSiteSettings } from '../services/contentService';
+import { addSubmission, ADMIN_NOTIFICATION_EMAIL } from '@/services/submissionService';
+import { sanitizeInput, validateEmail, validatePhone, checkRateLimit } from '@/utils/security';
+import type { PublicSiteSettings } from '@/types';
 
 interface ContactFormProps {
   initialSolution?: string;

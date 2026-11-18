@@ -1,5 +1,6 @@
 import React from 'react';
 import { Target, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
+import { motion, VARIANTS } from '@/motion';
 
 export const Differentials: React.FC = () => {
   const items = [
@@ -34,10 +35,20 @@ export const Differentials: React.FC = () => {
   ];
 
   return (
-    <section id="diferenciais" style={{ padding: '100px 0', position: 'relative' }}>
+    <motion.section
+      id="diferenciais"
+      style={{ padding: '100px 0', position: 'relative' }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={VARIANTS.fadeIn}
+    >
       <div className="container">
         {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
+        <motion.div
+          style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}
+          variants={VARIANTS.fadeInUp}
+        >
           <div
             style={{
               display: 'inline-flex',
@@ -60,7 +71,7 @@ export const Differentials: React.FC = () => {
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800 }}>
             Por que escolher a <span className="text-gradient">Devs From Tomorrow</span>?
           </h2>
-        </div>
+        </motion.div>
 
         {/* 4 Differentials Grid with Triangular Connectors */}
         <div style={{ position: 'relative' }}>
@@ -102,16 +113,29 @@ export const Differentials: React.FC = () => {
               zIndex: 1,
             }}
           >
-            {items.map((diff) => {
+            {items.map((diff, index) => {
               const IconComponent = diff.icon;
               return (
-                <div
+                <motion.div
                   key={diff.num}
                   className="glass-card"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 24 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, delay: index * 0.1 },
+                    },
+                  }}
+                  whileHover={VARIANTS.cardHover.hover}
                   style={{
                     padding: '32px 26px',
                     position: 'relative',
                     background: 'rgba(16, 21, 36, 0.8)',
+                    cursor: 'default',
                   }}
                 >
                   {/* Floating Micro-Triangle Accent */}
@@ -162,7 +186,7 @@ export const Differentials: React.FC = () => {
                   <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: 1.6 }}>
                     {diff.description}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -176,6 +200,6 @@ export const Differentials: React.FC = () => {
           }
         }
       `}</style>
-    </section>
+    </motion.section>
   );
 };

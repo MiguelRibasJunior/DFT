@@ -16,6 +16,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Strict Type-Checking & Aliases */
+    "strict": true,
+    "paths": {
+      "@/*": ["./resources/js/*"]
+    },
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
