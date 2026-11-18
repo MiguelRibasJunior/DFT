@@ -1,5 +1,8 @@
 /* Devs From Tomorrow — Global Design System */
 
+@import './components/ui.css';
+@import './components/header.css';
+
 :root {
   --bg-primary: #080B14;
   --bg-secondary: #101524;
@@ -23,6 +26,9 @@
   --gradient-text: linear-gradient(135deg, #FFFFFF 0%, #28D7E5 50%, #60A5FA 100%);
   --gradient-purple-cyan: linear-gradient(135deg, #A78BFA 0%, #28D7E5 100%);
   --gradient-card: linear-gradient(180deg, rgba(35, 136, 255, 0.08) 0%, rgba(123, 77, 255, 0.03) 100%);
+
+  /* Altura do header fixo (estado compacto) + respiro; usado no scroll-padding-top. */
+  --header-offset: 72px;
 }
 
 * {
@@ -33,6 +39,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* Compensa o header fixo: âncoras e scrollIntoView param logo abaixo dele. */
+  scroll-padding-top: var(--header-offset);
+  scrollbar-gutter: stable;
   font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-white);
@@ -57,6 +66,12 @@ img, svg, video, canvas, audio, iframe, embed, object {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 3px;
   border-radius: 8px;
+}
+
+/* Seções recebem foco programático ao navegar pelo menu (tabindex=-1); sem anel de foco nelas. */
+section[tabindex='-1']:focus,
+main[tabindex='-1']:focus {
+  outline: none;
 }
 
 /* Touch Targets Minimum Sizing on Mobile & Interactive Controls */

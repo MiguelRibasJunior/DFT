@@ -1,0 +1,275 @@
+/* Header público — fixo, muda ao rolar, menu mobile.
+ * Breakpoints:
+ *   < 640px      celular: logo + hambúrguer (CTA dentro do menu)
+ *   640–1199px   tablet / notebook pequeno: logo + CTA + hambúrguer
+ *   >= 1200px    desktop: logo + navegação + painel admin + CTA
+ * O breakpoint de desktop precisa bater com DESKTOP_QUERY em components/layout/header/Header.tsx.
+ */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  background: linear-gradient(to bottom, rgba(8, 11, 20, 0.9), rgba(8, 11, 20, 0));
+  border-bottom: 1px solid transparent;
+  transition:
+    padding 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.site-header--scrolled,
+.site-header--menu-open {
+  padding: 10px 0;
+  background: rgba(8, 11, 20, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: rgba(41, 50, 71, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Logo / marca */
+.site-header__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.site-header__brand .dft-logo__mark {
+  transition: transform 0.3s ease;
+  transform-origin: left center;
+}
+
+.site-header--scrolled .site-header__brand .dft-logo__mark {
+  transform: scale(0.9);
+}
+
+/* Navegação desktop */
+.site-header__nav {
+  display: none;
+}
+
+.site-header__nav-list {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+}
+
+.site-header__nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text-gray);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.site-header__nav-link::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gradient-main);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.site-header__nav-link:hover {
+  color: var(--accent-cyan);
+}
+
+.site-header__nav-link[aria-current] {
+  color: var(--text-white);
+}
+
+.site-header__nav-link[aria-current]::after {
+  transform: scaleX(1);
+}
+
+/* Ações (admin, CTA, hambúrguer) */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Seletores com .btn: este arquivo é importado antes das regras de .btn do index.css. */
+.btn.site-header__admin {
+  display: none;
+  width: 44px;
+  padding: 0;
+}
+
+.btn.site-header__cta {
+  display: none;
+}
+
+.site-header__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: var(--text-white);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.site-header__toggle:hover,
+.site-header__toggle[aria-expanded='true'] {
+  color: var(--accent-cyan);
+  border-color: rgba(40, 215, 229, 0.35);
+  background: rgba(40, 215, 229, 0.08);
+}
+
+/* Menu mobile (painel abaixo do header) */
+.mobile-menu,
+.mobile-menu__backdrop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.mobile-menu__backdrop {
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(4, 6, 11, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.mobile-menu {
+  max-height: calc(100vh - 64px);
+  max-height: calc(100dvh - 64px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 16px 24px;
+  background: rgba(10, 14, 26, 0.98);
+  border-bottom: 1px solid var(--border-gray);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+
+.mobile-menu.is-open,
+.mobile-menu__backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.mobile-menu__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(41, 50, 71, 0.4);
+  color: var(--text-white);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.mobile-menu__link:hover,
+.mobile-menu__link[aria-current] {
+  color: var(--accent-cyan);
+  padding-left: 14px;
+}
+
+.mobile-menu__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.mobile-menu__admin {
+  width: 100%;
+}
+
+/* Tablet: CTA visível ao lado do hambúrguer */
+@media (min-width: 640px) {
+  .btn.site-header__cta {
+    display: inline-flex;
+  }
+
+  .mobile-menu {
+    padding: 20px 24px 28px;
+  }
+
+  .mobile-menu__actions .btn.contact-cta {
+    display: none;
+  }
+}
+
+/* Desktop: navegação completa, sem menu mobile */
+@media (min-width: 1200px) {
+  .site-header__nav {
+    display: block;
+  }
+
+  .btn.site-header__admin {
+    display: inline-flex;
+  }
+
+  .site-header__toggle,
+  .mobile-menu,
+  .mobile-menu__backdrop {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header__brand .dft-logo__mark,
+  .site-header__nav-link::after,
+  .mobile-menu,
+  .mobile-menu__backdrop {
+    transition: none;
+  }
+}

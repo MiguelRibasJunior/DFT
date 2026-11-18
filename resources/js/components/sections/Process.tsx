@@ -1,5 +1,7 @@
 import React from 'react';
 import { Search, Compass, Palette, Code, CheckCircle, Rocket } from 'lucide-react';
+import { SECTION_IDS } from '../../config/sections';
+import { SectionHeading } from '../ui/SectionHeading';
 
 export const Process: React.FC = () => {
   const steps = [
@@ -43,7 +45,8 @@ export const Process: React.FC = () => {
 
   return (
     <section
-      id="processo"
+      id={SECTION_IDS.processo}
+      aria-labelledby="processo-titulo"
       style={{
         padding: '100px 0',
         background: 'linear-gradient(180deg, #080B14 0%, #101524 100%)',
@@ -51,31 +54,16 @@ export const Process: React.FC = () => {
       }}
     >
       <div className="container">
-        {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(123, 77, 255, 0.1)',
-              border: '1px solid rgba(123, 77, 255, 0.3)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-purple)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            Metodologia Ágil
-          </div>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800 }}>
-            Da ideia à <span className="text-gradient">solução digital</span>
-          </h2>
-        </div>
+        <SectionHeading
+          id="processo-titulo"
+          eyebrow="Metodologia Ágil"
+          accent="purple"
+          title={
+            <>
+              Da ideia à <span className="text-gradient">solução digital</span>
+            </>
+          }
+        />
 
         {/* 6 Steps Grid / Timeline */}
         <div

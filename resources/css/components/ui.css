@@ -1,0 +1,147 @@
+/* Componentes de UI reutilizáveis da one page (Logo, SectionHeading, CTA de contato, skip link). */
+
+/* Layout da one page — components/layout/OnePageLayout.tsx */
+.one-page {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+/* Acima do canvas de fundo (fixed, z-index 0). */
+.one-page__main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo — components/ui/Logo.tsx */
+.dft-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dft-logo__mark {
+  flex-shrink: 0;
+}
+
+.dft-logo__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dft-logo__name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.dft-logo__tagline {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  white-space: nowrap;
+}
+
+/* Cabeçalho de seção — components/ui/SectionHeading.tsx */
+.section-heading {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 60px;
+}
+
+.section-heading--wide {
+  max-width: 750px;
+  margin-bottom: 50px;
+}
+
+.section-heading--compact {
+  margin-bottom: 44px;
+}
+
+.section-heading--compact .section-title {
+  font-size: clamp(26px, 3.5vw, 38px);
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.section-eyebrow--cyan {
+  color: var(--accent-cyan);
+  background: rgba(40, 215, 229, 0.1);
+  border-color: rgba(40, 215, 229, 0.3);
+}
+
+.section-eyebrow--blue {
+  color: var(--accent-blue);
+  background: rgba(35, 136, 255, 0.1);
+  border-color: rgba(35, 136, 255, 0.3);
+}
+
+.section-eyebrow--purple {
+  color: var(--accent-purple);
+  background: rgba(123, 77, 255, 0.12);
+  border-color: rgba(123, 77, 255, 0.35);
+}
+
+.section-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-gray);
+}
+
+/* CTA de contato — components/ui/ContactCTAButton.tsx */
+/* .btn.* porque este arquivo é importado antes das regras de .btn do index.css. */
+.btn.contact-cta--sm {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.contact-cta--block {
+  width: 100%;
+}
+
+/* Link "pular para o conteúdo" — visível só ao receber foco pelo teclado */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: var(--accent-cyan);
+  color: #04060b;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: none;
+}

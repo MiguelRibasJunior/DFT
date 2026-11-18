@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
-import { addSubmission, SubmissionError } from '../services/submissionService';
-import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../utils/security';
-import type { PublicContactLink } from '../services/contentService';
-import { CONTACT_COLORS, ContactIcon } from './ContactIcon';
+import { addSubmission, SubmissionError } from '../../services/submissionService';
+import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../../utils/security';
+import type { PublicContactLink } from '../../services/contentService';
+import { CONTACT_COLORS, ContactIcon } from '../ui/ContactIcon';
+import { SectionHeading } from '../ui/SectionHeading';
+import { SECTION_IDS } from '../../config/sections';
 
 interface ContactFormProps {
   initialSolution?: string;
@@ -101,33 +103,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
   };
 
   return (
-    <section id="contato" style={{ padding: '100px 0', position: 'relative' }}>
+    <section id={SECTION_IDS.contato} aria-labelledby="contato-titulo" style={{ padding: '100px 0', position: 'relative' }}>
       <div className="container">
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 60px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(35, 136, 255, 0.1)',
-              border: '1px solid rgba(35, 136, 255, 0.3)',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--accent-blue)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginBottom: '16px',
-            }}
-          >
-            Fale Conosco
-          </div>
-          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800 }}>
-            Entre em <span className="text-gradient">contato</span>
-          </h2>
-        </div>
+        <SectionHeading
+          id="contato-titulo"
+          eyebrow="Fale Conosco"
+          accent="blue"
+          title={
+            <>
+              Entre em <span className="text-gradient">contato</span>
+            </>
+          }
+        />
 
         <div className="contact-grid">
           {/* Form Column */}

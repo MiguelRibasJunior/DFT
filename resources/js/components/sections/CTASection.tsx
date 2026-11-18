@@ -1,9 +1,10 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Send } from 'lucide-react';
-import type { PublicCta } from '../services/contentService';
+import type { PublicCta } from '../../services/contentService';
+import { SECTION_IDS } from '../../config/sections';
+import { handleAnchorClick } from '../../utils/scroll';
 
 interface CTASectionProps {
-  onStartProject: () => void;
   cta?: PublicCta | null;
 }
 
@@ -14,11 +15,13 @@ const FALLBACK_CTA = {
   button_url: '#contato',
 };
 
-export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) => {
+export const CTASection: React.FC<CTASectionProps> = ({ cta }) => {
   const content = cta || FALLBACK_CTA;
 
   return (
     <section
+      id={SECTION_IDS.cta}
+      aria-labelledby="cta-titulo"
       style={{
         padding: '110px 0',
         position: 'relative',
@@ -93,6 +96,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) =
         </div>
 
         <h2
+          id="cta-titulo"
           style={{
             fontSize: 'clamp(30px, 4.5vw, 48px)',
             fontWeight: 800,
@@ -118,7 +122,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ onStartProject, cta }) =
 
         <a
           href={content.button_url}
-          onClick={content.button_url === '#contato' ? onStartProject : undefined}
+          onClick={handleAnchorClick}
           target={/^https?:\/\//i.test(content.button_url) ? '_blank' : undefined}
           rel={/^https?:\/\//i.test(content.button_url) ? 'noopener noreferrer' : undefined}
           className="btn btn-primary btn-glow"
