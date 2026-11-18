@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useDialogFocus } from '../../hooks/useDialogFocus';
 import { X, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface ProjectModalProps {
@@ -16,20 +17,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   description,
   technologies,
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const dialogRef = useDialogFocus(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="project-modal-title"
