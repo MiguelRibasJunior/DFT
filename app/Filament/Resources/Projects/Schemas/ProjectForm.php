@@ -33,7 +33,13 @@ class ProjectForm
                                     ->label('Título')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (?string $state, callable $set) => $set('slug', Str::slug((string) $state))),
+                                    ->afterStateUpdated(function (?string $state, callable $set, string $operation): void {
+                                        // O slug é um identificador: só é gerado ao criar. Renomear um projeto
+                                        // existente não pode trocá-lo (o seeder o usa como chave).
+                                        if ($operation === 'create') {
+                                            $set('slug', Str::slug((string) $state));
+                                        }
+                                    }),
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()

@@ -128,6 +128,58 @@ class ProjectCrudTest extends TestCase
         $this->assertDatabaseCount('projects', 1);
     }
 
+    public function test_slug_is_generated_from_the_title_when_creating(): void
+    {
+        $this->actingAsRole('Admin');
+
+        Livewire::test(CreateProject::class)
+            ->fillForm([
+                'title' => 'Plataforma de Gestão Nova',
+                'category' => 'Web',
+                'short_description' => 'Resumo.',
+                'description' => 'Descrição.',
+            ])
+            ->assertFormSet(['slug' => 'plataforma-de-gestao-nova'])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('projects', ['slug' => 'plataforma-de-gestao-nova']);
+    }
+
+    public function test_renaming_an_existing_project_keeps_its_slug(): void
+    {
+        $this->actingAsRole('Admin');
+        $project = $this->makeProject(['title' => 'Nome Antigo', 'slug' => 'nome-antigo']);
+
+        Livewire::test(EditProject::class, ['record' => $project->id])
+            ->fillForm(['title' => 'Nome Totalmente Novo'])
+            ->assertFormSet(['slug' => 'nome-antigo'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $project->refresh();
+        $this->assertSame('Nome Totalmente Novo', $project->title);
+        $this->assertSame('nome-antigo', $project->slug);
+    }
+
+    public function test_seeding_again_after_a_rename_does_not_duplicate_the_original_projects(): void
+    {
+        $this->actingAsRole('Admin');
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $project = Project::where('slug', 'plataforma-de-gestao')->firstOrFail();
+        $total = Project::count();
+
+        Livewire::test(EditProject::class, ['record' => $project->id])
+            ->fillForm(['title' => 'Plataforma Renomeada'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $this->assertSame($total, Project::count());
+    }
+
     public function test_clearing_the_title_shows_a_validation_error_instead_of_crashing(): void
     {
         $this->actingAsRole('Admin');
