@@ -273,9 +273,9 @@ class ProjectCrudTest extends TestCase
         $this->assertSame('o-meu', $project->fresh()->slug);
     }
 
-    // ----------------------------------------------------------------- exclusão
+    // ----------------------------------------------------------------- exclusão (lixeira)
 
-    public function test_admin_deletes_a_project_from_the_list(): void
+    public function test_admin_deleting_a_project_from_the_list_sends_it_to_the_trash(): void
     {
         $this->actingAsRole('Admin');
         $project = $this->makeProject();
@@ -284,11 +284,11 @@ class ProjectCrudTest extends TestCase
         Livewire::test(ListProjects::class)
             ->callTableAction('delete', $project);
 
-        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
-        $this->assertDatabaseHas('projects', ['id' => $other->id]);
+        $this->assertSoftDeleted('projects', ['id' => $project->id]);
+        $this->assertNotSoftDeleted('projects', ['id' => $other->id]);
     }
 
-    public function test_admin_deletes_a_project_from_the_edit_page(): void
+    public function test_admin_deleting_a_project_from_the_edit_page_sends_it_to_the_trash(): void
     {
         $this->actingAsRole('Admin');
         $project = $this->makeProject();
@@ -296,10 +296,10 @@ class ProjectCrudTest extends TestCase
         Livewire::test(EditProject::class, ['record' => $project->id])
             ->callAction('delete');
 
-        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+        $this->assertSoftDeleted('projects', ['id' => $project->id]);
     }
 
-    public function test_admin_deletes_several_projects_at_once(): void
+    public function test_admin_deleting_several_projects_at_once_sends_them_to_the_trash(): void
     {
         $this->actingAsRole('Admin');
         $a = $this->makeProject();
@@ -309,20 +309,114 @@ class ProjectCrudTest extends TestCase
         Livewire::test(ListProjects::class)
             ->callTableBulkAction('delete', [$a, $b]);
 
-        $this->assertDatabaseMissing('projects', ['id' => $a->id]);
-        $this->assertDatabaseMissing('projects', ['id' => $b->id]);
-        $this->assertDatabaseHas('projects', ['id' => $keep->id]);
+        $this->assertSoftDeleted('projects', ['id' => $a->id]);
+        $this->assertSoftDeleted('projects', ['id' => $b->id]);
+        $this->assertNotSoftDeleted('projects', ['id' => $keep->id]);
     }
 
-    public function test_deleting_a_project_removes_its_tasks_comments_and_activity_log(): void
+    public function test_a_trashed_project_leaves_the_list_but_shows_up_with_the_trash_filter(): void
+    {
+        $this->actingAsRole('Admin');
+        $project = $this->makeProject();
+        $project->delete();
+
+        Livewire::test(ListProjects::class)
+            ->assertCanNotSeeTableRecords([$project])
+            ->filterTable('trashed', true)
+            ->assertCanSeeTableRecords([$project]);
+    }
+
+    public function test_admin_restores_a_trashed_project(): void
+    {
+        $this->actingAsRole('Admin');
+        $project = $this->makeProject();
+        $project->delete();
+
+        Livewire::test(ListProjects::class)
+            ->filterTable('trashed', true)
+            ->callTableAction('restore', $project);
+
+        $this->assertNotSoftDeleted('projects', ['id' => $project->id]);
+    }
+
+    public function test_the_trashed_project_edit_page_still_opens_so_it_can_be_restored(): void
+    {
+        $this->actingAsRole('Admin');
+        $project = $this->makeProject();
+        $project->delete();
+
+        Livewire::test(EditProject::class, ['record' => $project->id])
+            ->assertSuccessful()
+            ->callAction('restore');
+
+        $this->assertNotSoftDeleted('projects', ['id' => $project->id]);
+    }
+
+    public function test_only_super_admin_can_delete_a_project_permanently(): void
+    {
+        $this->actingAsRole('Admin');
+        $project = $this->makeProject();
+        $project->delete();
+
+        Livewire::test(ListProjects::class)
+            ->filterTable('trashed', true)
+            ->assertTableActionHidden('forceDelete', $project);
+
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+
+        $this->actingAsRole('Super Admin');
+
+        Livewire::test(ListProjects::class)
+            ->filterTable('trashed', true)
+            ->callTableAction('forceDelete', $project);
+
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+    }
+
+    public function test_editor_cannot_restore_or_force_delete(): void
+    {
+        $editor = $this->actingAsRole('Editor');
+        $project = $this->makeProject();
+        $project->delete();
+
+        $this->assertFalse($editor->can('restore', $project));
+        $this->assertFalse($editor->can('forceDelete', $project));
+    }
+
+    public function test_trashing_a_project_keeps_its_tasks_comments_and_activity_log_for_a_restore(): void
     {
         $user = $this->actingAsRole('Admin');
         $project = $this->makeProject();
         Task::create(['project_id' => $project->id, 'title' => 'Tarefa']);
         Comment::create(['project_id' => $project->id, 'user_id' => $user->id, 'content' => 'Comentário']);
         Activity::log($project->id, 'Algo aconteceu', $user->id);
+        $activities = Activity::count();
 
         Livewire::test(ListProjects::class)->callTableAction('delete', $project);
+
+        // Os dados continuam no banco; só o projeto (e, por consequência, as tarefas) saem de cena.
+        $this->assertDatabaseCount('tasks', 1);
+        $this->assertDatabaseCount('comments', 1);
+        $this->assertDatabaseCount('activities', $activities);
+        $this->assertSame(0, Task::count(), 'tarefas de projeto na lixeira não aparecem nas listas');
+
+        $project->restore();
+
+        $this->assertSame(1, Task::count(), 'voltam junto com o projeto');
+    }
+
+    public function test_permanently_deleting_a_project_removes_its_tasks_comments_and_activity_log(): void
+    {
+        $user = $this->actingAsRole('Super Admin');
+        $project = $this->makeProject();
+        Task::create(['project_id' => $project->id, 'title' => 'Tarefa']);
+        Comment::create(['project_id' => $project->id, 'user_id' => $user->id, 'content' => 'Comentário']);
+        Activity::log($project->id, 'Algo aconteceu', $user->id);
+        $project->delete();
+
+        Livewire::test(ListProjects::class)
+            ->filterTable('trashed', true)
+            ->callTableAction('forceDelete', $project);
 
         $this->assertDatabaseCount('tasks', 0);
         $this->assertDatabaseCount('comments', 0);

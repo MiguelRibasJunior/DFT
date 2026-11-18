@@ -68,9 +68,33 @@ class DatabaseSchemaTest extends TestCase
         }
     }
 
-    public function test_the_last_migration_can_be_rolled_back_and_reapplied(): void
+    public function test_soft_deletes_exist_on_the_three_trashable_tables(): void
     {
-        $this->artisan('migrate:rollback', ['--step' => 1])->assertSuccessful();
+        foreach (['projects', 'messages', 'contact_submissions'] as $table) {
+            $this->assertTrue(Schema::hasColumn($table, 'deleted_at'), "{$table}.deleted_at deveria existir");
+        }
+    }
+
+    public function test_the_soft_deletes_migration_can_be_rolled_back_and_reapplied(): void
+    {
+        $this->artisan('migrate:rollback', [
+            '--path' => 'database/migrations/2026_11_18_235000_add_soft_deletes_to_projects_messages_and_contact_submissions.php',
+        ])->assertSuccessful();
+
+        foreach (['projects', 'messages', 'contact_submissions'] as $table) {
+            $this->assertFalse(Schema::hasColumn($table, 'deleted_at'), "down() deve remover {$table}.deleted_at");
+        }
+
+        $this->artisan('migrate')->assertSuccessful();
+
+        $this->assertTrue(Schema::hasColumn('projects', 'deleted_at'));
+    }
+
+    public function test_the_indexes_migration_can_be_rolled_back_and_reapplied(): void
+    {
+        $this->artisan('migrate:rollback', [
+            '--path' => 'database/migrations/2026_11_18_230000_add_indexes_and_drop_legacy_contact_columns.php',
+        ])->assertSuccessful();
 
         $this->assertTrue(Schema::hasColumn('site_settings', 'whatsapp'), 'down() deve recriar as colunas antigas');
         $this->assertFalse($this->hasIndexOn('projects', ['status', 'featured', 'order']), 'down() deve remover os índices');

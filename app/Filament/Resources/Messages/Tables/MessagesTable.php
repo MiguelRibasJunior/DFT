@@ -8,9 +8,14 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Table;
 
@@ -47,6 +52,7 @@ class MessagesTable
                 Filter::make('archived')
                     ->label('Arquivadas')
                     ->query(fn (Builder $query) => $query->where('archived', true)),
+                TrashedFilter::make()->label('Lixeira'),
             ])
             ->recordActions([
                 EditAction::make()
@@ -62,12 +68,19 @@ class MessagesTable
                         ->label(fn ($record) => $record->archived ? 'Desarquivar' : 'Arquivar')
                         ->icon(Heroicon::OutlinedArchiveBox)
                         ->action(fn ($record) => $record->update(['archived' => ! $record->archived])),
-                    DeleteAction::make()->requiresConfirmation(),
+                    DeleteAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription('A mensagem vai para a lixeira e pode ser restaurada depois.'),
+                    RestoreAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalDescription('Exclusão definitiva: a mensagem não poderá ser recuperada.'),
                 ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->requiresConfirmation(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }

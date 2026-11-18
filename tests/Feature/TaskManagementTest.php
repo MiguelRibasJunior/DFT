@@ -133,14 +133,30 @@ class TaskManagementTest extends TestCase
         $this->assertTrue($results->first()->is($overdue));
     }
 
-    public function test_deleting_a_project_cascades_to_its_tasks(): void
+    public function test_permanently_deleting_a_project_cascades_to_its_tasks(): void
+    {
+        $project = $this->makeProject();
+        $task = $this->makeTask($project);
+
+        $project->forceDelete();
+
+        $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+    }
+
+    public function test_trashing_a_project_hides_its_tasks_without_deleting_them(): void
     {
         $project = $this->makeProject();
         $task = $this->makeTask($project);
 
         $project->delete();
 
-        $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+        $this->assertDatabaseHas('tasks', ['id' => $task->id]);
+        $this->assertNull(Task::find($task->id), 'tarefas de projeto na lixeira ficam fora das consultas');
+        $this->assertSame(0, Task::overdue()->count());
+
+        $project->restore();
+
+        $this->assertNotNull(Task::find($task->id));
     }
 
     public function test_project_progress_stays_unchanged_without_tasks(): void
