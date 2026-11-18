@@ -33,7 +33,7 @@ class ProjectForm
                                     ->label('Título')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (string $state, callable $set) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(fn (?string $state, callable $set) => $set('slug', Str::slug((string) $state))),
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
