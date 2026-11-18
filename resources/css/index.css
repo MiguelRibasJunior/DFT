@@ -606,7 +606,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 576px) {
   .hero-floating-card {
-    font-size: 11px;
+    font-size: 12px;
     padding: 7px 12px;
     gap: 7px;
     border-radius: 9999px !important;

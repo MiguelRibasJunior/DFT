@@ -81,7 +81,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
         {/* Modal Header */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '12px', background: 'rgba(40, 215, 229, 0.15)', border: '1px solid rgba(40, 215, 229, 0.3)', fontSize: '11px', fontWeight: 700, color: '#28D7E5', textTransform: 'uppercase', marginBottom: '12px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '12px', background: 'rgba(40, 215, 229, 0.15)', border: '1px solid rgba(40, 215, 229, 0.3)', fontSize: '12px', fontWeight: 700, color: '#28D7E5', textTransform: 'uppercase', marginBottom: '12px' }}>
             <Sparkles size={12} />
             <span>Devs From Tomorrow Case</span>
           </div>

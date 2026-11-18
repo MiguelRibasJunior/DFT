@@ -226,7 +226,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
 
                     <span
                       style={{
-                        fontSize: '11px',
+                        fontSize: '12px',
                         fontWeight: 600,
                         padding: '4px 10px',
                         borderRadius: '12px',

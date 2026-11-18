@@ -114,7 +114,7 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
           <div>
             <span
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 fontWeight: 600,
                 padding: '4px 10px',
                 borderRadius: '12px',

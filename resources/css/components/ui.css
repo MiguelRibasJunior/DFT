@@ -41,9 +41,9 @@
 
 .dft-logo__tagline {
   font-family: var(--font-heading);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent-cyan);
   white-space: nowrap;
