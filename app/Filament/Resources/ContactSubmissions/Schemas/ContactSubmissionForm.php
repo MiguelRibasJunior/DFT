@@ -37,7 +37,18 @@ class ContactSubmissionForm
                             ->required(),
                         TextInput::make('email_trigger_status')
                             ->label('Notificação por e-mail')
-                            ->disabled(),
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                'pendente' => 'Pendente (sendo enviada)',
+                                'erro' => 'Falhou — o contato está salvo, mas o aviso não saiu',
+                                default => 'Enviada',
+                            })
+                            ->disabled()
+                            ->dehydrated(false),
+                        TextInput::make('email_trigger_error')
+                            ->label('Detalhe do erro do aviso')
+                            ->visible(fn (?\App\Models\ContactSubmission $record): bool => filled($record?->email_trigger_error))
+                            ->disabled()
+                            ->dehydrated(false),
                     ]),
             ]);
     }

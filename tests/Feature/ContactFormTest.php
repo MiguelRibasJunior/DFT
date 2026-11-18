@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\ContactSubmission;
+use App\Jobs\SendContactNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -87,5 +90,53 @@ class ContactFormTest extends TestCase
             'email' => 'maria@acme.com',
             'email_trigger_status' => 'erro',
         ]);
+    }
+
+    public function test_the_email_notice_is_dispatched_after_the_response_and_starts_pending(): void
+    {
+        Bus::fake();
+
+        $this->postJson('/api/contact', $this->validPayload())->assertCreated();
+
+        Bus::assertDispatchedAfterResponse(SendContactNotification::class);
+        $this->assertDatabaseHas('contact_submissions', [
+            'email' => 'maria@acme.com',
+            'email_trigger_status' => 'pendente',
+        ]);
+    }
+
+    public function test_successful_notice_marks_the_submission_as_sent(): void
+    {
+        Http::fake(['*' => Http::response(['success' => true], 200)]);
+
+        $this->postJson('/api/contact', $this->validPayload())->assertCreated();
+
+        $submission = ContactSubmission::first();
+        $this->assertSame('sucesso', $submission->email_trigger_status);
+        $this->assertNull($submission->email_trigger_error);
+        $this->assertNotNull($submission->last_email_sent_at);
+    }
+
+    public function test_network_failure_is_recorded_as_error_and_never_breaks_the_form(): void
+    {
+        Http::fake(['*' => fn () => throw new ConnectionException('cURL error 28: timeout')]);
+
+        $this->postJson('/api/contact', $this->validPayload())
+            ->assertCreated()
+            ->assertJson(['success' => true]);
+
+        $submission = ContactSubmission::first();
+        $this->assertSame('erro', $submission->email_trigger_status);
+        $this->assertStringContainsString('timeout', $submission->email_trigger_error);
+        $this->assertNull($submission->last_email_sent_at);
+    }
+
+    public function test_notice_for_a_submission_deleted_in_the_meantime_is_ignored(): void
+    {
+        Http::fake();
+
+        (new SendContactNotification(999999))->handle();
+
+        Http::assertNothingSent();
     }
 }
