@@ -32,6 +32,11 @@ class Settings extends Page
 
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(['Super Admin', 'Admin']) ?? false;
+    }
+
     public function mount(): void
     {
         $this->form->fill(SiteSetting::current()->toArray());
@@ -54,15 +59,36 @@ class Settings extends Page
                                     ))
                                     ->columnSpanFull(),
                                 TextInput::make('site_name')->label('Nome do site')->required(),
-                                FileUpload::make('logo')->label('Logo')->image()->directory('settings'),
-                                FileUpload::make('favicon')->label('Favicon')->image()->directory('settings'),
+                                FileUpload::make('logo')
+                                    ->label('Logo')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
+                                    ->maxSize(2048)
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->directory('settings'),
+                                FileUpload::make('favicon')
+                                    ->label('Favicon')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml'])
+                                    ->maxSize(1024)
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->directory('settings'),
                             ])->columns(2),
                         Tab::make('SEO')
                             ->schema([
                                 TextInput::make('meta_title')->label('Meta título padrão')->maxLength(70),
                                 TextInput::make('meta_description')->label('Meta descrição')->maxLength(160),
                                 TextInput::make('meta_keywords')->label('Palavras-chave'),
-                                FileUpload::make('og_image')->label('Imagem Open Graph')->image()->directory('settings'),
+                                FileUpload::make('og_image')
+                                    ->label('Imagem Open Graph')
+                                    ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(2048)
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->directory('settings'),
                             ])->columns(2),
                         Tab::make('Integrações')
                             ->schema([
