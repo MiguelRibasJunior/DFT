@@ -67,7 +67,7 @@ class ContactLinkForm
                 Section::make('Link gerado')
                     ->components([
                         Placeholder::make('preview')
-                            ->label('')
+                            ->hiddenLabel()
                             ->content(function (Get $get): HtmlString {
                                 $type = ContactLinkType::resolve($get('type'));
                                 $value = trim((string) $get('value'));

@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\ContactLink;
+use App\Models\SiteSetting;
+use App\Support\PublicPageData;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,7 +12,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('app');
+    // SEO, favicon, logo e analytics editados no admin entram no HTML que o servidor entrega.
+    return view('app', [
+        'page' => PublicPageData::build(
+            SiteSetting::current(),
+            ContactLink::query()->active()->ordered()->get()
+        ),
+    ]);
 });
 
 Route::get('/robots.txt', function () {

@@ -76,6 +76,10 @@ class PublicContentController
             'site_name', 'description', 'logo', 'favicon', 'copyright_text',
         ]);
 
+        // O admin guarda o caminho do arquivo; o site precisa da URL pública (ou null = logo padrão).
+        $settings['logo'] = $current->logoUrl();
+        $settings['favicon'] = $current->faviconUrl();
+
         $settings['footer_links'] = $current->footerLinks();
 
         // Qualquer usuário do painel pode editar estes textos; o HTML é sanitizado na saída.

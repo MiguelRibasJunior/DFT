@@ -18,7 +18,13 @@ const NAV_IDS = NAV_ITEMS.map((item) => item.id);
  * Header público: fixo no topo, muda de aparência ao rolar, destaca a seção atual
  * e troca a navegação por um menu hambúrguer em telas menores.
  */
-export const Header: React.FC = () => {
+interface HeaderProps {
+  /** Logo enviada no admin; sem ela, usa o logo padrão. */
+  logoUrl?: string | null;
+  siteName?: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({ logoUrl, siteName }) => {
   const scrolled = useScrolled(24);
   const activeId = useActiveSection(NAV_IDS);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,7 +59,7 @@ export const Header: React.FC = () => {
           aria-label="Devs From Tomorrow — voltar ao início"
           onClick={(event) => handleAnchorClick(event, () => closeMenu())}
         >
-          <Logo />
+          <Logo imageUrl={logoUrl} alt={siteName} />
         </a>
 
         <DesktopNav items={NAV_ITEMS} activeId={activeId} />

@@ -76,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
         >
           {/* Col 1 — Logo & Summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <Logo size={32} showTagline={false} />
+            <Logo size={32} showTagline={false} imageUrl={settings?.logo} alt={settings?.site_name} />
 
             <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: 1.6, maxWidth: '300px' }}>
               {settings?.description || 'Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, aplicativos mobile, automação n8n e inteligência artificial.'}

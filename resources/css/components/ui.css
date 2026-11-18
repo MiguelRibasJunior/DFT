@@ -24,6 +24,15 @@
   flex-shrink: 0;
 }
 
+/* Logo enviada no admin: altura vem do componente; a largura acompanha a proporção, com teto
+   para não empurrar o hambúrguer para fora em telas estreitas. */
+.dft-logo__image {
+  display: block;
+  width: auto;
+  max-width: min(220px, 60vw);
+  object-fit: contain;
+}
+
 .dft-logo__text {
   display: flex;
   flex-direction: column;
