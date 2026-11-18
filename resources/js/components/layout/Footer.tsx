@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUp, ShieldCheck } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import type { PublicContactLink, PublicSiteSettings } from '../../services/contentService';
 import { CONTACT_COLORS, ContactIcon } from '../ui/ContactIcon';
 import { LegalModal } from '../modals/LegalModal';
@@ -200,23 +200,6 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
           <div>{settings?.copyright_text || '© 2026 Devs From Tomorrow. Todos os direitos reservados.'}</div>
 
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <a
-              href="/admin"
-              style={{
-                color: 'var(--accent-cyan)',
-                textDecoration: 'none',
-                fontSize: '13px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                minHeight: '44px',
-              }}
-            >
-              <ShieldCheck size={14} />
-              <span>Área Administrativa</span>
-            </a>
-            <span>•</span>
             <button type="button" onClick={() => setLegalModal('privacy')} style={{ ...linkButtonStyle, minHeight: '44px' }}>
               Política de privacidade
             </button>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Menu, ShieldCheck, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { NAV_ITEMS, SECTION_IDS, sectionHref } from '../../../config/sections';
 import { useActiveSection } from '../../../hooks/useActiveSection';
 import { useScrolled } from '../../../hooks/useScrolled';
@@ -59,15 +59,6 @@ export const Header: React.FC = () => {
         <DesktopNav items={NAV_ITEMS} activeId={activeId} />
 
         <div className="site-header__actions">
-          <a
-            href="/admin"
-            className="btn btn-secondary site-header__admin"
-            aria-label="Painel administrativo"
-            title="Painel administrativo"
-          >
-            <ShieldCheck size={18} color="#28D7E5" aria-hidden="true" />
-          </a>
-
           <ContactCTAButton size="sm" className="site-header__cta" />
 
           <button
