@@ -21,18 +21,22 @@
 ### Frontend
 - **React 19 & TypeScript 6**: Interface reativa, modular e fortemente tipada.
 - **Vite 8**: Build tool ultra-rápida com HMR (Hot Module Replacement).
-- **Vanilla CSS / Design System**: CSS3 moderno utilizando variáveis HSL, glassmorphism, temas escuros com neons customizados e responsividade mobile-first.
+- **Vanilla CSS / Design System**: CSS3 com variáveis (tokens de cor e tipografia em `resources/css/index.css`), glassmorphism, tema escuro com neons customizados e responsividade mobile-first. Cores com contraste WCAG AA.
 - **Lucide React**: Biblioteca de ícones modernos e leves.
 - **HTML5 Canvas**: Animação de background geométrica interativa de alta performance.
 
 ### Backend (API RESTful)
-- **PHP 8.2+ & Laravel 12**: Estrutura robusta para controle de rotas, API REST e envio de e-mails.
+- **PHP 8.2+ & Laravel 12**: Rotas, API REST pública (somente leitura, exceto o formulário de contato) e aviso de novos contatos por e-mail.
 - **SQLite / MySQL**: Banco de dados para persistência de mensagens de orçamento e contatos.
 - **Throttle Middleware**: Proteção nativa contra spam e abuso de envios nos formulários.
 
 ### Painel Administrativo
 - **Laravel Filament v4**: Painel administrativo completo (Projetos, Tarefas/Kanban, Contatos, Mensagens, CTAs, Configurações, Usuários).
-- **Spatie Laravel-Permission**: Papéis de acesso (*Super Admin*, *Admin*, *Editor*).
+- **Spatie Laravel-Permission**: Papéis de acesso (*Super Admin*, *Admin*, *Editor*), aplicados por *Policies*.
+
+### Qualidade
+- **PHPUnit 11**: suíte de testes automatizados (`php artisan test`) cobrindo painel, API pública, permissões, banco e SEO.
+- **TypeScript + oxlint**: `npm run build` checa os tipos e `npm run lint` roda o linter.
 
 ---
 
@@ -48,20 +52,29 @@
    - Aplicativos Mobile Nativos e Híbridos.
 
 3. **Formulário Inteligente de Orçamentos**:
-   - Seleção interativa do tipo de serviço desejado.
-   - Validação em tempo real dos campos de entrada.
+   - Seleção interativa do tipo de serviço desejado (os cards de Soluções já pré-selecionam o serviço).
+   - Validação dos campos, com erros anunciados para leitores de tela e proteção contra spam (limite de envios e campo oculto).
+   - O contato é gravado no painel na hora; o aviso por e-mail sai depois, sem atrasar a resposta.
 
 4. **Painel Administrativo (Laravel Filament)**:
    - Login com e-mail e senha, com papéis de acesso (*Super Admin*, *Admin*, *Editor*).
    - Gestão de Projetos: status interno, prioridade, responsável, progresso calculado automaticamente pelas tarefas, prazos, Kanban, comentários e histórico de atividades.
    - Gestão de Contatos (leads do formulário) e Mensagens recebidas pelo site.
-   - Gestão de CTAs e das Configurações gerais do site (contato, redes sociais, rodapé, SEO) — refletidas em tempo real no site público.
+   - Gestão de CTAs, Canais de contato (WhatsApp, e-mail, telefone, redes sociais), Rodapé (links, Política de Privacidade e Termos de Uso) e Configurações do site (nome, logo, favicon, SEO e analytics) — refletidas em tempo real no site público.
+   - Lixeira para projetos, mensagens e contatos: apagar não é definitivo, dá para restaurar; a exclusão definitiva é só do Super Admin.
    - Dashboard com indicadores de projetos/tarefas, "Minhas tarefas", próximos prazos e projetos que precisam de atenção.
 
 5. **Otimização SEO & Performance**:
+   - Título, descrição, palavras-chave, favicon e imagem de compartilhamento editáveis no painel, com valores padrão.
    - Tags Open Graph e Twitter Cards para compartilhamento em redes sociais.
-   - Dados Estruturados em JSON-LD (Schema.org ProfessionalService).
+   - Dados Estruturados em JSON-LD (Schema.org), montados com o nome do site e os canais de contato cadastrados.
    - Arquivos `sitemap.xml` e `robots.txt` configurados na pasta `public/`.
+   - Carregamento sob demanda das seções abaixo da dobra (code splitting).
+
+6. **Acessibilidade**:
+   - Navegação completa por teclado, com link "Pular para o conteúdo", menu mobile e modais com foco preso e Esc.
+   - Contraste WCAG AA e layout sem rolagem horizontal a partir de 320 px.
+   - Respeita a preferência de movimento reduzido e mostra um aviso e os contatos quando o JavaScript está desligado.
 
 ---
 
@@ -74,55 +87,64 @@ produção, o `@vite` aponta para os arquivos já compilados em `public/build/`.
 
 ```bash
 DFT/
-├── app/                        # Backend Laravel (Controllers, Filament, Models, Providers)
-│   ├── Filament/
-│   │   ├── Resources/          # Recursos do Painel Admin (Projetos, Contatos, Mensagens, CTAs, Usuários)
-│   │   ├── Pages/              # Páginas customizadas (Configurações, Minhas tarefas)
-│   │   └── Widgets/            # Widgets do Dashboard
-│   ├── Http/Controllers/
-│   │   ├── ContactController.php
-│   │   └── PublicContentController.php
-│   ├── Models/
-│   └── Providers/
+├── app/                        # Backend Laravel
+│   ├── Enums/                  # ContactLinkType, Priority, ProjectManagementStatus, TaskStatus
+│   ├── Filament/               # Painel administrativo
+│   │   ├── Resources/          # Projetos, Contatos, Mensagens, CTAs, Canais de contato, Usuários
+│   │   ├── Pages/              # Dashboard, Minhas tarefas, Configurações, Rodapé
+│   │   └── Widgets/            # Indicadores do Dashboard e da lista de Projetos
+│   ├── Http/
+│   │   ├── Controllers/        # ContactController, PublicContentController
+│   │   └── Requests/           # StoreContactRequest (validação do formulário de contato)
+│   ├── Jobs/                   # SendContactNotification (aviso de contato por e-mail)
+│   ├── Models/                 # Project, Task, Comment, Activity, Cta, ContactLink, ContactSubmission, Message, SiteSetting, User
+│   ├── Policies/               # Quem pode ver/criar/editar/apagar o quê, por papel
+│   ├── Providers/              # Inclui a configuração central do painel Filament
+│   └── Support/                # LinkTarget (validação de links) e PublicPageData (<head> da página: SEO, favicon, JSON-LD)
 ├── bootstrap/                  # Bootstrap e configurações do framework Laravel
 ├── config/                     # Configuração do Laravel (app, database, session, etc.)
-├── database/                   # Migrações e configurações do SQLite/MySQL
-│   └── migrations/
+├── database/
+│   ├── migrations/             # Esquema do banco
+│   └── seeders/                # DatabaseSeeder (papéis + admin, roda em produção) e DemoContentSeeder (só fora de produção)
 ├── public/                     # Front controller do Laravel + assets públicos e SEO
 │   ├── index.php               # Front controller (todas as requisições passam por aqui)
 │   ├── build/                  # Assets compilados pelo Vite (gerado, não versionado)
 │   ├── robots.txt
 │   └── sitemap.xml
-├── resources/                  # Código Fonte do Frontend (React + CSS) + a view Blade
+├── resources/                  # Código-fonte do frontend (React + CSS) e as views Blade
 │   ├── css/
-│   │   └── index.css          # Design System e tokens visuais
+│   │   ├── index.css           # Design system: tokens (cores, fontes) e estilos globais
+│   │   └── components/         # header.css, ui.css
 │   ├── js/
 │   │   ├── components/
-│   │   │   ├── layout/        # OnePageLayout, Footer, GeometricCanvas e header/ (Header, DesktopNav, MobileMenu)
-│   │   │   ├── sections/      # Uma seção por arquivo: Hero, Solutions, Automation, Differentials,
-│   │   │   │                  #   Process, Portfolio, TechStack, CTASection, ContactForm
-│   │   │   ├── modals/        # ProjectModal, SolutionModal, LegalModal
-│   │   │   └── ui/            # Peças reutilizáveis: Logo, SectionHeading, ContactCTAButton, ContactIcon
+│   │   │   ├── layout/         # OnePageLayout, Footer, GeometricCanvas e header/ (Header, DesktopNav, MobileMenu)
+│   │   │   ├── sections/       # Uma seção por arquivo: Hero, Solutions, Automation, Differentials,
+│   │   │   │                   #   Process, Portfolio, TechStack, CTASection, ContactForm
+│   │   │   ├── modals/         # ProjectModal, SolutionModal, LegalModal (Privacidade e Termos)
+│   │   │   └── ui/             # Peças reutilizáveis: Logo, SectionHeading, ContactCTAButton, ContactIcon
 │   │   ├── config/
-│   │   │   └── sections.ts    # IDs das âncoras e itens do menu (fonte única para header, rodapé e seções)
-│   │   ├── hooks/             # useScrolled, useActiveSection, usePublicContent, useIntersectionObserver
+│   │   │   └── sections.ts     # IDs das âncoras e itens do menu (fonte única para header, rodapé e seções)
+│   │   ├── hooks/              # useScrolled, useActiveSection, usePublicContent, useIntersectionObserver,
+│   │   │                       #   useDialogFocus (foco e Esc dos modais)
 │   │   ├── pages/
-│   │   │   └── HomePage.tsx   # Composição da one page (ordem das seções + conteúdo do admin)
-│   │   ├── services/          # Camada de requisições HTTP e API
-│   │   ├── utils/             # scroll.ts (rolagem suave entre seções), security.ts
-│   │   ├── App.tsx            # Componente principal da aplicação
-│   │   └── main.tsx           # Entry point do React
+│   │   │   └── HomePage.tsx    # Composição da one page (ordem das seções + conteúdo do admin)
+│   │   ├── services/           # Requisições à API pública (conteúdo e envio do formulário)
+│   │   ├── utils/              # scroll.ts (rolagem suave entre seções), security.ts
+│   │   ├── App.tsx             # Componente principal da aplicação
+│   │   └── main.tsx            # Entry point do React
 │   └── views/
-│       └── app.blade.php      # View única que monta a SPA via @vite
+│       ├── app.blade.php       # View única que monta a SPA via @vite (SEO, Open Graph, JSON-LD, analytics, <noscript>)
+│       └── filament/           # Views e partials do painel (Kanban, visão geral do projeto, etc.)
 ├── routes/                     # Rotas de API, Web e Console
 │   ├── api.php
 │   ├── console.php
 │   └── web.php
-├── storage/                     # Cache, sessões, logs e uploads do Laravel
-├── .env.example                # Modelo de variáveis de ambiente
+├── storage/                    # Cache, sessões, logs e uploads do Laravel
+├── tests/Feature/              # Testes automatizados (PHPUnit)
+├── .env.example                # Modelo de variáveis de ambiente (já com valores de produção)
 ├── .gitignore                  # Regras de exclusão do Git
-├── composer.json               # Dependências PHP e scripts (composer run dev)
-├── package.json                # Dependências Node.js
+├── composer.json               # Dependências PHP e scripts (composer run dev, composer test)
+├── package.json                # Dependências Node.js e scripts (dev, build, lint)
 ├── tsconfig.json               # Configurações do TypeScript
 └── vite.config.ts              # Plugin Laravel + React + alias do Vite
 ```
@@ -133,7 +155,7 @@ DFT/
 
 ### Pré-requisitos
 - **Node.js**: `v20.x` ou superior
-- **PHP**: `v8.2` ou superior com as extensões `fileinfo` e `pdo_sqlite` habilitadas
+- **PHP**: `v8.2` ou superior com as extensões `fileinfo`, `intl`, `zip`, `mbstring` e `pdo_sqlite` habilitadas (a lista completa está em [Deploy](#-deploy-produção))
 - **Composer**: `v2.x`
 
 ### 1. Clonar o Repositório
@@ -155,6 +177,7 @@ cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --seed
+php artisan storage:link   # necessário para exibir imagens enviadas pelo admin (capas, logo, favicon)
 ```
 > O `.env.example` já vem com valores de **produção** (`APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` do domínio final). Para desenvolver, ajuste no seu `.env`: `APP_ENV=local`, `APP_DEBUG=true` e `APP_URL=http://127.0.0.1:8000`. O `--seed` cria o admin e, fora de produção, também o conteúdo de demonstração.
 
@@ -172,6 +195,13 @@ npm run build
 ```
 Os assets otimizados são gerados em `public/build/` (versionados via `manifest.json`, lido pelo
 `@vite` do Blade) — não é preciso servir nada separado, o próprio Laravel já serve tudo em produção.
+O `npm run build` também checa os tipos do TypeScript; para só rodar o linter, use `npm run lint`.
+
+### 6. Rodar os Testes
+```bash
+php artisan test        # ou: composer test
+```
+A suíte usa um banco temporário e não mexe nos seus dados locais.
 
 ---
 
@@ -260,9 +290,11 @@ O painel é construído com **Laravel Filament** e roda em `/admin` (rota própr
   - **E-mail**: `admin@devsfromtomorrow.com` (ou o valor de `ADMIN_EMAIL` no `.env`)
   - **Senha**: o valor de `ADMIN_PASSWORD` no `.env`. Só em **desenvolvimento**, sem `ADMIN_PASSWORD`, o seeder usa a senha `dft2026admin`; em **produção** ele se recusa a rodar sem `ADMIN_PASSWORD`.
 - O menu lateral é organizado em três grupos:
-  - **Gestão**: Projetos, Minhas tarefas.
-  - **Site / Conteúdo**: Contatos, Mensagens, CTAs, Configurações.
+  - **Gestão**: Projetos (lista, Kanban e visão geral com comentários e histórico), Minhas tarefas.
+  - **Site / Conteúdo**: Contatos, Mensagens, CTAs, Canais de contato, Rodapé, Configurações.
   - **Administração**: Usuários (e seus papéis: *Super Admin*, *Admin*, *Editor*).
+- **Permissões por papel**: o *Editor* cria e edita projetos e atende contatos; o *Admin* também apaga, restaura e gerencia CTAs, canais, rodapé, configurações e usuários; só o *Super Admin* exclui definitivamente (lixeira) e edita outro Super Admin.
+- **Lixeira**: projetos, mensagens e contatos apagados vão para a lixeira (filtro **Lixeira** nas listas) e podem ser restaurados.
 - Alterações feitas no painel (projetos, CTAs, configurações) refletem em tempo real no site público, consumidas pela API pública somente-leitura listada abaixo.
 
 ---
@@ -272,9 +304,12 @@ O painel é construído com **Laravel Filament** e roda em `/admin` (rota própr
 | Método | Rota | Descrição | Autenticação / Limite |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/contact` | Envio de formulário de contato | Throttle (6 requisições/min) |
-| `GET` | `/api/projects` | Lista de projetos publicados | Pública |
+| `GET` | `/api/projects` | Projetos publicados **e** em destaque, na ordem do admin | Pública |
 | `GET` | `/api/ctas/{position}` | CTA ativo de uma posição | Pública |
-| `GET` | `/api/settings` | Configurações públicas do site | Pública |
+| `GET` | `/api/contact-links` | Canais de contato ativos (WhatsApp, e-mail, telefone, redes), com o link já montado | Pública |
+| `GET` | `/api/settings` | Nome, descrição, logo, rodapé e textos legais (HTML sanitizado) | Pública |
+
+As rotas públicas nunca expõem dados internos (analytics, usuários, tarefas, contatos recebidos).
 
 O Painel Administrativo (`/admin`) não usa essas rotas — autenticação e ações administrativas são
 tratadas diretamente pelo Filament (Livewire), sem uma API REST separada.
@@ -285,7 +320,9 @@ tratadas diretamente pelo Filament (Livewire), sem uma API REST separada.
 
 Para manter o fluxo de trabalho limpo e organizado no GitHub, siga obrigatoriamente os padrões de branches estabelecidos:
 
-- **Novas Funcionalidades**: `FEATURE/SITE-01`, `FEATURE/SITE-02`, etc.
+- **Novas Funcionalidades**: `FEATURE/SITE-01`, `FEATURE/SITE-02`, etc. O número `SITE-XX` é o **card da tarefa** no gerenciador de tarefas, não uma sequência livre.
+- **Uma branch por tarefa** e **nunca commitar direto na `main`**: as mudanças entram por Pull Request.
+- Mensagens de commit no formato `feat:`, `fix:`, `docs:`, `test:`, `refactor:`.
 - **Correções de Bugs**: `BUGFIX/SITE-X`
 - **Correções Urgentes (Hotfix)**: `HOTFIX/SITE-Y`
 
