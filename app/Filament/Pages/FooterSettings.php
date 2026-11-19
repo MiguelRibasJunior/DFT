@@ -101,7 +101,7 @@ class FooterSettings extends Page
                 Section::make('Redes sociais e contatos')
                     ->components([
                         \Filament\Forms\Components\Placeholder::make('contact_links_hint')
-                            ->label('')
+                            ->hiddenLabel()
                             ->content(new HtmlString(
                                 'Os ícones de contato do rodapé são gerenciados em '
                                 .'<a href="'.ContactLinkResource::getUrl().'" style="text-decoration:underline">Canais de contato</a>.'

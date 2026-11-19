@@ -64,7 +64,7 @@ class CtaForm
                 Section::make('Preview')
                     ->components([
                         Placeholder::make('preview')
-                            ->label('')
+                            ->hiddenLabel()
                             ->content(function (Get $get): HtmlString {
                                 $title = e($get('title') ?: 'Título do CTA');
                                 $subtitle = e($get('subtitle') ?: '');

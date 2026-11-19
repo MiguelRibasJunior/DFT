@@ -52,6 +52,8 @@ export const HomePage: React.FC = () => {
 
   return (
     <OnePageLayout
+      logoUrl={siteSettings?.logo}
+      siteName={siteSettings?.site_name}
       footer={
         <Suspense fallback={<SectionPlaceholder minHeight="380px" />}>
           <Footer settings={siteSettings} contactLinks={contactLinks} />

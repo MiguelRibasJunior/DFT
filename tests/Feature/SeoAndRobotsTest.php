@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SeoAndRobotsTest extends TestCase
 {
+    use RefreshDatabase; // a página inicial lê as configurações do admin
     public function test_robots_txt_is_accessible_and_protects_admin(): void
     {
         $response = $this->get('/robots.txt');

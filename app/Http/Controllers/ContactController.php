@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContactRequest;
+use App\Jobs\SendContactNotification;
 use App\Models\ContactSubmission;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ContactController
@@ -30,40 +30,9 @@ class ContactController
         $tipoSolucao = strip_tags(trim($validated['tipoSolucao']));
         $descricao = strip_tags(trim($validated['descricao']));
 
-        $adminEmail = config('services.contact.admin_notification_email', env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com'));
-        $emailTriggerStatus = 'sucesso';
-        $emailTriggerError = null;
-
-        // 4. Trigger Email Notification via FormSubmit / Mailer API
-        try {
-            $payload = [
-                '_subject' => "[Devs From Tomorrow] Novo Contato: {$nome} ({$tipoSolucao})",
-                '_replyto' => $email,
-                '_template' => 'table',
-                '_captcha' => 'false',
-                'Destinatario_Admin' => $adminEmail,
-                'Nome_Cliente' => $nome,
-                'Empresa' => $empresa ?? 'Não informada',
-                'Email_Cliente' => $email,
-                'Telefone' => $telefone,
-                'Tipo_Solucao' => $tipoSolucao,
-                'Mensagem_Descricao' => $descricao,
-                'Data_Envio' => date('d/m/Y H:i:s'),
-            ];
-
-            $response = Http::timeout(6)->post("https://formsubmit.co/ajax/{$adminEmail}", $payload);
-
-            if (!$response->successful()) {
-                $emailTriggerStatus = 'erro';
-                $emailTriggerError = "HTTP Status " . $response->status();
-            }
-        } catch (\Throwable $e) {
-            Log::warning("Envio de e-mail de notificação enfrentou timeout/rede: " . $e->getMessage());
-            // Safe fallback so local application records state gracefully
-            $emailTriggerStatus = 'sucesso';
-        }
-
-        // 5. Save to Database with secure error handling
+        // 4. Save to Database with secure error handling.
+        // O contato é gravado ANTES do aviso por e-mail: se o serviço de e-mail estiver lento
+        // ou fora do ar, o lead não se perde e o visitante não espera.
         try {
             $submission = new ContactSubmission();
             $submission->nome = $nome;
@@ -73,9 +42,7 @@ class ContactController
             $submission->tipo_solucao = $tipoSolucao;
             $submission->descricao = $descricao;
             $submission->status = 'nova';
-            $submission->email_trigger_status = $emailTriggerStatus;
-            $submission->email_trigger_error = $emailTriggerError;
-            $submission->last_email_sent_at = now();
+            $submission->email_trigger_status = 'pendente';
             $submission->save();
         } catch (\Throwable $e) {
             Log::error("Falha ao salvar submissão de contato no banco: " . $e->getMessage(), [
@@ -87,6 +54,9 @@ class ContactController
                 'message' => 'Ocorreu um erro ao salvar sua mensagem. Por favor, tente novamente mais tarde.'
             ], 500);
         }
+
+        // 5. Aviso por e-mail depois que a resposta já foi enviada (ver SendContactNotification).
+        SendContactNotification::dispatch($submission->id)->afterResponse();
 
         // Safe, minimal public response (no internal email/database leak)
         return response()->json([

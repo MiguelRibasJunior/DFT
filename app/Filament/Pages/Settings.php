@@ -8,7 +8,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -52,7 +51,8 @@ class Settings extends Page
                         Tab::make('Geral')
                             ->schema([
                                 Placeholder::make('moved')
-                                    ->label('')
+                                    ->label('Onde editar contatos, redes sociais e rodapé')
+                                    ->hiddenLabel()
                                     ->content(new HtmlString(
                                         'Contatos e redes sociais ficam em <a href="'.ContactLinkResource::getUrl().'" style="text-decoration:underline">Canais de contato</a>; '
                                         .'descrição, copyright, links e textos legais ficam em <a href="'.FooterSettings::getUrl().'" style="text-decoration:underline">Rodapé</a>.'
@@ -61,6 +61,7 @@ class Settings extends Page
                                 TextInput::make('site_name')->label('Nome do site')->required(),
                                 FileUpload::make('logo')
                                     ->label('Logo')
+                                    ->helperText('Aparece no topo e no rodapé do site. Sem arquivo, o site usa a logo padrão.')
                                     ->image()
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
                                     ->maxSize(2048)
@@ -69,6 +70,7 @@ class Settings extends Page
                                     ->directory('settings'),
                                 FileUpload::make('favicon')
                                     ->label('Favicon')
+                                    ->helperText('Ícone da aba do navegador. Sem arquivo, o site usa o favicon padrão.')
                                     ->image()
                                     ->acceptedFileTypes(['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml'])
                                     ->maxSize(1024)
@@ -78,11 +80,20 @@ class Settings extends Page
                             ])->columns(2),
                         Tab::make('SEO')
                             ->schema([
-                                TextInput::make('meta_title')->label('Meta título padrão')->maxLength(70),
-                                TextInput::make('meta_description')->label('Meta descrição')->maxLength(160),
-                                TextInput::make('meta_keywords')->label('Palavras-chave'),
+                                TextInput::make('meta_title')
+                                    ->label('Meta título padrão')
+                                    ->maxLength(70)
+                                    ->helperText('Aparece na aba do navegador e no Google. Em branco = título padrão do site.'),
+                                TextInput::make('meta_description')
+                                    ->label('Meta descrição')
+                                    ->maxLength(160)
+                                    ->helperText('Resumo que aparece nos resultados do Google e nas prévias de link. Em branco = descrição padrão.'),
+                                TextInput::make('meta_keywords')
+                                    ->label('Palavras-chave')
+                                    ->helperText('Separadas por vírgula. Em branco = palavras-chave padrão.'),
                                 FileUpload::make('og_image')
                                     ->label('Imagem Open Graph')
+                                    ->helperText('Imagem da prévia ao compartilhar o link (WhatsApp, LinkedIn). Ideal: 1200×630. Sem arquivo, usa a padrão.')
                                     ->image()
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(2048)
@@ -92,9 +103,23 @@ class Settings extends Page
                             ])->columns(2),
                         Tab::make('Integrações')
                             ->schema([
-                                TextInput::make('google_analytics_id')->label('Google Analytics ID'),
-                                TextInput::make('google_tag_manager_id')->label('Google Tag Manager ID'),
-                                Textarea::make('extra_scripts')->label('Scripts adicionais')->rows(4)->columnSpanFull(),
+                                Placeholder::make('analytics_note')
+                                    ->label('Quando os códigos de análise são carregados')
+                                    ->hiddenLabel()
+                                    ->content('Os códigos abaixo só são carregados no site em produção, e somente com o ID preenchido. Deixe em branco para não usar.')
+                                    ->columnSpanFull(),
+                                TextInput::make('google_analytics_id')
+                                    ->label('Google Analytics ID')
+                                    ->placeholder('G-XXXXXXXXXX')
+                                    ->helperText('ID de medição do Google Analytics 4. Começa com G-.')
+                                    ->regex(SiteSetting::GOOGLE_ANALYTICS_PATTERN)
+                                    ->validationMessages(['regex' => 'Use o formato G-XXXXXXXXXX (letras maiúsculas e números).']),
+                                TextInput::make('google_tag_manager_id')
+                                    ->label('Google Tag Manager ID')
+                                    ->placeholder('GTM-XXXXXXX')
+                                    ->helperText('ID do contêiner do Tag Manager. Começa com GTM-.')
+                                    ->regex(SiteSetting::GOOGLE_TAG_MANAGER_PATTERN)
+                                    ->validationMessages(['regex' => 'Use o formato GTM-XXXXXXX (letras maiúsculas e números).']),
                             ])->columns(2),
                     ]),
             ])

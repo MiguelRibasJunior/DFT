@@ -12,6 +12,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ContactSubmissionResource extends Resource
 {
@@ -54,6 +56,13 @@ class ContactSubmissionResource extends Resource
         $count = static::getModel()::where('status', 'nova')->count();
 
         return $count > 0 ? (string) $count : null;
+    }
+
+    /** Permite abrir (e restaurar) um contato que está na lixeira pelo link direto. */
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 
     public static function getPages(): array

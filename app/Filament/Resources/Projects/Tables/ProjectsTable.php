@@ -9,12 +9,17 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -116,14 +121,24 @@ class ProjectsTable
                     ]),
                 TernaryFilter::make('featured')
                     ->label('Destaque'),
+                TrashedFilter::make()->label('Lixeira'),
             ])
             ->recordActions([
                 EditAction::make()->iconButton(),
-                DeleteAction::make()->iconButton()->requiresConfirmation(),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->requiresConfirmation()
+                    ->modalDescription('O projeto sai do site e da lista, mas vai para a lixeira e pode ser restaurado depois.'),
+                RestoreAction::make()->iconButton(),
+                ForceDeleteAction::make()
+                    ->iconButton()
+                    ->modalDescription('Exclusão definitiva: o projeto, suas tarefas, comentários e atividades não poderão ser recuperados.'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->requiresConfirmation(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }

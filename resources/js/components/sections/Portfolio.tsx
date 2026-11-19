@@ -157,7 +157,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFBD2E' }} />
                           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27C93F' }} />
                         </div>
-                        <span style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Devs Tomorrow v2.4</span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-gray)' }}>Devs Tomorrow v2.4</span>
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
@@ -221,7 +221,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                         <span
                           key={tech}
                           style={{
-                            fontSize: '11px',
+                            fontSize: '12px',
                             fontWeight: 600,
                             padding: '4px 10px',
                             borderRadius: '8px',

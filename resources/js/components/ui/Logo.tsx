@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 
 interface LogoProps {
   /** Tamanho do símbolo em pixels. */
@@ -6,6 +6,10 @@ interface LogoProps {
   /** Exibe a linha "Digital Solutions & AI" abaixo do nome. */
   showTagline?: boolean;
   className?: string;
+  /** Logo enviada no admin (Configurações → Geral). Sem ela, ou se a imagem falhar, usa o logo padrão. */
+  imageUrl?: string | null;
+  /** Texto alternativo da imagem enviada (nome do site). */
+  alt?: string;
 }
 
 /**
@@ -13,10 +17,25 @@ interface LogoProps {
  * É apenas visual: quem usa decide se envolve em link. Os IDs dos gradientes
  * são gerados por instância para o logo poder aparecer no header e no rodapé ao mesmo tempo.
  */
-export const Logo: React.FC<LogoProps> = ({ size = 36, showTagline = true, className }) => {
+export const Logo: React.FC<LogoProps> = ({ size = 36, showTagline = true, className, imageUrl, alt = 'Devs From Tomorrow' }) => {
+  const [imageFailed, setImageFailed] = useState(false);
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const outlineId = `logo-outline-${uid}`;
   const fillId = `logo-fill-${uid}`;
+
+  if (imageUrl && !imageFailed) {
+    return (
+      <span className={['dft-logo', className].filter(Boolean).join(' ')}>
+        <img
+          className="dft-logo__image"
+          src={imageUrl}
+          alt={alt}
+          style={{ height: Math.round(size * 1.25) }}
+          onError={() => setImageFailed(true)}
+        />
+      </span>
+    );
+  }
 
   return (
     <span className={['dft-logo', className].filter(Boolean).join(' ')}>
