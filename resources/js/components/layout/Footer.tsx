@@ -4,6 +4,7 @@ import type { PublicContactLink, PublicSiteSettings } from '../../services/conte
 import { CONTACT_COLORS, ContactIcon } from '../ui/ContactIcon';
 import { LegalModal } from '../modals/LegalModal';
 import { Logo } from '../ui/Logo';
+import { useCookieConsent } from '../../hooks/useCookieConsent';
 import { SECTION_IDS, sectionHref } from '../../config/sections';
 import { handleAnchorClick, prefersReducedMotion } from '../../utils/scroll';
 
@@ -33,6 +34,7 @@ const FALLBACK_SOCIAL_LINKS: PublicContactLink[] = [
 
 export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+  const { available: cookiesAvailable, reopen: reopenCookiePreferences } = useCookieConsent();
   const navLinks = settings?.footer_links ?? FALLBACK_NAV_LINKS;
   const socialLinks = contactLinks === null ? FALLBACK_SOCIAL_LINKS : contactLinks ?? [];
 
@@ -207,6 +209,15 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
             <button type="button" onClick={() => setLegalModal('terms')} style={{ ...linkButtonStyle, minHeight: '44px' }}>
               Termos de uso
             </button>
+            {/* Só existe com analytics configurado: sem ele o site usa apenas cookies técnicos. */}
+            {cookiesAvailable && (
+              <>
+                <span>•</span>
+                <button type="button" onClick={reopenCookiePreferences} style={{ ...linkButtonStyle, minHeight: '44px' }}>
+                  Preferências de cookies
+                </button>
+              </>
+            )}
           </div>
 
           <button

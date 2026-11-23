@@ -106,7 +106,7 @@ class Settings extends Page
                                 Placeholder::make('analytics_note')
                                     ->label('Quando os códigos de análise são carregados')
                                     ->hiddenLabel()
-                                    ->content('Os códigos abaixo só são carregados no site em produção, e somente com o ID preenchido. Deixe em branco para não usar.')
+                                    ->content('Os códigos abaixo só valem em produção e com o ID preenchido. Ao preencher, o site passa a mostrar um aviso de cookies (LGPD): o Google só é carregado depois que o visitante aceita. Atualize a Política de Privacidade (Rodapé) para citar os cookies de análise. Deixe em branco para não usar analytics, e então não há aviso.')
                                     ->columnSpanFull(),
                                 TextInput::make('google_analytics_id')
                                     ->label('Google Analytics ID')

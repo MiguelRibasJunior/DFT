@@ -48,7 +48,10 @@ class PublicPageData
             ->values();
 
         // Só em produção: acessos de desenvolvimento e de teste não podem sujar as métricas.
-        $trackingEnabled = app()->isProduction();
+        // Aqui só vai a CONFIGURAÇÃO (os IDs). Os scripts do Google nunca saem no HTML: o navegador só
+        // os carrega depois que o visitante aceita no banner de cookies (resources/js/utils/consent.ts).
+        $ga4 = app()->isProduction() ? $site->googleAnalyticsId() : null;
+        $gtm = app()->isProduction() ? $site->googleTagManagerId() : null;
 
         return [
             'name' => $name,
@@ -62,8 +65,8 @@ class PublicPageData
             'ogImage' => $ogImage,
             // Dimensões e tipo só valem para a imagem padrão; com imagem do admin, não se sabe.
             'ogImageIsDefault' => $customOg === null,
-            'googleAnalyticsId' => $trackingEnabled ? $site->googleAnalyticsId() : null,
-            'googleTagManagerId' => $trackingEnabled ? $site->googleTagManagerId() : null,
+            // null = sem analytics configurado: não há banner, porque só existem cookies técnicos.
+            'analytics' => ($ga4 || $gtm) ? ['ga4' => $ga4, 'gtm' => $gtm] : null,
             'noscriptLinks' => $links->map(fn (ContactLink $link) => [
                 'label' => $link->label,
                 'value' => $link->value,

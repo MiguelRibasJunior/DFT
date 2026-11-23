@@ -209,7 +209,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
    - **Projetos**: só aparecem os marcados como *Publicado* **e** *Destaque*.
    - **CTA** da seção final, e **Rodapé** (descrição, links, Política de Privacidade e Termos de Uso, que precisam de revisão antes de ir ao ar).
    - **Configurações**: nome do site, logo, favicon e SEO (título, descrição, imagem de compartilhamento).
-4. **Deixe em branco os campos de Google Analytics e Tag Manager** (Configurações → Integrações). O site ainda **não tem banner de consentimento de cookies**; ativar analytics sem ele coleta dados de visitantes sem aviso (LGPD).
+4. **Analytics e cookies (LGPD).** Os campos de Google Analytics e Tag Manager (Configurações → Integrações) podem ficar em branco: sem eles o site usa só cookies técnicos e **não mostra aviso nenhum**. Se forem preenchidos, em produção o site passa a exibir o **banner de cookies** e o Google **só é carregado depois que o visitante clica em "Aceitar"** ("Recusar" tem o mesmo peso, e o rodapé ganha "Preferências de cookies" para mudar de ideia; a escolha vale 12 meses). Antes de preencher: **atualize a Política de Privacidade** (Rodapé) para citar os cookies de análise do Google e peça revisão jurídica; o texto da página `/privacidade` e o de demonstração já trazem uma seção "Cookies", mas não substituem a revisão.
 5. **Ative o aviso por e-mail.** O aviso de novo contato é enviado pelo serviço [formsubmit.co](https://formsubmit.co). Na primeira vez que alguém usa o formulário, o serviço envia um e-mail de confirmação para `ADMIN_NOTIFICATION_EMAIL`, que precisa ser aceito para os avisos passarem a chegar. Os contatos são **sempre salvos** no painel, mesmo se o aviso falhar; em **Contatos** dá para ver se cada aviso saiu.
 
 ### 5. Teste final (smoke test)
@@ -218,6 +218,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 - `/api/admin/submissions` responde **404** (não existe API administrativa).
 - Envie um contato pelo formulário: ele aparece em **Contatos** e o e-mail de aviso chega (ou o status mostra `Falhou`).
 - Edite o título em **Configurações → SEO**, salve e confira que ele muda na aba do navegador.
+- Com analytics preenchido: ao abrir o site em uma janela anônima aparece o banner de cookies e, **antes de clicar em "Aceitar"**, a aba Rede do navegador não mostra nenhuma requisição ao Google (googletagmanager.com).
 - `/robots.txt` e `/sitemap.xml` abrem e mostram o domínio certo.
 - Em caso de erro 500, veja `storage/logs/laravel.log`.
 
