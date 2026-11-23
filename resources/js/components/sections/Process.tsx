@@ -65,16 +65,8 @@ export const Process: React.FC = () => {
           }
         />
 
-        {/* 6 Steps Grid / Timeline */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: '24px',
-            position: 'relative',
-          }}
-          className="process-grid"
-        >
+        {/* 6 etapas: 3 em cima e 3 embaixo no desktop (colunas em .process-grid, components/ui.css) */}
+        <div style={{ position: 'relative' }} className="process-grid">
           {steps.map((step) => {
             const StepIcon = step.icon;
             return (
