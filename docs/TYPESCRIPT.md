@@ -90,7 +90,6 @@ import { motion, VARIANTS } from '@/motion';
 // Serviços e chamadas HTTP
 import { getProjects, getSiteSettings } from '@/services/contentService';
 import { addSubmission } from '@/services/submissionService';
-import { login, isAuthenticated } from '@/services/authService';
 
 // Hooks utilitários
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
@@ -182,17 +181,6 @@ export * from './models';
     copyright_text: string | null;
     privacy_url: string | null;
     terms_url: string | null;
-  }
-  ```
-
-- **`AdminUser`**: Modelo do usuário autenticado no painel:
-  ```ts
-  export interface AdminUser {
-    id: string;
-    name: string;
-    email: string;
-    role: 'super_admin' | 'admin';
-    lastLogin?: string;
   }
   ```
 

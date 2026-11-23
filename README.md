@@ -15,12 +15,13 @@ O projeto reúne:
 2. [Início Rápido (Passo a Passo)](#início-rápido-passo-a-passo)
 3. [Modos de Execução](#modos-de-execução)
 4. [Credenciais de Acesso](#credenciais-de-acesso)
-5. [Estrutura do Projeto](#estrutura-do-projeto)
-6. [Convenções de Componentes React](#convenções-de-componentes-react)
-7. [Endpoints da API](#endpoints-da-api)
-8. [Comandos Úteis](#comandos-úteis)
-9. [Solução de Problemas Comuns](#solução-de-problemas-comuns)
-10. [Padronização de Git e Branches](#padronização-de-git-e-branches)
+5. [Deploy (produção)](#deploy-produção)
+6. [Estrutura do Projeto](#estrutura-do-projeto)
+7. [Convenções de Componentes React](#convenções-de-componentes-react)
+8. [Endpoints da API](#endpoints-da-api)
+9. [Comandos Úteis](#comandos-úteis)
+10. [Solução de Problemas Comuns](#solução-de-problemas-comuns)
+11. [Padronização de Git e Branches](#padronização-de-git-e-branches)
 
 ---
 
@@ -83,8 +84,8 @@ Esse comando executa automaticamente as seguintes tarefas:
 1. Cria o arquivo `.env` a partir de `.env.example` (se ainda não existir).
 2. Gera a chave de criptografia da aplicação (`php artisan key:generate`).
 3. Inicializa o arquivo de banco de dados SQLite em `database/database.sqlite`.
-4. Executa todas as 12 migrações de tabelas (`php artisan migrate --force`).
-5. Popula o banco com os dados iniciais do portfólio e cria o usuário Super Admin (`php artisan db:seed --force`).
+4. Executa todas as migrações de tabelas (`php artisan migrate --force`).
+5. Popula o banco com os dados de demonstração do portfólio e cria o usuário Super Admin (`php artisan db:seed --force`). Fora de produção, se `ADMIN_PASSWORD` estiver vazia no `.env`, o admin é criado com a senha de teste descrita em [Credenciais de Acesso](#credenciais-de-acesso).
 
 ### 4. Iniciar a aplicação
 ```bash
@@ -93,8 +94,7 @@ composer run dev
 
 Após iniciar, acesse no seu navegador:
 - **Site Institucional:** http://localhost:8000
-- **Painel Administrativo Filament:** http://localhost:8000/admin
-- **Painel Administrativo React (SPA):** http://localhost:8000/#admin
+- **Painel Administrativo (Filament):** http://localhost:8000/admin
 
 ---
 
@@ -131,15 +131,95 @@ Acessível diretamente em: http://localhost:8000
 
 ## Credenciais de Acesso
 
-Ao inicializar o banco de dados localmente pela primeira vez, utilize as credenciais padrão:
+O painel fica em `/admin` (Filament) e o login é feito nessa tela. O usuário inicial é criado pelo seeder com os valores do `.env`:
 
-| Campo | Valor Padrão |
+| Campo | Valor |
 | :--- | :--- |
-| E-mail | admin@devsfromtomorrow.com |
-| Senha | admin123 |
+| E-mail | `ADMIN_EMAIL` (padrão: admin@devsfromtomorrow.com) |
+| Senha | `ADMIN_PASSWORD`. **Só em desenvolvimento**, se estiver vazia, o seeder usa a senha de teste `dft2026admin` |
 | Perfil | Super Admin |
 
-No modal de login do site há também um botão "Preencher credenciais" que preenche esses dados automaticamente para testes rápidos.
+**Em produção a `ADMIN_PASSWORD` é obrigatória** (no mínimo 12 caracteres, e nunca uma senha de exemplo): o seeder recusa senhas fracas e não cria o admin. O site público não tem link nem modal de login para o painel. Veja [Deploy](#deploy-produção).
+
+---
+
+## Deploy (produção)
+
+Guia para quem vai publicar o site. É um app Laravel comum: **um único servidor PHP serve o site, a API e o painel `/admin`**. Os passos que dependem do tipo de hospedagem (compartilhada, VPS) estão marcados com ⚠️.
+
+### 1. Requisitos do servidor
+- **PHP 8.2 ou superior** com as extensões: `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `iconv`, `intl`, `json`, `libxml`, `mbstring`, `openssl`, `pdo` (+ `pdo_sqlite` **ou** `pdo_mysql`), `phar`, `session`, `tokenizer`, `xml`, `xmlreader`, `xmlwriter` e `zip`. O `composer.json` fixa `config.platform.php = 8.2.0`: as dependências travadas no `composer.lock` funcionam do PHP 8.2 em diante.
+- **Composer 2**.
+- **Node.js 20+** só para gerar o front-end (`npm run build`). `public/build/` **não é versionado**: gere-o na máquina de build (ou no servidor) e garanta que a pasta chegue ao servidor.
+- **Banco de dados:** SQLite (`database/database.sqlite`) funciona para um site pequeno. Para MySQL, ajuste as variáveis `DB_*` do `.env`. ⚠️ A suíte de testes roda em SQLite; se a produção for MySQL, rode as migrations e o teste final (passo 5) nele antes de divulgar.
+- ⚠️ **Raiz do site (document root) deve ser a pasta `public/`**, nunca a raiz do projeto. Em hospedagem compartilhada, aponte o domínio para `public/` no painel da hospedagem. Se não for possível, mantenha o projeto fora da pasta pública e copie só o conteúdo de `public/` para ela, ajustando os caminhos em `index.php`.
+- ⚠️ **Escrita:** `storage/` e `bootstrap/cache/` precisam de permissão de escrita pelo usuário do PHP (e `database/` e o arquivo `database.sqlite`, se usar SQLite).
+- Não há fila nem agendador: **não é preciso configurar `queue:work` nem cron**.
+
+### 2. Variáveis do `.env`
+O `.env.example` vem com valores de **desenvolvimento**. Crie o `.env` a partir dele e troque o que a tabela indica:
+
+| Variável | Valor em produção |
+| :--- | :--- |
+| `APP_ENV` | `production` |
+| `APP_DEBUG` | `false` (**nunca** `true` em produção: expõe erros e segredos) |
+| `APP_URL` | URL final com `https://`, sem barra no fim. Define o domínio do canonical e das imagens de compartilhamento |
+| `APP_KEY` | vem **vazia** no exemplo; gere com `php artisan key:generate` (uma vez; não troque depois). Nunca copie a chave de outro ambiente |
+| `DB_CONNECTION` / `DB_*` | SQLite (padrão) ou os dados do MySQL |
+| `ADMIN_EMAIL` | e-mail do primeiro administrador |
+| `ADMIN_PASSWORD` | **obrigatória em produção:** no mínimo 12 caracteres e **nunca uma senha de exemplo** (`admin123`, `dft2026admin`...). O seeder recusa senhas fracas e não cria o admin |
+| `ADMIN_NOTIFICATION_EMAIL` | e-mail que recebe o aviso de cada novo contato do formulário |
+| `VITE_SITE_URL` | URL final do site. É lida **na hora do build** do front-end (passo 3) |
+| `VITE_API_BASE_URL` | `/api` (padrão) |
+
+> Nunca coloque senhas ou chaves em variáveis `VITE_*`: o Vite as embute no JavaScript que vai para o navegador de todos os visitantes.
+
+### 3. Passo a passo (nesta ordem)
+```bash
+# 1. Código e dependências
+git clone https://github.com/MiguelRibasJunior/DFT.git && cd DFT
+composer install --no-dev --optimize-autoloader
+cp .env.example .env        # depois edite o .env (tabela acima)
+php artisan key:generate
+
+# 2. Front-end (as variáveis VITE_* já precisam estar no .env aqui)
+npm ci && npm run build
+
+# 3. Banco de dados
+touch database/database.sqlite   # só se for SQLite
+php artisan migrate --force
+php artisan db:seed --force      # cria os papéis e o admin (em produção, NÃO cria conteúdo de exemplo)
+
+# 4. Uploads públicos
+php artisan storage:link
+
+# 5. Caches de produção — por último
+php artisan config:cache && php artisan route:cache && php artisan view:cache
+```
+- ⚠️ **Rode o `db:seed` antes do `config:cache`.** O seeder lê `ADMIN_PASSWORD` direto do `.env`; com a configuração em cache, essa leitura volta vazia e o seeder aborta.
+- ⚠️ **`storage:link`** cria um atalho (symlink) de `public/storage` para `storage/app/public`. Algumas hospedagens compartilhadas bloqueiam symlinks; nesse caso, peça ao suporte para liberar ou crie o atalho pelo painel. Sem ele, **as imagens enviadas no admin (capas de projeto, logo, favicon) não aparecem**.
+- **Atualizações futuras:** `git pull`, `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force` e depois `php artisan optimize:clear` seguido dos caches do passo 5.
+- **Faça backup do banco antes de rodar `migrate`** em um site que já tenha dados reais (com SQLite, copie o arquivo `database/database.sqlite`).
+
+### 4. Antes de divulgar o site
+1. **`public/sitemap.xml` e `public/robots.txt`** têm o domínio `https://devsfromtomorrow.com` e as datas escritos à mão. Se o domínio for outro, troque em todas as linhas (`<loc>`, `<lastmod>` e `Sitemap:`).
+2. **Troque a senha do admin** depois do primeiro acesso, e crie um usuário por pessoa (menu **Usuários**) com o papel certo (*Editor* para quem só edita conteúdo).
+3. **Cadastre o conteúdo no painel `/admin`.** Em produção o seeder cria só os papéis e o admin, então o site sai vazio:
+   - **Canais de contato** (WhatsApp, e-mail, telefone, redes): aparecem no formulário de contato, no rodapé e nos dados para o Google.
+   - **Projetos**: só aparecem os marcados como *Publicado* **e** *Destaque*.
+   - **CTA** da seção final, e **Rodapé** (descrição, links, Política de Privacidade e Termos de Uso, que precisam de revisão antes de ir ao ar).
+   - **Configurações**: nome do site, logo, favicon e SEO (título, descrição, imagem de compartilhamento).
+4. **Deixe em branco os campos de Google Analytics e Tag Manager** (Configurações → Integrações). O site ainda **não tem banner de consentimento de cookies**; ativar analytics sem ele coleta dados de visitantes sem aviso (LGPD).
+5. **Ative o aviso por e-mail.** O aviso de novo contato é enviado pelo serviço [formsubmit.co](https://formsubmit.co). Na primeira vez que alguém usa o formulário, o serviço envia um e-mail de confirmação para `ADMIN_NOTIFICATION_EMAIL`, que precisa ser aceito para os avisos passarem a chegar. Os contatos são **sempre salvos** no painel, mesmo se o aviso falhar; em **Contatos** dá para ver se cada aviso saiu.
+
+### 5. Teste final (smoke test)
+- A página inicial abre com HTTPS, sem erro, e as imagens dos projetos e a logo carregam.
+- `/admin` pede login; o login funciona e as telas abrem (Projetos, Contatos, Configurações).
+- `/api/admin/submissions` responde **404** (não existe API administrativa).
+- Envie um contato pelo formulário: ele aparece em **Contatos** e o e-mail de aviso chega (ou o status mostra `Falhou`).
+- Edite o título em **Configurações → SEO**, salve e confira que ele muda na aba do navegador.
+- `/robots.txt` e `/sitemap.xml` abrem e mostram o domínio certo.
+- Em caso de erro 500, veja `storage/logs/laravel.log`.
 
 ---
 
@@ -222,11 +302,10 @@ As interfaces de domínio e tipos reutilizáveis da aplicação ficam centraliza
 - `PublicProject`: Estrutura dos projetos do portfólio exibidos no site (`resources/js/types/models.ts`).
 - `PublicCta`: Dados dinâmicos de chamadas para ação (`resources/js/types/models.ts`).
 - `PublicSiteSettings`: Configurações públicas do site, contatos e redes sociais (`resources/js/types/models.ts`).
-- `AdminUser`: Modelo do usuário administrador logado (`resources/js/types/models.ts`).
 
 Exemplo de importação dos tipos compartilhados via alias:
 ```tsx
-import type { PublicProject, ContactSubmission, AdminUser } from '@/types';
+import type { PublicProject, ContactSubmission } from '@/types';
 ```
 
 Para a documentação completa com detalhes de interfaces e arquitetura do compilador, consulte o guia oficial em [docs/TYPESCRIPT.md](docs/TYPESCRIPT.md).
@@ -274,11 +353,10 @@ Endpoints disponíveis no arquivo `routes/api.php`:
 | POST | /api/contact | Envio do formulário de orçamento | Público (limite de 6 req/min) |
 | GET | /api/projects | Listagem de projetos publicados no portfólio | Público |
 | GET | /api/ctas/{position} | Conteúdo do banner CTA ativo por posição | Público |
-| GET | /api/settings | Configurações públicas (redes sociais, contatos, rodapé) | Público |
-| POST | /api/admin/login | Autenticação administrativa via API | Público |
-| GET | /api/admin/submissions | Listagem de leads e mensagens recebidas | Administrativo |
-| GET/POST/PUT/DELETE | /api/admin/projects | Gerenciamento de projetos do portfólio | Administrativo |
-| PUT | /api/admin/settings | Atualização das configurações institucionais | Administrativo |
+| GET | /api/contact-links | Canais de contato ativos (WhatsApp, e-mail, telefone, redes) | Público |
+| GET | /api/settings | Configurações públicas (nome, logo, rodapé, textos legais) | Público |
+
+**Não existe API administrativa.** Todo o painel (login, projetos, contatos, configurações) é o Filament em `/admin`, com papéis e permissões por policy. Uma versão anterior de rotas `/api/admin/*` não exigia login e foi removida; um teste (`SecurityAuditTest`) garante que elas não voltem.
 
 ---
 
