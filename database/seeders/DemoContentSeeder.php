@@ -46,10 +46,15 @@ class DemoContentSeeder extends Seeder
         ];
 
         foreach ($projects as $order => $project) {
-            Project::updateOrCreate(
+            // withTrashed: o slug é único também entre projetos na lixeira; um demo apagado volta ao ar.
+            $demo = Project::withTrashed()->updateOrCreate(
                 ['slug' => $project['slug']],
                 [...$project, 'status' => 'published', 'featured' => true, 'order' => $order, 'published_at' => now()]
             );
+
+            if ($demo->trashed()) {
+                $demo->restore();
+            }
         }
 
         Cta::updateOrCreate(
@@ -90,10 +95,10 @@ class DemoContentSeeder extends Seeder
         ];
 
         foreach ($messages as $message) {
-            Message::updateOrCreate(
+            Message::withTrashed()->updateOrCreate(
                 ['sender_email' => $message['sender_email'], 'subject' => $message['subject']],
                 $message
-            );
+            )->restore();
         }
 
         SiteSetting::updateOrCreate(['id' => 1], [

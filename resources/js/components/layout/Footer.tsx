@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUp, ShieldCheck } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import type { PublicContactLink, PublicSiteSettings } from '../../services/contentService';
 import { CONTACT_COLORS, ContactIcon } from '../ui/ContactIcon';
 import { LegalModal } from '../modals/LegalModal';
@@ -76,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
         >
           {/* Col 1 — Logo & Summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <Logo size={32} showTagline={false} />
+            <Logo size={32} showTagline={false} imageUrl={settings?.logo} alt={settings?.site_name} />
 
             <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: 1.6, maxWidth: '300px' }}>
               {settings?.description || 'Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, aplicativos mobile, automação n8n e inteligência artificial.'}
@@ -200,23 +200,6 @@ export const Footer: React.FC<FooterProps> = ({ settings, contactLinks }) => {
           <div>{settings?.copyright_text || '© 2026 Devs From Tomorrow. Todos os direitos reservados.'}</div>
 
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <a
-              href="/admin"
-              style={{
-                color: 'var(--accent-cyan)',
-                textDecoration: 'none',
-                fontSize: '13px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                minHeight: '44px',
-              }}
-            >
-              <ShieldCheck size={14} />
-              <span>Área Administrativa</span>
-            </a>
-            <span>•</span>
             <button type="button" onClick={() => setLegalModal('privacy')} style={{ ...linkButtonStyle, minHeight: '44px' }}>
               Política de privacidade
             </button>

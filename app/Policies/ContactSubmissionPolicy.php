@@ -31,4 +31,24 @@ class ContactSubmissionPolicy
     {
         return $user->hasAnyRole(['Super Admin', 'Admin']);
     }
+
+    public function restore(User $user, ContactSubmission $submission): bool
+    {
+        return $user->hasAnyRole(['Super Admin', 'Admin']);
+    }
+
+    public function restoreAny(User $user): bool
+    {
+        return $user->hasAnyRole(['Super Admin', 'Admin']);
+    }
+
+    public function forceDelete(User $user, ContactSubmission $submission): bool
+    {
+        return $user->hasRole('Super Admin');
+    }
+
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->hasRole('Super Admin');
+    }
 }

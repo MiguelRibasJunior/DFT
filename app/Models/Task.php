@@ -40,6 +40,11 @@ class Task extends Model
 
     protected static function booted(): void
     {
+        // Projeto na lixeira: as tarefas dele somem das listas, dos contadores e do "Minhas tarefas"
+        // (e voltam junto com o projeto, se for restaurado). Sem isto, "Minhas tarefas" tentaria
+        // abrir um projeto que não existe mais para o painel.
+        static::addGlobalScope('projeto_ativo', fn (Builder $query) => $query->whereHas('project'));
+
         static::creating(function (Task $task) {
             if ($task->position === null) {
                 $task->position = (static::where('project_id', $task->project_id)->max('position') ?? -1) + 1;

@@ -1,12 +1,10 @@
-
-<?php
-
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+﻿<?php
 
 use App\Models\Project;
 use App\Models\SiteSetting;
 use App\Models\Cta;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,11 +31,10 @@ $renderApp = function () {
     }
 
     return Inertia::render('Home', [
-        'initialData' => [
-            'settings' => $settings,
-            'projects' => $projects,
-            'cta' => $cta,
-        ],
+	'initialData' => [
+    	'projects' => $projects,
+    	'cta' => $cta,
+	],
     ]);
 };
 
@@ -59,8 +56,8 @@ Route::get('/sitemap.xml', function () {
     $path = public_path('sitemap.xml');
 
     if (file_exists($path)) {
-        return response()->file($path, [
-            'Content-Type' => 'text/xml',
+        return response(file_get_contents($path), 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
         ]);
     }
 
@@ -71,15 +68,15 @@ Route::get('/robots.txt', function () {
     $path = public_path('robots.txt');
 
     if (file_exists($path)) {
-        return response()->file($path, [
-            'Content-Type' => 'text/plain',
+        return response(file_get_contents($path), 200, [
+            'Content-Type' => 'text/plain; charset=UTF-8',
         ]);
     }
 
     return response(
-        "User-agent: *\nAllow: /\nSitemap: " . url('/sitemap.xml'),
+        "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: " . url('/sitemap.xml'),
         200,
-        ['Content-Type' => 'text/plain']
+        ['Content-Type' => 'text/plain; charset=UTF-8']
     );
 });
 

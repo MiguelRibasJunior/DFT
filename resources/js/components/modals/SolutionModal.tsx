@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
+import { useDialogFocus } from '../../hooks/useDialogFocus';
 import { X, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -26,21 +27,14 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
   longDescription,
   highlights,
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const dialogRef = useDialogFocus(isOpen, onClose);
 
   if (!isOpen) return null;
 
   // Portal no <body>: fora do <main> (z-index 1), o modal fica acima do header fixo.
   return createPortal(
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="solution-modal-title"
@@ -120,7 +114,7 @@ export const SolutionModal: React.FC<SolutionModalProps> = ({
           <div>
             <span
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 fontWeight: 600,
                 padding: '4px 10px',
                 borderRadius: '12px',

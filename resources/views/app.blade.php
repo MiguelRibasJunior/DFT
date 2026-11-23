@@ -1,38 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#080B14" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="robots" content="index, follow" />
-    <meta name="author" content="Devs From Tomorrow" />
+    <meta name="author" content="{{ $seo['name'] }}" />
 
-    <!-- SEO Meta Tags -->
-    <title>Devs From Tomorrow — Soluções Digitais, Automação &amp; Inteligência Artificial</title>
-    <meta name="description" content="Devs From Tomorrow: Criamos aplicativos móveis, sistemas web sob medida, chatbots inteligentes, automações com n8n e IA para escalar seu negócio com eficiência." />
-    <meta name="keywords" content="desenvolvimento web, IA, automação n8n, chatbots, aplicativos mobile, SaaS, software house, Devs From Tomorrow" />
-    <link rel="canonical" href="https://devsfromtomorrow.com/" />
+    <!-- SEO -->
+    <title>{{ $seo['title'] }}</title>
+    <meta name="description" content="{{ $seo['description'] }}" />
+    <meta name="keywords" content="{{ $seo['keywords'] }}" />
+    <link rel="canonical" href="{{ $seo['canonical'] }}" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="{{ $seo['iconType'] }}" href="{{ $seo['icon'] }}" />
+    <link rel="apple-touch-icon" href="{{ $seo['appleTouchIcon'] }}" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://devsfromtomorrow.com/" />
-    <meta property="og:title" content="Devs From Tomorrow — Soluções Digitais, Automação &amp; IA" />
-    <meta property="og:description" content="Desenvolvemos hoje as soluções digitais de amanhã. Especialistas em sistemas web, apps mobile, automação n8n e inteligência artificial." />
-    <meta property="og:image" content="https://devsfromtomorrow.com/og-image.png" />
-    <meta property="og:locale" content="pt_BR" />
-    <meta property="og:site_name" content="Devs From Tomorrow" />
+    <meta property="og:url" content="{{ $seo['canonical'] }}" />
+    <meta property="og:title" content="{{ $seo['title'] }}" />
+    <meta property="og:description" content="{{ $seo['description'] }}" />
+    <meta property="og:image" content="{{ $seo['ogImage'] }}" />
+    <meta property="og:image:secure_url" content="{{ $seo['ogImage'] }}" />
 
-    <!-- Twitter Card -->
+    @if ($seo['ogImageIsDefault'])
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    @endif
+
+    <meta property="og:image:alt" content="{{ $seo['title'] }}" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="{{ $seo['name'] }}" />
+
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://devsfromtomorrow.com/" />
-    <meta name="twitter:title" content="Devs From Tomorrow — Soluções Digitais &amp; IA" />
-    <meta name="twitter:description" content="Desenvolvimento sob medida de apps, sistemas web e automações inteligentes com n8n e IA." />
-    <meta name="twitter:image" content="https://devsfromtomorrow.com/og-image.png" />
+    <meta name="twitter:url" content="{{ $seo['canonical'] }}" />
+    <meta name="twitter:title" content="{{ $seo['title'] }}" />
+    <meta name="twitter:description" content="{{ $seo['description'] }}" />
+    <meta name="twitter:image" content="{{ $seo['ogImage'] }}" />
+    <meta name="twitter:image:alt" content="{{ $seo['title'] }}" />
 
     <!-- Font Optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,38 +51,84 @@
 
     <!-- Schema.org -->
     <script type="application/ld+json">
-    @verbatim
-    {
-      "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "Devs From Tomorrow",
-      "url": "https://devsfromtomorrow.com/",
-      "logo": "https://devsfromtomorrow.com/favicon.svg",
-      "image": "https://devsfromtomorrow.com/og-image.png",
-      "description": "Desenvolvimento de softwares web, aplicativos móveis, automação com n8n e chatbots com Inteligência Artificial.",
-      "telephone": "+5511999999999",
-      "email": "contato@devsfromtomorrow.com",
-      "priceRange": "$$",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "BR"
-      },
-      "sameAs": [
-        "https://www.instagram.com/devsfromtomorrow/?utm_source=ig_web_button_share_sheet",
-        "https://linkedin.com/company/devs-from-tomorrow",
-        "https://github.com/devs-from-tomorrow"
-      ]
-    }
-    @endverbatim
+    {!! $seo['jsonLd'] !!}
     </script>
+
+    <!-- Google Tag Manager -->
+    @if ($seo['googleTagManagerId'])
+    <script>
+        (function(w,d,s,l,i){
+            w[l]=w[l]||[];
+            w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+            var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),
+                dl=l!='dataLayer'?'&l='+l:'';
+            j.async=true;
+            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+            f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','{{ $seo['googleTagManagerId'] }}');
+    </script>
+    @endif
+
+    <!-- Google Analytics 4 -->
+    @if ($seo['googleAnalyticsId'])
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $seo['googleAnalyticsId'] }}"></script>
+    <script>
+        window.dataLayer=window.dataLayer||[];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js',new Date());
+        gtag('config','{{ $seo['googleAnalyticsId'] }}');
+    </script>
+    @endif
 
     @viteReactRefresh
     @vite(['resources/js/main.tsx', 'resources/css/index.css'])
 
     <x-inertia::head />
-  </head>
+</head>
 
-  <body style="background-color: #080B14; color: #F5F7FA;">
+<body style="background-color: #080B14; color: #F5F7FA;">
+
+    @if ($seo['googleTagManagerId'])
+    <noscript>
+        <iframe
+            src="https://www.googletagmanager.com/ns.html?id={{ $seo['googleTagManagerId'] }}"
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden">
+        </iframe>
+    </noscript>
+    @endif
+
+    <!-- Fallback para visitantes sem JavaScript -->
+    <noscript>
+        <div style="max-width:640px;margin:0 auto;padding:48px 20px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#F5F7FA;background:#080B14;line-height:1.6">
+            <h1 style="font-size:28px;margin:0 0 12px">{{ $seo['name'] }}</h1>
+
+            <p style="margin:0 0 16px;color:#CBD5E1">
+                {{ $seo['description'] }}
+            </p>
+
+            <p style="margin:0 0 16px;color:#CBD5E1">
+                Este site precisa do JavaScript para funcionar por completo.
+                Ative o JavaScript no seu navegador ou fale com a gente diretamente:
+            </p>
+
+            @if (count($seo['noscriptLinks']) > 0)
+            <ul style="margin:0;padding-left:20px">
+                @foreach ($seo['noscriptLinks'] as $link)
+                <li style="margin-bottom:8px">
+                    <a href="{{ $link['href'] }}" style="color:#28D7E5">
+                        {{ $link['label'] }}: {{ $link['value'] }}
+                    </a>
+                </li>
+                @endforeach
+            </ul>
+            @endif
+        </div>
+    </noscript>
+
     <x-inertia::app />
-  </body>
+
+</body>
 </html>

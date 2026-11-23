@@ -4,6 +4,8 @@ namespace App\Filament\Resources\ContactSubmissions\Pages;
 
 use App\Filament\Resources\ContactSubmissions\ContactSubmissionResource;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditContactSubmission extends EditRecord
@@ -14,6 +16,8 @@ class EditContactSubmission extends EditRecord
     {
         return [
             DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
         ];
     }
 }

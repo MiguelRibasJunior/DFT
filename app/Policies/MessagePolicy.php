@@ -31,4 +31,24 @@ class MessagePolicy
     {
         return $user->hasAnyRole(['Super Admin', 'Admin']);
     }
+
+    public function restore(User $user, Message $message): bool
+    {
+        return $user->hasAnyRole(['Super Admin', 'Admin']);
+    }
+
+    public function restoreAny(User $user): bool
+    {
+        return $user->hasAnyRole(['Super Admin', 'Admin']);
+    }
+
+    public function forceDelete(User $user, Message $message): bool
+    {
+        return $user->hasRole('Super Admin');
+    }
+
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->hasRole('Super Admin');
+    }
 }

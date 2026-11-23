@@ -333,6 +333,16 @@ h1, h2, h3, h4, h5, h6 {
   border: none;
   outline: none;
   white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Telas muito estreitas (320 px é a referência do critério de reflow, WCAG 1.4.10):
+   textos longos, como "Quero automatizar um processo", quebram em duas linhas em vez de vazar. */
+@media (max-width: 400px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+  }
 }
 
 .btn-primary {
@@ -596,7 +606,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 576px) {
   .hero-floating-card {
-    font-size: 11px;
+    font-size: 12px;
     padding: 7px 12px;
     gap: 7px;
     border-radius: 9999px !important;

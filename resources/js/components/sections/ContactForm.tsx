@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Send, CheckCircle2, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Send, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import { addSubmission, SubmissionError } from '../../services/submissionService';
 import { sanitizeInput, validateEmail, validatePhone, checkRateLimit, clearRateLimit } from '../../utils/security';
 import type { PublicContactLink } from '../../services/contentService';
@@ -44,10 +44,38 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorNotice, setErrorNotice] = useState<string | null>(null);
+  // Campo que causou o erro (null = erro geral, como limite de envio ou falha do servidor).
+  const [errorField, setErrorField] = useState<'email' | 'telefone' | null>(null);
+  const successRef = useRef<HTMLHeadingElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+  const hasSubmittedRef = useRef(false);
+
+  // Ao enviar, o formulário some e o foco se perderia: leva o foco para a confirmação
+  // (o leitor de tela a lê). Ao voltar para o formulário, devolve o foco ao primeiro campo.
+  useEffect(() => {
+    if (submitted) {
+      hasSubmittedRef.current = true;
+      successRef.current?.focus();
+    } else if (hasSubmittedRef.current) {
+      document.getElementById('contact-nome')?.focus();
+    }
+  }, [submitted]);
+
+  /** Mostra o erro e leva o foco até ele: ao campo inválido, ou ao aviso quando é um erro geral. */
+  const failWith = (message: string, field: 'email' | 'telefone' | null = null) => {
+    setErrorNotice(message);
+    setErrorField(field);
+    // Espera o React renderizar o aviso antes de mover o foco.
+    requestAnimationFrame(() => {
+      if (field) document.getElementById(`contact-${field}`)?.focus();
+      else errorRef.current?.focus();
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorNotice(null);
+    setErrorField(null);
 
     // 1. Honeypot check
     if (formData.website_hp) {
@@ -59,18 +87,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
     // 2. Client-side Rate Limit check (30 seconds)
     const rateCheck = checkRateLimit('contact_form', 30);
     if (!rateCheck.allowed) {
-      setErrorNotice(`Por favor, aguarde ${rateCheck.waitSeconds} segundos antes de enviar uma nova mensagem.`);
+      failWith(`Por favor, aguarde ${rateCheck.waitSeconds} segundos antes de enviar uma nova mensagem.`);
       return;
     }
 
     // 3. Validation
     if (!validateEmail(formData.email)) {
-      setErrorNotice('Por favor, informe um endereço de e-mail válido (ex: seu.nome@empresa.com).');
+      failWith('Por favor, informe um endereço de e-mail válido (ex: seu.nome@empresa.com).', 'email');
       return;
     }
 
     if (!validatePhone(formData.telefone)) {
-      setErrorNotice('Por favor, informe um número de telefone ou WhatsApp válido com DDD.');
+      failWith('Por favor, informe um número de telefone ou WhatsApp válido com DDD.', 'telefone');
       return;
     }
 
@@ -94,7 +122,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
     } catch (err) {
       clearRateLimit('contact_form');
       setLoading(false);
-      setErrorNotice(
+      failWith(
         err instanceof SubmissionError
           ? err.message
           : 'Não foi possível enviar sua mensagem agora. Tente novamente em instantes.'
@@ -136,7 +164,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                 >
                   <CheckCircle2 size={36} color="#28D7E5" />
                 </div>
-                <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px', color: '#F5F7FA' }}>
+                <h3
+                  ref={successRef}
+                  tabIndex={-1}
+                  style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px', color: '#F5F7FA', outline: 'none' }}
+                >
                   Mensagem enviada com sucesso!
                 </h3>
                 <p style={{ fontSize: '15px', color: 'var(--text-gray)', maxWidth: '420px', margin: '0 auto 16px', lineHeight: 1.6 }}>
@@ -152,10 +184,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                   >
                     Enviar outra mensagem
                   </button>
-                  <a href="/admin" className="btn btn-primary" style={{ fontSize: '13px', textDecoration: 'none' }}>
-                    <ShieldCheck size={16} />
-                    <span>Ver no Painel Admin</span>
-                  </a>
                 </div>
               </div>
             ) : (
@@ -173,6 +201,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
 
                 {errorNotice && (
                   <div
+                    id="contact-error"
+                    ref={errorRef}
+                    role="alert"
+                    tabIndex={-1}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -181,12 +213,14 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                       borderRadius: '10px',
                       background: 'rgba(239, 68, 68, 0.12)',
                       border: '1px solid rgba(239, 68, 68, 0.3)',
-                      color: '#EF4444',
+                      // #F87171 sobre o fundo avermelhado: ~6:1 (o antigo #EF4444 dava 4,4:1, abaixo do mínimo AA de 4,5:1).
+                      color: '#F87171',
                       fontSize: '13px',
                       fontWeight: 600,
+                      outline: 'none',
                     }}
                   >
-                    <AlertTriangle size={18} />
+                    <AlertTriangle size={18} aria-hidden="true" />
                     <span>{errorNotice}</span>
                   </div>
                 )}
@@ -200,6 +234,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                     <input
                       id="contact-nome"
                       type="text"
+                      autoComplete="name"
                       required
                       placeholder="Seu nome"
                       value={formData.nome}
@@ -216,6 +251,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                     <input
                       id="contact-empresa"
                       type="text"
+                      autoComplete="organization"
                       placeholder="Nome da sua empresa"
                       value={formData.empresa}
                       onChange={(e) => setFormData({ ...formData, empresa: e.target.value })}
@@ -233,10 +269,16 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                     <input
                       id="contact-email"
                       type="email"
+                      autoComplete="email"
                       required
+                      aria-invalid={errorField === 'email' || undefined}
+                      aria-describedby={errorField === 'email' ? 'contact-error' : undefined}
                       placeholder="seu.email@empresa.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (errorField === 'email') setErrorField(null);
+                      }}
                       className="form-input"
                     />
                   </div>
@@ -249,10 +291,16 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
                     <input
                       id="contact-telefone"
                       type="tel"
+                      autoComplete="tel"
                       required
+                      aria-invalid={errorField === 'telefone' || undefined}
+                      aria-describedby={errorField === 'telefone' ? 'contact-error' : undefined}
                       placeholder="(11) 99999-9999"
                       value={formData.telefone}
-                      onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, telefone: e.target.value });
+                        if (errorField === 'telefone') setErrorField(null);
+                      }}
                       className="form-input"
                     />
                   </div>
@@ -425,6 +473,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialSolution = '', 
         .form-input::placeholder {
           color: #94A3B8;
           opacity: 1;
+        }
+        .form-input[aria-invalid='true'] {
+          border-color: #F87171;
         }
         .form-input:focus,
         .form-input:focus-visible {
