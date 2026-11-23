@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicContentController;
-use App\Http\Controllers\AdminApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,15 +17,6 @@ Route::get('/ctas/{position}', [PublicContentController::class, 'cta']);
 Route::get('/contact-links', [PublicContentController::class, 'contactLinks']);
 Route::get('/settings', [PublicContentController::class, 'settings']);
 
-// Endpoints Administrativos (Painel Admin & Autenticação)
-Route::prefix('admin')->group(function () {
-    Route::post('/login', [AdminApiController::class, 'login']);
-    Route::get('/submissions', [AdminApiController::class, 'submissions']);
-    Route::patch('/submissions/{id}', [AdminApiController::class, 'updateSubmissionStatus']);
-    Route::delete('/submissions/{id}', [AdminApiController::class, 'deleteSubmission']);
-    Route::get('/projects', [AdminApiController::class, 'projects']);
-    Route::post('/projects', [AdminApiController::class, 'storeProject']);
-    Route::put('/projects/{id}', [AdminApiController::class, 'updateProject']);
-    Route::delete('/projects/{id}', [AdminApiController::class, 'deleteProject']);
-    Route::put('/settings', [AdminApiController::class, 'updateSettings']);
-});
+// Não há API administrativa: o painel (/admin) é o Filament, com login, papéis e policies.
+// Uma API paralela de administração precisaria de autenticação própria e passaria por fora
+// das permissões e da lixeira; por isso não existe.

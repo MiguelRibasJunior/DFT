@@ -44,11 +44,4 @@ export interface PublicSiteSettings {
   terms_url: string | null;
 }
 
-export interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  role: 'super_admin' | 'admin';
-  lastLogin?: string;
-}
 
