@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Models\Project;
 use App\Models\SiteSetting;

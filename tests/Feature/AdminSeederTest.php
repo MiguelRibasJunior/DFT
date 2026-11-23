@@ -86,6 +86,56 @@ class AdminSeederTest extends TestCase
         $this->app->make(DatabaseSeeder::class)->run();
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function weakProductionPasswords(): array
+    {
+        return [
+            'senha de exemplo do .env.example antigo' => ['admin123'],
+            'senha padrão de desenvolvimento do seeder' => ['dft2026admin'],
+            'placeholder do .env.example' => ['alterar_para_senha_segura_no_env'],
+            'curta demais (11 caracteres)' => ['Abcdefg1234'],
+            'exemplo em maiúsculas' => ['ADMIN123'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('weakProductionPasswords')]
+    public function test_seeder_refuses_a_weak_or_example_password_in_production(string $password): void
+    {
+        Env::getRepository()->set('ADMIN_PASSWORD', $password);
+        $this->app['env'] = 'production';
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('fraca');
+
+        $this->app->make(DatabaseSeeder::class)->run();
+    }
+
+    public function test_a_weak_password_never_creates_the_admin_in_production(): void
+    {
+        Env::getRepository()->set('ADMIN_PASSWORD', 'admin123');
+        $this->app['env'] = 'production';
+
+        try {
+            $this->app->make(DatabaseSeeder::class)->run();
+        } catch (\RuntimeException) {
+            // esperado
+        }
+
+        $this->assertSame(0, User::count());
+    }
+
+    public function test_the_example_password_is_still_fine_outside_production(): void
+    {
+        Env::getRepository()->set('ADMIN_EMAIL', 'dev@exemplo.com');
+        Env::getRepository()->set('ADMIN_PASSWORD', 'admin123');
+
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertNotNull(User::where('email', 'dev@exemplo.com')->first());
+    }
+
     public function test_seeder_is_idempotent_and_does_not_reset_an_existing_admin_password(): void
     {
         Env::getRepository()->set('ADMIN_EMAIL', 'dono@exemplo.com');

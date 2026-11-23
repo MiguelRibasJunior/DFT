@@ -8,6 +8,9 @@ use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
+    /** Senhas que aparecem no repositório; nunca aceitas em produção. */
+    private const WEAK_PASSWORDS = ['admin123', 'dft2026admin', 'alterar_para_senha_segura_no_env', 'password', 'senha123'];
+
     public function run(): void
     {
         foreach (['Super Admin', 'Admin', 'Editor'] as $role) {
@@ -22,6 +25,12 @@ class DatabaseSeeder extends Seeder
             }
 
             $password = 'dft2026admin';
+        }
+
+        // Em produção, nada de senha de exemplo ou curta: os valores abaixo estão em arquivos
+        // públicos do repositório (.env.example, README, seeder) e seriam o primeiro palpite de qualquer atacante.
+        if (app()->isProduction() && (strlen($password) < 12 || in_array(strtolower($password), self::WEAK_PASSWORDS, true))) {
+            throw new \RuntimeException('ADMIN_PASSWORD fraca demais para produção: use pelo menos 12 caracteres e não use senhas de exemplo.');
         }
 
         $admin = User::firstOrCreate(

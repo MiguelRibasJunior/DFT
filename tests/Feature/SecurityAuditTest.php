@@ -126,4 +126,51 @@ class SecurityAuditTest extends TestCase
         $this->assertStringNotContainsString('secret_db_pass_123', $response->getContent());
         $this->assertStringNotContainsString('RuntimeException', $response->getContent());
     }
+
+    /**
+     * Não existe API administrativa. Uma versão sem autenticação chegou a ir para a main
+     * (listava e apagava contatos e projetos sem login); este teste impede que volte.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function removedAdminApiRoutes(): array
+    {
+        return [
+            'login' => ['POST', '/api/admin/login'],
+            'listar contatos' => ['GET', '/api/admin/submissions'],
+            'mudar status de contato' => ['PATCH', '/api/admin/submissions/1'],
+            'apagar contato' => ['DELETE', '/api/admin/submissions/1'],
+            'listar projetos' => ['GET', '/api/admin/projects'],
+            'criar projeto' => ['POST', '/api/admin/projects'],
+            'editar projeto' => ['PUT', '/api/admin/projects/1'],
+            'apagar projeto' => ['DELETE', '/api/admin/projects/1'],
+            'alterar configurações' => ['PUT', '/api/admin/settings'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('removedAdminApiRoutes')]
+    public function test_there_is_no_administrative_api_and_it_never_exposes_data_without_login(string $method, string $uri): void
+    {
+        \App\Models\ContactSubmission::create([
+            'nome' => 'Visitante', 'email' => 'v@exemplo.com', 'telefone' => '(11) 98765-4321',
+            'tipo_solucao' => 'Site', 'descricao' => 'Dado pessoal que não pode vazar.',
+        ]);
+
+        $response = $this->json($method, $uri, []);
+
+        // 404 (GET, pela página de erro) ou 405 (demais métodos, pela rota-fallback que só atende GET):
+        // o que importa é que nenhuma ação exista e nada seja devolvido ou alterado.
+        $this->assertContains($response->getStatusCode(), [404, 405]);
+        $this->assertStringNotContainsString('v@exemplo.com', $response->getContent());
+        $this->assertDatabaseCount('contact_submissions', 1);
+    }
+
+    public function test_no_route_under_api_admin_is_registered(): void
+    {
+        $registered = collect(\Illuminate\Support\Facades\Route::getRoutes()->getRoutes())
+            ->map(fn ($route) => $route->uri())
+            ->filter(fn (string $uri) => str_starts_with($uri, 'api/admin'));
+
+        $this->assertCount(0, $registered, 'Rotas /api/admin/* não devem existir: o admin é o Filament.');
+    }
 }
