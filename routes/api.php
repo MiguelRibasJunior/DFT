@@ -15,6 +15,7 @@ use App\Http\Controllers\AdminApiController;
 Route::middleware('throttle:6,1')->post('/contact', [ContactController::class, 'store']);
 Route::get('/projects', [PublicContentController::class, 'projects']);
 Route::get('/ctas/{position}', [PublicContentController::class, 'cta']);
+Route::get('/contact-links', [PublicContentController::class, 'contactLinks']);
 Route::get('/settings', [PublicContentController::class, 'settings']);
 
 // Endpoints Administrativos (Painel Admin & Autenticação)

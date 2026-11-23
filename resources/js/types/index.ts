@@ -3,6 +3,4 @@
  * Devs From Tomorrow — Shared Types
  */
 
-export * from './contact';
 export * from './models';
-

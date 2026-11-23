@@ -52,6 +52,10 @@ export function checkRateLimit(actionKey: string, cooldownSeconds: number = 30):
   return { allowed: true };
 }
 
+export function clearRateLimit(actionKey: string): void {
+  localStorage.removeItem(`dft_rate_limit_${actionKey}`);
+}
+
 export interface FileValidationResult {
   valid: boolean;
   error?: string;

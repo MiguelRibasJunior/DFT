@@ -33,7 +33,13 @@ class ProjectForm
                                     ->label('Título')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (string $state, callable $set) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(function (?string $state, callable $set, string $operation): void {
+                                        // O slug é um identificador: só é gerado ao criar. Renomear um projeto
+                                        // existente não pode trocá-lo (o seeder o usa como chave).
+                                        if ($operation === 'create') {
+                                            $set('slug', Str::slug((string) $state));
+                                        }
+                                    }),
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
@@ -57,13 +63,24 @@ class ProjectForm
                                     ->columnSpanFull(),
                                 FileUpload::make('cover_image')
                                     ->label('Imagem de capa')
+                                    ->helperText('JPG, PNG ou WebP, até 2 MB. Aparece no card do projeto na Home.')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(2048)
+                                    ->disk('public')
+                                    ->visibility('public')
                                     ->directory('projects'),
                                 FileUpload::make('gallery')
                                     ->label('Galeria de imagens')
+                                    ->helperText('Até 8 imagens JPG, PNG ou WebP, de até 2 MB cada.')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->maxSize(2048)
+                                    ->maxFiles(8)
                                     ->multiple()
                                     ->reorderable()
+                                    ->disk('public')
+                                    ->visibility('public')
                                     ->directory('projects/gallery'),
                             ])->columns(2),
                         Tab::make('Gestão')
@@ -148,7 +165,8 @@ class ProjectForm
                                     ->required()
                                     ->default('draft'),
                                 Toggle::make('featured')
-                                    ->label('Projeto em destaque'),
+                                    ->label('Projeto em destaque')
+                                    ->helperText('Só projetos publicados e marcados como destaque aparecem na Home do site.'),
                                 TextInput::make('order')
                                     ->label('Ordem de exibição')
                                     ->numeric()

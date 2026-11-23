@@ -1,8 +1,12 @@
+
 <?php
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,12 +16,48 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-    $middleware->web(append: [
-        \App\Http\Middleware\HandleInertiaRequests::class,
-    ]);
+        // Middleware necessário para o funcionamento do Inertia.
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->respond(function ($response, \Throwable $e, \Illuminate\Http\Request $request) {
+
+        // Sanitização das respostas de exceções da API.
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                if ($e instanceof \Illuminate\Validation\ValidationException) {
+                    return null;
+                }
+
+                if ($e instanceof HttpExceptionInterface) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $e->getMessage() ?: 'Erro ao processar a requisição.',
+                    ], $e->getStatusCode());
+                }
+
+                Log::error('Exceção capturada na API: '.$e->getMessage(), [
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                    'exception' => $e,
+                ]);
+
+                $hideInternals = ! config('app.debug') || app()->isProduction();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $hideInternals
+                        ? 'Ocorreu um erro interno no servidor. Tente novamente mais tarde.'
+                        : $e->getMessage(),
+                ], 500);
+            }
+
+            return null;
+        });
+
+        // Tratamento de erros para navegação Inertia.
+        $exceptions->respond(function ($response, \Throwable $e, Request $request) {
             if ($response->getStatusCode() === 419) {
                 return back()->with([
                     'error' => 'A sessão expirou. Por favor, tente novamente.',

@@ -1,6 +1,10 @@
 # Devs From Tomorrow - Robots Configuration
 User-agent: *
 Allow: /
-Disallow: /api/admin/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /livewire/
+Disallow: /filament/
+Disallow: /api/
 
 Sitemap: https://devsfromtomorrow.com/sitemap.xml

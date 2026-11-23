@@ -79,8 +79,7 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('featured')
                     ->label('Destaque')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->boolean(),
                 TextColumn::make('order')
                     ->label('Ordem')
                     ->numeric()
@@ -93,6 +92,7 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('order')
+            ->reorderable('order')
             ->recordUrl(fn ($record) => ProjectResource::getUrl('overview', ['record' => $record]))
             ->filters([
                 SelectFilter::make('management_status')

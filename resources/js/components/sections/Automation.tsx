@@ -1,0 +1,226 @@
+import React from 'react';
+import { Cpu, ArrowRight, Zap, Database, Bot, Workflow, MessageCircle, FileText, Bell, Layers } from 'lucide-react';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { SECTION_IDS, sectionHref } from '../../config/sections';
+import { handleAnchorClick } from '../../utils/scroll';
+import { SectionHeading } from '../ui/SectionHeading';
+
+export const Automation: React.FC = () => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+
+  const steps = [
+    { label: 'Entrada de Dados', icon: Database, color: '#60A5FA' },
+    { label: 'Automação n8n', icon: Workflow, color: '#28D7E5' },
+    { label: 'Inteligência Artificial', icon: Bot, color: '#A78BFA' },
+    { label: 'Sistema Interno', icon: Layers, color: '#60A5FA' },
+    { label: 'Resultado Rápido', icon: Zap, color: '#28D7E5' },
+  ];
+
+  const examples = [
+    { title: 'Atendimento automático', icon: MessageCircle },
+    { title: 'Geração de relatórios', icon: FileText },
+    { title: 'Integração com WhatsApp', icon: MessageCircle },
+    { title: 'Processamento de documentos', icon: FileText },
+    { title: 'Envio de notificações', icon: Bell },
+    { title: 'Organização de dados', icon: Database },
+    { title: 'Assistentes virtuais', icon: Bot },
+    { title: 'Integração com CRM e ERP', icon: Layers },
+  ];
+
+  return (
+    <section
+      id={SECTION_IDS.automacao}
+      aria-labelledby="automacao-titulo"
+      ref={ref}
+      style={{
+        padding: '100px 0',
+        background: 'linear-gradient(180deg, #080B14 0%, #101524 50%, #080B14 100%)',
+        position: 'relative',
+        borderTop: '1px solid rgba(41, 50, 71, 0.5)',
+        borderBottom: '1px solid rgba(41, 50, 71, 0.5)',
+      }}
+    >
+      {/* Background Triangles */}
+      <div className="triangle-decor triangle-cyan" aria-hidden="true" style={{ top: '10%', left: '5%', opacity: 0.2 }} />
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ bottom: '15%', right: '5%', opacity: 0.2 }} />
+
+      {/* Glow Center Accent */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '30%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '600px',
+          height: '350px',
+          background: 'radial-gradient(circle, rgba(123, 77, 255, 0.12) 0%, rgba(8, 11, 20, 0) 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        <SectionHeading
+          id="automacao-titulo"
+          eyebrow="Ecossistema n8n & IA"
+          eyebrowIcon={Cpu}
+          accent="purple"
+          title="Automatize processos e ganhe eficiência"
+          subtitle="Conectamos sistemas, ferramentas e inteligências artificiais para reduzir atividades repetitivas, organizar informações e acelerar processos."
+          revealed={isVisible}
+          className="section-heading--wide"
+        />
+
+        {/* Visual Flow Diagram */}
+        <div
+          className="glass-card"
+          style={{
+            padding: '36px 24px',
+            marginBottom: '48px',
+            borderColor: 'rgba(40, 215, 229, 0.3)',
+            background: 'rgba(16, 21, 36, 0.9)',
+          }}
+        >
+          <div
+            style={{
+              textAlign: 'center',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: 'var(--accent-cyan)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '24px',
+            }}
+          >
+            Fluxo de Automação Inteligente
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              flexWrap: 'wrap',
+            }}
+            className="flow-container"
+          >
+            {steps.map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <React.Fragment key={step.label}>
+                  <div
+                    style={{
+                      flex: '1 1 150px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '16px 12px',
+                      borderRadius: '12px',
+                      background: 'rgba(8, 11, 20, 0.8)',
+                      border: '1px solid rgba(41, 50, 71, 0.8)',
+                      textAlign: 'center',
+                      transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+                    }}
+                    className="flow-node"
+                  >
+                    <div
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '50%',
+                        background: `rgba(${
+                          step.color === '#A78BFA' ? '167, 139, 250' : step.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
+                        }, 0.15)`,
+                        border: `1px solid ${step.color}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '10px',
+                      }}
+                    >
+                      <Icon size={20} color={step.color} />
+                    </div>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#F5F7FA' }}>{step.label}</span>
+                  </div>
+
+                  {idx < steps.length - 1 && (
+                    <div className="flow-arrow" style={{ color: 'var(--accent-cyan)', opacity: 0.85 }}>
+                      <ArrowRight size={22} />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 8 Example Pills Grid */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 700, textAlign: 'center', marginBottom: '24px', color: 'var(--text-gray)' }}>
+            Exemplos de automações que desenvolvemos:
+          </h3>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))',
+              gap: '16px',
+            }}
+          >
+            {examples.map((item) => {
+              const ExIcon = item.icon;
+              return (
+                <div
+                  key={item.title}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '14px 18px',
+                    borderRadius: '12px',
+                    background: 'rgba(16, 21, 36, 0.65)',
+                    border: '1px solid rgba(41, 50, 71, 0.6)',
+                    transition: 'transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease',
+                  }}
+                  className="example-pill"
+                >
+                  <ExIcon size={18} color="#28D7E5" />
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#F5F7FA' }}>{item.title}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom Action Button */}
+        <div style={{ textAlign: 'center' }}>
+          <a href={sectionHref(SECTION_IDS.contato)} onClick={handleAnchorClick} className="btn btn-primary btn-glow">
+            <Zap size={18} />
+            <span>Quero automatizar um processo</span>
+          </a>
+        </div>
+      </div>
+
+      <style>{`
+        .example-pill:hover {
+          border-color: rgba(40, 215, 229, 0.5);
+          background: rgba(22, 30, 52, 0.9);
+          transform: translateY(-2px);
+        }
+        .flow-node:hover {
+          border-color: #28D7E5;
+          box-shadow: 0 0 15px rgba(40, 215, 229, 0.2);
+        }
+        @media (max-width: 768px) {
+          .flow-arrow {
+            transform: rotate(90deg);
+            margin: 4px 0;
+          }
+          .flow-container {
+            flex-direction: column;
+          }
+        }
+      `}</style>
+    </section>
+  );
+};

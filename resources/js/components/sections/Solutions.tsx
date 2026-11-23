@@ -1,0 +1,299 @@
+import React, { useState } from 'react';
+import { Bot, Cpu, Smartphone, Globe, Layers, Share2, ArrowUpRight } from 'lucide-react';
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
+import { SolutionModal } from '../modals/SolutionModal';
+import { SectionHeading } from '../ui/SectionHeading';
+import { SECTION_IDS } from '../../config/sections';
+
+interface SolutionsProps {
+  onSelectSolution: (solutionName: string) => void;
+}
+
+export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+  const [activeSolution, setActiveSolution] = useState<string | null>(null);
+
+  const solutions = [
+    {
+      id: 'chatbots',
+      icon: Bot,
+      color: '#A78BFA',
+      title: 'Chatbots Inteligentes',
+      formValue: 'Chatbot',
+      description:
+        'Chatbots personalizados para atendimento, suporte, vendas, captação de informações e comunicação automatizada.',
+      longDescription:
+        'Criamos chatbots com inteligência artificial que atendem, qualificam leads e tiram dúvidas 24 horas por dia, integrados ao WhatsApp, ao site ou a sistemas internos. Cada assistente é treinado com a linguagem, os processos e o tom de voz da sua empresa.',
+      highlights: [
+        'Atendimento automatizado 24 horas por dia',
+        'Integração com WhatsApp e outros canais',
+        'Qualificação automática de leads',
+        'Relatórios de conversas e desempenho',
+      ],
+      badge: 'IA & Agentes',
+    },
+    {
+      id: 'automacao',
+      icon: Cpu,
+      color: '#28D7E5',
+      title: 'Automação com IA e n8n',
+      formValue: 'Automação com IA e n8n',
+      description:
+        'Automação de processos utilizando n8n, inteligência artificial, APIs e integrações entre diferentes plataformas.',
+      longDescription:
+        'Conectamos suas ferramentas, sistemas e equipes por meio de fluxos automatizados no n8n, eliminando tarefas repetitivas e reduzindo erros manuais. Da geração de relatórios ao envio de notificações, cada fluxo é desenhado sob medida para o seu processo.',
+      highlights: [
+        'Fluxos de automação personalizados no n8n',
+        'Integração entre sistemas e APIs',
+        'Redução de tarefas manuais e repetitivas',
+        'Monitoramento e ajustes contínuos',
+      ],
+      badge: 'Eficiência n8n',
+    },
+    {
+      id: 'aplicativos',
+      icon: Smartphone,
+      color: '#60A5FA',
+      title: 'Aplicativos',
+      formValue: 'Aplicativo',
+      description:
+        'Desenvolvimento de aplicativos modernos, intuitivos e responsivos para dispositivos Android e iOS.',
+      longDescription:
+        'Desenvolvemos aplicativos nativos e híbridos para Android e iOS, com foco em performance, usabilidade e escalabilidade — do primeiro protótipo até a publicação nas lojas.',
+      highlights: [
+        'Design de interface intuitivo',
+        'Publicação na Google Play e App Store',
+        'Integração com APIs e backend',
+        'Suporte e evolução contínua',
+      ],
+      badge: 'iOS & Android',
+    },
+    {
+      id: 'sites',
+      icon: Globe,
+      color: '#28D7E5',
+      title: 'Sites Institucionais',
+      formValue: 'Site',
+      description:
+        'Sites rápidos, responsivos e profissionais, desenvolvidos para fortalecer a presença digital de empresas e projetos.',
+      longDescription:
+        'Criamos sites rápidos, responsivos e otimizados para SEO, pensados para fortalecer a presença digital da sua marca e transformar visitantes em clientes.',
+      highlights: [
+        'Design responsivo mobile-first',
+        'Otimização de SEO e performance',
+        'Integração com formulários e analytics',
+        'Fácil atualização de conteúdo',
+      ],
+      badge: 'Alta Performance',
+    },
+    {
+      id: 'sistemas',
+      icon: Layers,
+      color: '#A78BFA',
+      title: 'Sistemas Online',
+      formValue: 'Sistema online',
+      description:
+        'Plataformas web personalizadas para gerenciamento de informações, processos, usuários, serviços e operações.',
+      longDescription:
+        'Desenvolvemos plataformas web sob medida — dashboards, portais e sistemas de gestão — para organizar processos, dados e equipes em um único lugar.',
+      highlights: [
+        'Painéis e dashboards personalizados',
+        'Gestão de usuários e permissões',
+        'Relatórios e indicadores em tempo real',
+        'Arquitetura pensada para escalar',
+      ],
+      badge: 'SaaS & Dashboards',
+    },
+    {
+      id: 'integracoes',
+      icon: Share2,
+      color: '#60A5FA',
+      title: 'Integrações e APIs',
+      formValue: 'Integração entre sistemas',
+      description:
+        'Integração entre sistemas, bancos de dados, serviços externos e plataformas digitais por meio de APIs.',
+      longDescription:
+        'Conectamos sistemas, bancos de dados e plataformas externas por meio de APIs REST e GraphQL, garantindo que suas ferramentas troquem informações de forma segura e automática.',
+      highlights: [
+        'Integração entre múltiplos sistemas',
+        'APIs REST e GraphQL',
+        'Sincronização automática de dados',
+        'Segurança e monitoramento de acessos',
+      ],
+      badge: 'Conectividade Total',
+    },
+  ];
+
+  const activeItem = solutions.find((item) => item.id === activeSolution) ?? null;
+
+  return (
+    <section id={SECTION_IDS.solucoes} aria-labelledby="solucoes-titulo" ref={ref} style={{ padding: '100px 0', position: 'relative' }}>
+      {/* Background Decor */}
+      <div className="triangle-decor triangle-purple" aria-hidden="true" style={{ top: '8%', left: '4%', opacity: 0.2 }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: '10%',
+          right: '5%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(40, 215, 229, 0.1) 0%, rgba(8, 11, 20, 0) 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="container">
+        <SectionHeading
+          id="solucoes-titulo"
+          eyebrow="Serviços Especializados"
+          accent="blue"
+          title="Soluções digitais para diferentes desafios"
+          subtitle="Desenvolvemos produtos personalizados, conectando tecnologia, estratégia e experiência do usuário."
+          revealed={isVisible}
+        />
+
+        {/* 6 Cards Grid with Stagger */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+            gap: '24px',
+          }}
+        >
+          {solutions.map((item, index) => {
+            const IconComp = item.icon;
+            return (
+              <div
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                className={`glass-card solution-card reveal-item stagger-${index + 1} ${
+                  isVisible ? 'reveal-visible' : ''
+                }`}
+                onClick={() => setActiveSolution(item.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveSolution(item.id);
+                  }
+                }}
+                aria-label={`Ver detalhes de ${item.title}`}
+                style={{
+                  padding: '32px 28px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  minHeight: '260px',
+                }}
+              >
+                {/* Triangular Decor in Card Background */}
+                <div
+                  className={`triangle-decor ${
+                    item.color === '#A78BFA' ? 'triangle-purple' : item.color === '#28D7E5' ? 'triangle-cyan' : 'triangle-blue'
+                  }`}
+                  aria-hidden="true"
+                  style={{
+                    top: '-10px',
+                    right: '-10px',
+                    opacity: 0.25,
+                  }}
+                />
+
+                <div>
+                  {/* Top Row: Icon + Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <div
+                      className="icon-box"
+                      style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '14px',
+                        background: `rgba(${
+                          item.color === '#A78BFA' ? '167, 139, 250' : item.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
+                        }, 0.12)`,
+                        border: `1px solid rgba(${
+                          item.color === '#A78BFA' ? '167, 139, 250' : item.color === '#28D7E5' ? '40, 215, 229' : '96, 165, 250'
+                        }, 0.3)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    >
+                      <IconComp size={26} color={item.color} />
+                    </div>
+
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        background: 'rgba(41, 50, 71, 0.5)',
+                        color: 'var(--text-gray)',
+                        border: '1px solid rgba(41, 50, 71, 0.8)',
+                      }}
+                    >
+                      {item.badge}
+                    </span>
+                  </div>
+
+                  {/* Title & Description */}
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '12px', color: '#F5F7FA' }}>
+                    {item.title}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: 1.6 }}>
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Bottom Arrow Indicator */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: item.color,
+                    marginTop: '24px',
+                    paddingTop: '16px',
+                    borderTop: '1px solid rgba(41, 50, 71, 0.4)',
+                  }}
+                >
+                  <span>Saiba mais</span>
+                  <ArrowUpRight size={16} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <style>{`
+        .solution-card:hover .icon-box,
+        .solution-card:focus-visible .icon-box {
+          transform: scale(1.1) rotate(-4deg);
+        }
+      `}</style>
+
+      {activeItem && (
+        <SolutionModal
+          isOpen
+          onClose={() => setActiveSolution(null)}
+          onRequestQuote={() => {
+            setActiveSolution(null);
+            onSelectSolution(activeItem.formValue);
+          }}
+          icon={activeItem.icon}
+          color={activeItem.color}
+          badge={activeItem.badge}
+          title={activeItem.title}
+          longDescription={activeItem.longDescription}
+          highlights={activeItem.highlights}
+        />
+      )}
+    </section>
+  );
+};
