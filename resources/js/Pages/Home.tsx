@@ -6,13 +6,22 @@ import type {
 } from '@/types';
 
 interface HomeProps {
-    initialData: {
+    initialData?: {
         settings: PublicSiteSettings | null;
         projects: PublicProject[];
         cta: PublicCta | null;
     };
+    settings?: PublicSiteSettings | null;
+    projects?: PublicProject[];
+    cta?: PublicCta | null;
 }
 
-export default function Home({ initialData }: HomeProps) {
+export default function Home(props: HomeProps) {
+    const initialData = props?.initialData || {
+        settings: props?.settings ?? null,
+        projects: props?.projects ?? [],
+        cta: props?.cta ?? null,
+    };
+
     return <App initialData={initialData} />;
 }

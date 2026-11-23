@@ -38,17 +38,18 @@ const EMPTY_INITIAL_DATA = {
 export function App({
   initialData = EMPTY_INITIAL_DATA,
 }: AppProps) {
+  const safeData = initialData || EMPTY_INITIAL_DATA;
   const [selectedSolution, setSelectedSolution] = useState<string>('Automação com IA e n8n');
   const [projects, setProjects] = useState<PublicProject[]>(
-    initialData.projects
+    safeData.projects || []
   );
 
   const [siteSettings, setSiteSettings] = useState<PublicSiteSettings | null>(
-    initialData.settings
+    safeData.settings || null
   );
 
   const [cta, setCta] = useState<PublicCta | null>(
-    initialData.cta
+    safeData.cta || null
   );
 
   // Admin Auth & Panel States

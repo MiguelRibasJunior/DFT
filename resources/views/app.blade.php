@@ -72,7 +72,7 @@
     <x-inertia::head />
   </head>
 
-  <body>
+  <body style="background-color: #080B14; color: #F5F7FA;">
     <x-inertia::app />
   </body>
 </html>
