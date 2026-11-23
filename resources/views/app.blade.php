@@ -54,31 +54,11 @@
     {!! $seo['jsonLd'] !!}
     </script>
 
-    <!-- Google Tag Manager -->
-    @if ($seo['googleTagManagerId'])
-    <script>
-        (function(w,d,s,l,i){
-            w[l]=w[l]||[];
-            w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-            var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),
-                dl=l!='dataLayer'?'&l='+l:'';
-            j.async=true;
-            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-            f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','{{ $seo['googleTagManagerId'] }}');
-    </script>
-    @endif
-
-    <!-- Google Analytics 4 -->
-    @if ($seo['googleAnalyticsId'])
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $seo['googleAnalyticsId'] }}"></script>
-    <script>
-        window.dataLayer=window.dataLayer||[];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js',new Date());
-        gtag('config','{{ $seo['googleAnalyticsId'] }}');
-    </script>
+    {{-- Analytics (LGPD): o HTML NÃO carrega nenhum script do Google. Só entrega os IDs, e apenas em
+         produção e com ID válido. O navegador carrega o Google depois que o visitante aceita o banner
+         de cookies (resources/js/utils/consent.ts). Sem IDs, não há banner nem este bloco. --}}
+    @if ($seo['analytics'])
+    <script type="application/json" id="dft-analytics">{!! json_encode($seo['analytics'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
     @endif
 
     @viteReactRefresh
@@ -88,17 +68,6 @@
 </head>
 
 <body style="background-color: #080B14; color: #F5F7FA;">
-
-    @if ($seo['googleTagManagerId'])
-    <noscript>
-        <iframe
-            src="https://www.googletagmanager.com/ns.html?id={{ $seo['googleTagManagerId'] }}"
-            height="0"
-            width="0"
-            style="display:none;visibility:hidden">
-        </iframe>
-    </noscript>
-    @endif
 
     <!-- Fallback para visitantes sem JavaScript -->
     <noscript>

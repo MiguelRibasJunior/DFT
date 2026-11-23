@@ -4,6 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp, router } from '@inertiajs/react';
 import '../css/index.css';
 import App from './App';
+import { initConsent } from './utils/consent';
+
+// LGPD: lê a escolha de cookies guardada; só carrega analytics se o visitante já tinha aceitado.
+initConsent();
 
 // Detecta se a página foi entregue pelo backend Laravel com o container e payload do Inertia
 const inertiaContainer = typeof document !== 'undefined' ? document.getElementById('app') : null;

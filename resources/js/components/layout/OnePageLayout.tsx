@@ -1,5 +1,6 @@
 import React from 'react';
 import { GeometricCanvas } from './GeometricCanvas';
+import { CookieBanner } from '../ui/CookieBanner';
 import { Header } from './header/Header';
 
 const MAIN_CONTENT_ID = 'conteudo';
@@ -24,6 +25,9 @@ export const OnePageLayout: React.FC<OnePageLayoutProps> = ({ children, footer, 
     <a href={`#${MAIN_CONTENT_ID}`} className="skip-link">
       Pular para o conteúdo
     </a>
+
+    {/* Logo após o skip link: quem navega por teclado decide sobre cookies sem percorrer a página. */}
+    <CookieBanner />
 
     <GeometricCanvas />
     <Header logoUrl={logoUrl} siteName={siteName} />

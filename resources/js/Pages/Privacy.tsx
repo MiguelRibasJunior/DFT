@@ -164,6 +164,21 @@ export default function Privacy({ settings }: PrivacyProps) {
                 </a>.
               </p>
             </section>
+
+            <section>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#FFFFFF', marginBottom: '12px' }}>
+                5. Cookies e Análise de Acesso
+              </h2>
+              <p style={{ marginBottom: '12px' }}>
+                Usamos <strong>cookies técnicos</strong>, estritamente necessários para o funcionamento e a segurança do site (por exemplo, a sessão e a proteção contra requisições forjadas). Eles não dependem de consentimento.
+              </p>
+              <p style={{ marginBottom: '12px' }}>
+                Somente se você <strong>aceitar</strong> no aviso exibido no site, usamos também <strong>cookies de análise do Google</strong> (Google Analytics e/ou Google Tag Manager) para entender como o site é utilizado, como páginas visitadas, tempo de permanência e tipo de dispositivo, e assim melhorá-lo. Esses dados são tratados pelo Google e podem ser armazenados fora do Brasil.
+              </p>
+              <p>
+                Você pode recusar, ou mudar de ideia a qualquer momento, em &ldquo;Preferências de cookies&rdquo; no rodapé da página inicial. Recusar não afeta o uso do site. A sua escolha fica guardada no seu navegador por até 12 meses.
+              </p>
+            </section>
           </div>
         </div>
       </main>

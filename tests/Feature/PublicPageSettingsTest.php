@@ -163,38 +163,66 @@ class PublicPageSettingsTest extends TestCase
         $this->assertStringNotContainsString('</script><script>alert(1)', $html);
     }
 
-    // ------------------------------------------------------------ analytics
+    // ------------------------------------------------------------ analytics (LGPD)
 
-    public function test_analytics_is_not_loaded_outside_production_even_with_ids_filled(): void
+    /** Lê o bloco JSON de configuração de analytics do HTML (ou null se não houver). */
+    private function analyticsConfig(string $html): ?array
     {
+        if (! preg_match('#<script type="application/json" id="dft-analytics">(.*?)</script>#s', $html, $match)) {
+            return null;
+        }
+
+        return json_decode($match[1], true, flags: JSON_THROW_ON_ERROR);
+    }
+
+    public function test_the_html_never_loads_google_scripts_before_the_visitor_consents(): void
+    {
+        $this->asProduction();
         SiteSetting::current()->update(['google_analytics_id' => 'G-ABCD1234', 'google_tag_manager_id' => 'GTM-ABCD123']);
 
         $html = $this->get('/')->getContent();
 
+        // Nada do Google no HTML: nem script, nem iframe do <noscript>, nem a função gtag.
         $this->assertStringNotContainsString('googletagmanager.com', $html);
+        $this->assertStringNotContainsString('google-analytics.com', $html);
+        $this->assertStringNotContainsString('gtag(', $html);
+        $this->assertStringNotContainsString('dataLayer', $html);
     }
 
-    public function test_analytics_is_loaded_in_production_when_the_ids_are_valid(): void
+    public function test_analytics_config_is_not_delivered_outside_production_even_with_ids_filled(): void
+    {
+        SiteSetting::current()->update(['google_analytics_id' => 'G-ABCD1234', 'google_tag_manager_id' => 'GTM-ABCD123']);
+
+        $this->assertNull($this->analyticsConfig($this->get('/')->getContent()));
+    }
+
+    public function test_analytics_config_is_delivered_in_production_when_the_ids_are_valid(): void
     {
         $this->asProduction();
         SiteSetting::current()->update(['google_analytics_id' => 'g-abcd1234', 'google_tag_manager_id' => 'GTM-ABCD123']);
 
-        $html = $this->get('/')->getContent();
-
-        $this->assertStringContainsString('googletagmanager.com/gtag/js?id=G-ABCD1234', $html);
-        $this->assertStringContainsString("gtag('config','G-ABCD1234')", $html);
-        $this->assertStringContainsString("'dataLayer','GTM-ABCD123'", $html);
-        $this->assertStringContainsString('ns.html?id=GTM-ABCD123', $html);
+        $this->assertSame(
+            ['ga4' => 'G-ABCD1234', 'gtm' => 'GTM-ABCD123'],
+            $this->analyticsConfig($this->get('/')->getContent())
+        );
     }
 
-    public function test_nothing_is_loaded_in_production_when_the_ids_are_empty(): void
+    public function test_only_the_filled_provider_is_delivered(): void
+    {
+        $this->asProduction();
+        SiteSetting::current()->update(['google_analytics_id' => 'G-ABCD1234']);
+
+        $this->assertSame(['ga4' => 'G-ABCD1234', 'gtm' => null], $this->analyticsConfig($this->get('/')->getContent()));
+    }
+
+    public function test_no_config_block_in_production_when_the_ids_are_empty(): void
     {
         $this->asProduction();
 
-        $this->assertStringNotContainsString('googletagmanager.com', $this->get('/')->getContent());
+        $this->assertNull($this->analyticsConfig($this->get('/')->getContent()));
     }
 
-    public function test_an_invalid_id_is_never_written_into_the_page_script(): void
+    public function test_an_invalid_id_is_never_written_into_the_page(): void
     {
         $this->asProduction();
         SiteSetting::current()->update([
@@ -206,7 +234,7 @@ class PublicPageSettingsTest extends TestCase
 
         $this->assertStringNotContainsString('alert(1)', $html);
         $this->assertStringNotContainsString('alert(2)', $html);
-        $this->assertStringNotContainsString('googletagmanager.com', $html);
+        $this->assertNull($this->analyticsConfig($html));
     }
 
     // ------------------------------------------------------------- noscript

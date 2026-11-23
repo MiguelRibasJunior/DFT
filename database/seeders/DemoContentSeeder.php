@@ -112,6 +112,8 @@ class DemoContentSeeder extends Seeder
                 .'<ul><li>Para responder às suas solicitações de orçamento ou contato.</li><li>Para melhorar nossos serviços e atendimento.</li></ul>'
                 .'<h2>Compartilhamento</h2>'
                 .'<p>Não vendemos nem compartilhamos seus dados pessoais com terceiros, exceto quando exigido por lei.</p>'
+                .'<h2>Cookies</h2>'
+                .'<p>Usamos cookies técnicos, necessários para o funcionamento e a segurança do site. Se você aceitar no aviso exibido no site, usamos também cookies de análise do Google para entender como o site é utilizado. Você pode recusar ou mudar de ideia a qualquer momento em &ldquo;Preferências de cookies&rdquo;, no rodapé.</p>'
                 .'<h2>Seus direitos</h2>'
                 .'<p>Você pode solicitar a atualização ou exclusão dos seus dados a qualquer momento entrando em contato pelo e-mail contato@devsfromtomorrow.com.</p>',
             'terms_of_use' => '<p>Ao utilizar este site, você concorda com os termos descritos abaixo.</p>'
