@@ -247,3 +247,23 @@
     width: 230px;
   }
 }
+
+/* Grade das 6 etapas do processo — components/sections/Process.tsx
+   Celular: 1 coluna · tablet: 2 colunas (3 linhas) · desktop: 3 colunas (3 em cima, 3 embaixo). */
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .process-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .process-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
