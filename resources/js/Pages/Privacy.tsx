@@ -159,7 +159,7 @@ export default function Privacy({ settings }: PrivacyProps) {
               </h2>
               <p>
                 Você tem o direito de solicitar a confirmação, o acesso, a retificação ou a exclusão definitiva dos seus dados armazenados em nossos registros. Para exercer esses direitos, entre em contato através do e-mail{' '}
-                <a href={`mailto:${email}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+                <a href={`mailto:${email}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'underline' }}>
                   {email}
                 </a>.
               </p>

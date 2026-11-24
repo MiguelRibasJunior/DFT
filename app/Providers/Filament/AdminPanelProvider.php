@@ -72,8 +72,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn () => new HtmlString(
-                    '<div class="fi-align-center" style="margin-top: 1.5rem; text-align: center;">'
-                    . '<a href="/" style="font-size: 0.875rem; font-weight: 600; color: var(--primary-600);">'
+                    // Azul escuro no fundo branco (contraste 6,7:1); no modo escuro, azul claro (html.dark).
+                    '<style>.dft-back-link{color:#1D4ED8;text-decoration:underline}html.dark .dft-back-link{color:#93C5FD}</style>'
+                    . '<div class="fi-align-center" style="margin-top: 1.5rem; text-align: center;">'
+                    . '<a href="/" class="dft-back-link" style="font-size: 0.875rem; font-weight: 600;">'
                     . '&larr; Voltar ao site'
                     . '</a>'
                     . '</div>'

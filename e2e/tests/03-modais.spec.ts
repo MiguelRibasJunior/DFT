@@ -5,7 +5,7 @@ test.describe('Modais (foco, teclado e retorno)', () => {
     await page.goto('/');
     await loadWholePage(page);
 
-    const card = page.getByRole('button', { name: /Ver detalhes de Chatbots Inteligentes/ });
+    const card = page.getByRole('button', { name: /Saiba mais sobre Chatbots Inteligentes/ });
     await card.scrollIntoViewIfNeeded();
     await card.click();
 
@@ -33,7 +33,7 @@ test.describe('Modais (foco, teclado e retorno)', () => {
     await page.goto('/');
     await loadWholePage(page);
 
-    await page.getByRole('button', { name: /Ver detalhes de Chatbots Inteligentes/ }).click();
+    await page.getByRole('button', { name: /Saiba mais sobre Chatbots Inteligentes/ }).click();
     await page.getByRole('dialog').getByRole('button', { name: /Solicitar orçamento/ }).click();
 
     await expect(page.getByRole('dialog')).toBeHidden();

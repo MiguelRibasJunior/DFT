@@ -246,6 +246,11 @@
     flex-shrink: 0;
     width: 230px;
   }
+
+  /* Na coluna, o flex-basis de 200px da regra base viraria ALTURA (botões de 200px). */
+  .btn.cookie-banner__button {
+    flex: 0 0 auto;
+  }
 }
 
 /* Grade das 6 etapas do processo — components/sections/Process.tsx
@@ -266,4 +271,17 @@
   .process-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+/* Texto só para leitores de tela (some da vista, mas continua no nome acessível do elemento). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

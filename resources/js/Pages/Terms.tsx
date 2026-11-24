@@ -151,7 +151,7 @@ export default function Terms({ settings }: TermsProps) {
               </h2>
               <p>
                 Dúvidas ou solicitações relacionadas a estes termos podem ser enviadas para:{' '}
-                <a href={`mailto:${email}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+                <a href={`mailto:${email}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'underline' }}>
                   {email}
                 </a>.
               </p>
