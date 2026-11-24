@@ -65,18 +65,21 @@ test.describe('Página inicial', () => {
       .toBeLessThan(200);
   });
 
-  // DEFEITO CONHECIDO: se o clique no menu acontece no primeiro instante, antes de todas as seções carregarem, a
-  // página às vezes para ~1000px antes da seção (o endereço vira #processo, mas a tela não chega). Reproduzido em
-  // 1 de 4 tentativas. Tire o fixme quando o deslocamento das seções carregadas sob demanda for tratado.
-  test.fixme('o clique no menu logo ao abrir a página também chega na seção', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
+  // Regressão: o clique logo ao abrir a página, antes de todas as seções carregarem, às vezes parava ~1000px antes da
+  // seção (a rolagem suave calculava o destino antes de o layout mudar). Repete algumas vezes porque era intermitente.
+  for (const tentativa of [1, 2, 3, 4, 5]) {
+    test(`o clique no menu logo ao abrir a página também chega na seção (tentativa ${tentativa})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto('/');
 
-    await page.locator('.site-header__nav').getByRole('link', { name: 'Processo' }).click();
-    await page.waitForTimeout(2500);
+      // Sem esperar nada: o clique acontece assim que o evento load dispara.
+      await page.locator('.site-header__nav').getByRole('link', { name: 'Processo' }).click();
 
-    expect(await page.locator('#processo').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(200);
-  });
+      await expect
+        .poll(() => page.locator('#processo').evaluate((el) => Math.round(el.getBoundingClientRect().top)), { timeout: 8000 })
+        .toBeLessThan(200);
+    });
+  }
 });
 
 test.describe('Sem JavaScript', () => {
