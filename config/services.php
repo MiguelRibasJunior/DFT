@@ -37,6 +37,9 @@ return [
 
     'contact' => [
         'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL', 'contato@devsfromtomorrow.com'),
+        // Serviço que envia o aviso de novo contato (formsubmit.co). Configurável para apontar outro destino,
+        // por exemplo uma porta sem ninguém ouvindo nos testes de ponta a ponta, que assim nunca saem para a internet.
+        'notification_endpoint' => env('CONTACT_NOTIFICATION_ENDPOINT', 'https://formsubmit.co/ajax'),
     ],
 
 ];
