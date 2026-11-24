@@ -42,7 +42,9 @@ class SendContactNotification implements ShouldQueue
         $error = null;
 
         try {
-            $response = Http::timeout(6)->post("https://formsubmit.co/ajax/{$adminEmail}", [
+            $endpoint = rtrim((string) config('services.contact.notification_endpoint'), '/');
+
+            $response = Http::timeout(6)->post("{$endpoint}/{$adminEmail}", [
                 '_subject' => "[Devs From Tomorrow] Novo Contato: {$submission->nome} ({$submission->tipo_solucao})",
                 '_replyto' => $submission->email,
                 '_template' => 'table',

@@ -131,6 +131,22 @@ class ContactFormTest extends TestCase
         $this->assertNull($submission->last_email_sent_at);
     }
 
+    public function test_the_notification_endpoint_is_configurable_so_tests_never_reach_the_real_service(): void
+    {
+        config(['services.contact.notification_endpoint' => 'http://127.0.0.1:9/ajax/', 'services.contact.admin_notification_email' => 'teste@example.test']);
+        Http::fake();
+
+        $this->postJson('/api/contact', $this->validPayload())->assertCreated();
+
+        Http::assertSent(fn ($request) => $request->url() === 'http://127.0.0.1:9/ajax/teste@example.test');
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'formsubmit.co'));
+    }
+
+    public function test_the_default_endpoint_is_formsubmit(): void
+    {
+        $this->assertSame('https://formsubmit.co/ajax', config('services.contact.notification_endpoint'));
+    }
+
     public function test_notice_for_a_submission_deleted_in_the_meantime_is_ignored(): void
     {
         Http::fake();
