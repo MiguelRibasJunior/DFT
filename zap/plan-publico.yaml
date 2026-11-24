@@ -1,0 +1,54 @@
+# OWASP ZAP (Automation Framework): site público, SEM login.
+# Variáveis de ambiente: ZAP_TARGET (ex.: http://127.0.0.1:8015) e ZAP_REPORT_DIR (pasta dos relatórios).
+# Veja zap/README.md. Rode SOMENTE contra um ambiente de teste: a varredura ativa envia ataques e grava lixo no banco.
+env:
+  contexts:
+    - name: site
+      urls: ["${ZAP_TARGET}"]
+      includePaths: ["${ZAP_TARGET}/.*"]
+      excludePaths: []
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    progressToStdout: true
+jobs:
+  - type: passiveScan-config
+    parameters: { maxAlertsPerRule: 20, scanOnlyInScope: true }
+
+  # O site é uma SPA: o spider comum não executa JavaScript, então as rotas e a API são apresentadas ao ZAP aqui.
+  - type: requestor
+    requests:
+      - { url: "${ZAP_TARGET}/", method: GET }
+      - { url: "${ZAP_TARGET}/termos", method: GET }
+      - { url: "${ZAP_TARGET}/privacidade", method: GET }
+      - { url: "${ZAP_TARGET}/robots.txt", method: GET }
+      - { url: "${ZAP_TARGET}/sitemap.xml", method: GET }
+      - { url: "${ZAP_TARGET}/admin", method: GET }
+      - { url: "${ZAP_TARGET}/admin/login", method: GET }
+      - { url: "${ZAP_TARGET}/nao-existe", method: GET }
+      - { url: "${ZAP_TARGET}/api/projects", method: GET, headers: ["Accept: application/json"] }
+      - { url: "${ZAP_TARGET}/api/settings", method: GET, headers: ["Accept: application/json"] }
+      - { url: "${ZAP_TARGET}/api/contact-links", method: GET, headers: ["Accept: application/json"] }
+      - { url: "${ZAP_TARGET}/api/ctas/hero", method: GET, headers: ["Accept: application/json"] }
+      - { url: "${ZAP_TARGET}/api/admin/projects", method: GET, headers: ["Accept: application/json"] }
+      - { url: "${ZAP_TARGET}/api/admin/submissions", method: GET, headers: ["Accept: application/json"] }
+      - url: "${ZAP_TARGET}/api/contact"
+        method: POST
+        headers: ["Content-Type: application/json", "Accept: application/json"]
+        data: '{"nome":"Zap","email":"zap@example.test","telefone":"(41) 99999-9999","empresa":"ZAP","tipoSolucao":"Chatbots Inteligentes","descricao":"Teste de seguranca automatizado."}'
+
+  - type: spider
+    parameters: { context: site, maxDuration: 3, maxDepth: 6 }
+  - type: passiveScan-wait
+    parameters: { maxDuration: 5 }
+  - type: activeScan
+    parameters: { context: site, maxScanDurationInMins: 12, maxRuleDurationInMins: 2, threadPerHost: 4 }
+
+  - type: report
+    parameters: { template: traditional-json, reportDir: "${ZAP_REPORT_DIR}", reportFile: publico, reportTitle: "DFT - site público" }
+    risks: [high, medium, low, info]
+    confidences: [high, medium, low, falsepositive]
+  - type: report
+    parameters: { template: traditional-html, reportDir: "${ZAP_REPORT_DIR}", reportFile: publico, reportTitle: "DFT - site público" }
+    risks: [high, medium, low, info]
+    confidences: [high, medium, low, falsepositive]
