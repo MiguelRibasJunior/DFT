@@ -30,10 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 }
 
                 if ($e instanceof HttpExceptionInterface) {
+                    // getHeaders() preserva o que a exceção define (Retry-After e X-RateLimit-* no 429, Allow no 405).
                     return response()->json([
                         'success' => false,
                         'message' => $e->getMessage() ?: 'Erro ao processar a requisição.',
-                    ], $e->getStatusCode());
+                    ], $e->getStatusCode(), $e->getHeaders());
                 }
 
                 Log::error('Exceção capturada na API: '.$e->getMessage(), [
