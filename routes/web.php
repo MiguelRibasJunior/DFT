@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Project;
+use App\Enums\ContactLinkType;
+use App\Models\ContactLink;
 use App\Models\SiteSetting;
-use App\Models\Cta;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,45 +12,31 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 */
 
-$renderApp = function () {
-    try {
-        $settings = SiteSetting::first();
+// ATENÇÃO: tudo que vai nas props de uma página Inertia aparece no HTML (data-page) e fica visível
+// para qualquer visitante. Por isso nunca se passa um model inteiro (SiteSetting, Project, Cta): eles
+// trazem colunas internas (gestão do projeto, IDs de analytics, textos legais sem sanitizar).
+// Os dados públicos da página inicial vêm da API (/api/*), que já devolve só campos escolhidos.
+Route::get('/', fn () => Inertia::render('Home'))->name('home');
 
-        $projects = Project::where('status', 'published')
-            ->orderBy('order')
-            ->get();
+/**
+ * Páginas legais fixas (/termos e /privacidade): só o necessário para o cabeçalho e o rodapé.
+ * O e-mail é o do primeiro canal de contato ativo cadastrado no admin.
+ */
+$legalPage = fn (string $component) => function () use ($component) {
+    $site = SiteSetting::current();
 
-        $cta = Cta::where('active', true)
-            ->where('position', 'cta_section')
-            ->first();
-
-    } catch (\Throwable $e) {
-        $settings = null;
-        $projects = [];
-        $cta = null;
-    }
-
-    return Inertia::render('Home', [
-	'initialData' => [
-    	'projects' => $projects,
-    	'cta' => $cta,
-	],
+    return Inertia::render($component, [
+        'settings' => [
+            'site_name' => $site->site_name,
+            'copyright_text' => $site->copyright_text,
+            'email' => ContactLink::query()->active()->ordered()->where('type', ContactLinkType::Email)->value('value'),
+        ],
     ]);
 };
 
-Route::get('/', $renderApp)->name('home');
+Route::get('/termos', $legalPage('Terms'))->name('terms');
 
-Route::get('/termos', function () {
-    return Inertia::render('Terms', [
-        'settings' => SiteSetting::first(),
-    ]);
-})->name('terms');
-
-Route::get('/privacidade', function () {
-    return Inertia::render('Privacy', [
-        'settings' => SiteSetting::first(),
-    ]);
-})->name('privacy');
+Route::get('/privacidade', $legalPage('Privacy'))->name('privacy');
 
 Route::get('/sitemap.xml', function () {
     $path = public_path('sitemap.xml');
