@@ -154,6 +154,8 @@ Guia para quem vai publicar o site. É um app Laravel comum: **um único servido
 - **Banco de dados:** SQLite (`database/database.sqlite`) funciona para um site pequeno. Para MySQL, ajuste as variáveis `DB_*` do `.env`. A suíte de testes completa já foi executada com sucesso num **MySQL 8.0.39** e num MariaDB 10.4.32 (e o CI roda em SQLite), mas **a versão do MySQL da hospedagem não foi testada**: se a produção for MySQL, rode as migrations e o teste final (passo 5) nele antes de divulgar.
 - ⚠️ **Raiz do site (document root) deve ser a pasta `public/`**, nunca a raiz do projeto. Em hospedagem compartilhada, aponte o domínio para `public/` no painel da hospedagem. Se não for possível, mantenha o projeto fora da pasta pública e copie só o conteúdo de `public/` para ela, ajustando os caminhos em `index.php`.
 - ⚠️ **Escrita:** `storage/` e `bootstrap/cache/` precisam de permissão de escrita pelo usuário do PHP (e `database/` e o arquivo `database.sqlite`, se usar SQLite).
+- ⚠️ **Ligue o OPcache** no PHP (`opcache.enable=1`; em produção, `opcache.validate_timestamps=0` e reinicie o PHP a cada deploy). Sem ele, cada requisição recompila o Laravel inteiro: nos testes, a resposta ficou ~3 vezes mais lenta.
+- **Compressão e cache** dos arquivos do site já estão no `public/.htaccess` (Apache e LiteSpeed). Em **Nginx** o `.htaccess` não vale: ligue `gzip on;` (ou brotli) para `text/html`, `text/css`, `application/javascript`, `application/json` e `image/svg+xml`, e dê `Cache-Control: public, max-age=31536000, immutable` aos arquivos de `/build/assets/`.
 - Não há fila nem agendador: **não é preciso configurar `queue:work` nem cron**.
 
 ### 2. Variáveis do `.env`
@@ -195,10 +197,11 @@ php artisan storage:link
 
 # 5. Caches de produção — por último
 php artisan config:cache && php artisan route:cache && php artisan view:cache
+php artisan filament:optimize   # cache dos componentes e ícones do Filament: a requisição caiu de ~60-85 ms para ~14 ms nos testes
 ```
 - ⚠️ **Rode o `db:seed` antes do `config:cache`.** O seeder lê `ADMIN_PASSWORD` direto do `.env`; com a configuração em cache, essa leitura volta vazia e o seeder aborta.
 - ⚠️ **`storage:link`** cria um atalho (symlink) de `public/storage` para `storage/app/public`. Algumas hospedagens compartilhadas bloqueiam symlinks; nesse caso, peça ao suporte para liberar ou crie o atalho pelo painel. Sem ele, **as imagens enviadas no admin (capas de projeto, logo, favicon) não aparecem**.
-- **Atualizações futuras:** `git pull`, `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force` e depois `php artisan optimize:clear` seguido dos caches do passo 5.
+- **Atualizações futuras:** `git pull`, `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force` e depois `php artisan optimize:clear && php artisan filament:optimize-clear` seguido dos caches do passo 5 (inclusive `filament:optimize`).
 - **Faça backup do banco antes de rodar `migrate`** em um site que já tenha dados reais (com SQLite, copie o arquivo `database/database.sqlite`).
 
 ### 4. Antes de divulgar o site
@@ -220,6 +223,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 - Edite o título em **Configurações → SEO**, salve e confira que ele muda na aba do navegador.
 - Com analytics preenchido: ao abrir o site em uma janela anônima aparece o banner de cookies e, **antes de clicar em "Aceitar"**, a aba Rede do navegador não mostra nenhuma requisição ao Google (googletagmanager.com).
 - `/robots.txt` e `/sitemap.xml` abrem e mostram o domínio certo.
+- **Verificação automática de leitura (opcional):** `k6 run -e BASE_URL=https://seu-dominio.com -e ALLOW_REMOTE=1 k6/smoke.js` confere 35 pontos (páginas, API sem campos internos, `/api/admin/*` inexistente, `/admin` pedindo login, 404 sem detalhes técnicos, `.env` não servido). Só faz `GET`. **Não rode `k6/load.js` nem `k6/contact.js` contra o site publicado** (ver `k6/README.md`).
 - Em caso de erro 500, veja `storage/logs/laravel.log`.
 
 ### 6. Pendências conhecidas (leia antes de publicar)
@@ -236,13 +240,15 @@ Resumo do que **ainda não está resolvido**. Os itens da primeira lista impedem
 
 **Incompleto em relação ao que os cards pediam**
 - **Projetos dinâmicos (SITE-07):** os cards do portfólio não mostram o link do projeto nem o do GitHub; o botão "Ver projeto" abre só a descrição curta. Os campos existem no admin, mas o site não os lê.
-- **Desempenho (SITE-02):** o Lighthouse e os Core Web Vitals **nunca foram medidos** (o bundle principal tem cerca de 350 kB). Meça no site publicado.
+- **Desempenho (SITE-02):** medido em 24/11/2026 num servidor local parecido com produção (Apache, OPcache, caches do passo 5, compressão e cache): **Lighthouse 86 no celular e 98 no desktop** (acessibilidade, boas práticas e SEO em 100), CLS 0, TBT 0 e LCP de **3,4 s no celular** (a meta é ≤ 2,5 s) e 0,9 s no desktop. Detalhes e limites em `k6/README.md`. **Falta medir no site publicado, em HTTPS.** Para baixar o LCP do celular: as fontes do Google bloqueiam a renderização (hospedá-las localmente ou carregá-las sem bloquear), cerca de 180 KiB do JavaScript principal não são usados na carga inicial, e o React só desenha o Hero depois de baixar o pacote (renderizar no servidor seria a mudança grande, só vale se a nota ainda importar).
+- **Carga (k6):** o site aguentou 30 visitantes simultâneos com p95 de ~40 ms, um pico súbito de 100 e até 150 simultâneos **sem nenhum erro** (p95 de 743 ms no pior caso). É uma medição local, com SQLite e tudo na mesma máquina; **refaça na hospedagem real** antes de divulgar em larga escala.
 - **Dependências com avisos de segurança:** o `composer audit` aponta 12 avisos em 7 pacotes, e o `npm ci` reporta vulnerabilidades. Rode `composer audit` e `npm audit` e atualize antes de publicar, rodando a suíte (`php artisan test`) depois.
 
 **Recomendado**
 - **Proteção da branch `main` no GitHub** exigindo Pull Request. Já houve commits direto na `main` que quebraram o painel e o CI.
 - **Testar em ambiente real** o que a suíte automática não cobre: teclado real, leitor de tela (NVDA/VoiceOver), outros navegadores (os testes de ponta a ponta usam só o Edge) e celulares de verdade.
 - **Rodar os testes de ponta a ponta** (`cd e2e && npm install && npm test`) antes de cada publicação. Eles **não rodam no CI**.
+- **Esconder a versão do servidor e do PHP.** As respostas trazem `Server: Apache/2.4... PHP/8.2...` e `X-Powered-By: PHP/8.2...`. Na hospedagem, desligue com `expose_php = Off` no `php.ini` (e `ServerTokens Prod` no Apache, se for possível). O site também **não envia cabeçalhos de segurança** (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy`); vale configurá-los no servidor depois do HTTPS.
 - O CI roda só em SQLite e PHP 8.4; uma regressão em MySQL ou PHP 8.2 só aparece rodando a suíte com `DB_CONNECTION=mysql` ou no PHP 8.2.
 - **Lixeira:** projetos, mensagens e contatos apagados ficam na lixeira até alguém excluir definitivamente (só o Super Admin); não há limpeza automática.
 - O `app.env` e o `app.debug` aparecem nos dados que a página envia ao navegador (props compartilhadas do Inertia). Com `APP_DEBUG=false` não há risco real, mas vale remover.
@@ -264,6 +270,8 @@ DFT/
 ├── database/
 │   ├── migrations/               # Migrações das tabelas do banco de dados
 │   └── seeders/                  # Dados iniciais para testes locais
+├── e2e/                          # Testes de ponta a ponta (Playwright): site, painel, cookies e acessibilidade
+├── k6/                           # Testes de fumaça e de carga (k6), com os resultados medidos
 ├── public/                       # Arquivos públicos e ponto de entrada da aplicação
 ├── resources/
 │   ├── css/
@@ -394,6 +402,13 @@ Endpoints disponíveis no arquivo `routes/api.php`:
 composer run setup    # Executa a configuração completa do ambiente local
 composer run dev      # Inicia o Laravel e o Vite simultaneamente
 composer run test     # Limpa cache e executa os testes do PHPUnit
+```
+
+### Testes
+```bash
+php artisan test                  # PHPUnit: 296 testes, em SQLite em memória (o mesmo que roda no CI)
+cd e2e && npm install && npm test  # Playwright: navegador de verdade (Edge), banco e porta próprios, nada sai para a internet
+k6 run k6/smoke.js                # k6: fumaça, só leitura (veja k6/README.md para carga e formulário)
 ```
 
 ### Comandos do npm

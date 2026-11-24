@@ -23,3 +23,17 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Compressão do texto (HTML, CSS, JS, JSON, SVG): o pacote principal do site cai de ~344 KiB para ~110 KiB.
+# Sem isso o Lighthouse reprova "Enable text compression" e a nota do celular cai bastante.
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# Cache longo só para os arquivos do build do Vite, que têm hash no nome (ex.: main-Bj2DYWzV.js):
+# quando o conteúdo muda, o nome muda, então o navegador nunca fica com versão velha.
+<IfModule mod_headers.c>
+    <FilesMatch "-[A-Za-z0-9_-]{8}\.(js|css|woff2?|svg|png|jpe?g|webp|avif)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
