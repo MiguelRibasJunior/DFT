@@ -12,6 +12,11 @@ class ContactsChart extends ChartWidget
 
     protected static bool $isLazy = false;
 
+    protected int|string|array $columnSpan = 'full';
+
+    // Na largura total o gráfico mantém a proporção e crescia demais para baixo.
+    protected ?string $maxHeight = '280px';
+
     protected ?string $heading = 'Contatos recebidos';
 
     protected function getData(): array
