@@ -151,7 +151,7 @@ Guia para quem vai publicar o site. É um app Laravel comum: **um único servido
 - **PHP 8.2 ou superior** com as extensões: `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `iconv`, `intl`, `json`, `libxml`, `mbstring`, `openssl`, `pdo` (+ `pdo_sqlite` **ou** `pdo_mysql`), `phar`, `session`, `tokenizer`, `xml`, `xmlreader`, `xmlwriter` e `zip`. O `composer.json` fixa `config.platform.php = 8.2.0`: as dependências travadas no `composer.lock` funcionam do PHP 8.2 em diante.
 - **Composer 2**.
 - **Node.js 20+** só para gerar o front-end (`npm run build`). `public/build/` **não é versionado**: gere-o na máquina de build (ou no servidor) e garanta que a pasta chegue ao servidor.
-- **Banco de dados:** SQLite (`database/database.sqlite`) funciona para um site pequeno. Para MySQL, ajuste as variáveis `DB_*` do `.env`. ⚠️ A suíte de testes roda em SQLite; se a produção for MySQL, rode as migrations e o teste final (passo 5) nele antes de divulgar.
+- **Banco de dados:** SQLite (`database/database.sqlite`) funciona para um site pequeno. Para MySQL, ajuste as variáveis `DB_*` do `.env`. A suíte de testes completa já foi executada com sucesso num **MySQL 8.0.39** e num MariaDB 10.4.32 (e o CI roda em SQLite), mas **a versão do MySQL da hospedagem não foi testada**: se a produção for MySQL, rode as migrations e o teste final (passo 5) nele antes de divulgar.
 - ⚠️ **Raiz do site (document root) deve ser a pasta `public/`**, nunca a raiz do projeto. Em hospedagem compartilhada, aponte o domínio para `public/` no painel da hospedagem. Se não for possível, mantenha o projeto fora da pasta pública e copie só o conteúdo de `public/` para ela, ajustando os caminhos em `index.php`.
 - ⚠️ **Escrita:** `storage/` e `bootstrap/cache/` precisam de permissão de escrita pelo usuário do PHP (e `database/` e o arquivo `database.sqlite`, se usar SQLite).
 - Não há fila nem agendador: **não é preciso configurar `queue:work` nem cron**.
@@ -221,6 +221,32 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 - Com analytics preenchido: ao abrir o site em uma janela anônima aparece o banner de cookies e, **antes de clicar em "Aceitar"**, a aba Rede do navegador não mostra nenhuma requisição ao Google (googletagmanager.com).
 - `/robots.txt` e `/sitemap.xml` abrem e mostram o domínio certo.
 - Em caso de erro 500, veja `storage/logs/laravel.log`.
+
+### 6. Pendências conhecidas (leia antes de publicar)
+
+Resumo do que **ainda não está resolvido**. Os itens da primeira lista impedem ou comprometem a publicação; as demais são melhorias. Detalhes técnicos estão na documentação técnica do projeto.
+
+**Resolver antes de publicar**
+1. **Quem faz o deploy e onde.** Ainda não há responsável nem hospedagem definidos. Faltam hospedagem, domínio, DNS, SSL, banco e rotina de backup. Siga os passos 1 a 5 acima.
+2. **Cadastre os projetos no admin, senão aparecem projetos de mentira.** Se a API não devolver nenhum projeto publicado em destaque, o portfólio mostra **3 projetos fictícios fixos no código** (`FALLBACK_PROJECTS`, em `resources/js/components/sections/Portfolio.tsx`). Em produção o seeder não cria conteúdo, então um site novo, sem cadastro, **iria ao ar com esses 3 projetos**. Cadastre ao menos um projeto como *Publicado* **e** *Destaque* (passo 4, item 3), ou peça para trocar esse comportamento por um aviso de "nenhum projeto".
+3. **Revisão jurídica** do texto do banner de cookies e da Política de Privacidade. Há **duas versões** da política: a do **Rodapé** do admin (abre no modal do rodapé) e a página fixa `/privacidade`, escrita no código (`resources/js/Pages/Privacy.tsx`) e **que não vem do admin**. Os Termos têm a mesma divisão (`/termos`). Alinhe as duas versões. Enquanto isso não for feito, **deixe os campos de analytics em branco** (passo 4, item 4).
+4. **Versão do MySQL da hospedagem.** Ver passo 1: rode as migrations nela e o teste final antes de divulgar.
+5. **Domínio e datas** de `public/sitemap.xml` e `public/robots.txt` (passo 4, item 1) e **senha forte** do admin (passo 2).
+6. **Aviso por e-mail.** Confirme o e-mail do formsubmit.co (passo 4, item 5). Se o aviso falhar, **não há nova tentativa**: o contato fica salvo no painel com o status `erro` e é preciso olhar a lista de **Contatos** de vez em quando. O aviso depende de um serviço externo, embora o card do projeto peça "sem automações externas".
+
+**Incompleto em relação ao que os cards pediam**
+- **Projetos dinâmicos (SITE-07):** os cards do portfólio não mostram o link do projeto nem o do GitHub; o botão "Ver projeto" abre só a descrição curta. Os campos existem no admin, mas o site não os lê.
+- **Desempenho (SITE-02):** o Lighthouse e os Core Web Vitals **nunca foram medidos** (o bundle principal tem cerca de 350 kB). Meça no site publicado.
+- **Dependências com avisos de segurança:** o `composer audit` aponta 12 avisos em 7 pacotes, e o `npm ci` reporta vulnerabilidades. Rode `composer audit` e `npm audit` e atualize antes de publicar, rodando a suíte (`php artisan test`) depois.
+
+**Recomendado**
+- **Proteção da branch `main` no GitHub** exigindo Pull Request. Já houve commits direto na `main` que quebraram o painel e o CI.
+- **Testar em ambiente real** o que a suíte automática não cobre: teclado real, leitor de tela (NVDA/VoiceOver), outros navegadores (os testes de ponta a ponta usam só o Edge) e celulares de verdade.
+- **Rodar os testes de ponta a ponta** (`cd e2e && npm install && npm test`) antes de cada publicação. Eles **não rodam no CI**.
+- O CI roda só em SQLite e PHP 8.4; uma regressão em MySQL ou PHP 8.2 só aparece rodando a suíte com `DB_CONNECTION=mysql` ou no PHP 8.2.
+- **Lixeira:** projetos, mensagens e contatos apagados ficam na lixeira até alguém excluir definitivamente (só o Super Admin); não há limpeza automática.
+- O `app.env` e o `app.debug` aparecem nos dados que a página envia ao navegador (props compartilhadas do Inertia). Com `APP_DEBUG=false` não há risco real, mas vale remover.
+- A página `/privacidade` e `/termos` mostram sempre a **data de hoje** em "Última atualização", não a data real da revisão do texto.
 
 ---
 
