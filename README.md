@@ -166,6 +166,7 @@ O `.env.example` vem com valores de **desenvolvimento**. Crie o `.env` a partir 
 | `APP_ENV` | `production` |
 | `APP_DEBUG` | `false` (**nunca** `true` em produção: expõe erros e segredos) |
 | `APP_URL` | URL final com `https://`, sem barra no fim. Define o domínio do canonical e das imagens de compartilhamento |
+| `SESSION_SECURE_COOKIE` | `true` quando o site estiver em HTTPS: o cookie de sessão só trafega por conexão segura. Não vem no exemplo (o desenvolvimento local é HTTP) |
 | `APP_KEY` | vem **vazia** no exemplo; gere com `php artisan key:generate` (uma vez; não troque depois). Nunca copie a chave de outro ambiente |
 | `DB_CONNECTION` / `DB_*` | SQLite (padrão) ou os dados do MySQL |
 | `ADMIN_EMAIL` | e-mail do primeiro administrador |
@@ -248,7 +249,8 @@ Resumo do que **ainda não está resolvido**. Os itens da primeira lista impedem
 - **Proteção da branch `main` no GitHub** exigindo Pull Request. Já houve commits direto na `main` que quebraram o painel e o CI.
 - **Testar em ambiente real** o que a suíte automática não cobre: teclado real, leitor de tela (NVDA/VoiceOver), outros navegadores (os testes de ponta a ponta usam só o Edge) e celulares de verdade.
 - **Rodar os testes de ponta a ponta** (`cd e2e && npm install && npm test`) antes de cada publicação. Eles **não rodam no CI**.
-- **Esconder a versão do servidor e do PHP.** As respostas trazem `Server: Apache/2.4... PHP/8.2...` e `X-Powered-By: PHP/8.2...`. Na hospedagem, desligue com `expose_php = Off` no `php.ini` (e `ServerTokens Prod` no Apache, se for possível). O site também **não envia cabeçalhos de segurança** (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy`); vale configurá-los no servidor depois do HTTPS.
+- **Segurança testada com o OWASP ZAP** (24/11/2026, ambiente de teste local): **nenhum alerta alto e nenhuma injeção** (SQL, XSS, comandos, template) no site público nem no painel; o formulário de contato resistiu a 6 ataques clássicos. Os cabeçalhos `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` e a remoção do `X-Powered-By` já estão no `public/.htaccess`. Detalhes, falsos positivos e limites em `zap/README.md`.
+- **Falta na hospedagem (o ZAP só viu HTTP local):** (1) ligar o HTTPS, pôr `SESSION_SECURE_COOKIE=true` no `.env` e só então ativar o **HSTS** (a linha está pronta, comentada, no fim do `public/.htaccess`; o navegador guarda a regra por 1 ano, por isso não vem ligada); (2) esconder a versão do servidor: `expose_php = Off` no `php.ini` e `ServerTokens Prod` no Apache, porque o cabeçalho `Server: Apache/... PHP/...` não se remove pelo `.htaccess`; (3) **Content-Security-Policy**: o site não tem CSP. Não é uma falha explorável, mas vale montar uma, começando por `Content-Security-Policy-Report-Only` (o site usa estilos em linha, Google Fonts e, se ligado, o Google Analytics; o painel Filament exige regras próprias); (4) repetir a varredura **passiva** do ZAP no site publicado.
 - O CI roda só em SQLite e PHP 8.4; uma regressão em MySQL ou PHP 8.2 só aparece rodando a suíte com `DB_CONNECTION=mysql` ou no PHP 8.2.
 - **Lixeira:** projetos, mensagens e contatos apagados ficam na lixeira até alguém excluir definitivamente (só o Super Admin); não há limpeza automática.
 - O `app.env` e o `app.debug` aparecem nos dados que a página envia ao navegador (props compartilhadas do Inertia). Com `APP_DEBUG=false` não há risco real, mas vale remover.
@@ -272,6 +274,7 @@ DFT/
 │   └── seeders/                  # Dados iniciais para testes locais
 ├── e2e/                          # Testes de ponta a ponta (Playwright): site, painel, cookies e acessibilidade
 ├── k6/                           # Testes de fumaça e de carga (k6), com os resultados medidos
+├── zap/                          # Planos do OWASP ZAP (testes de segurança), com os resultados
 ├── public/                       # Arquivos públicos e ponto de entrada da aplicação
 ├── resources/
 │   ├── css/
@@ -409,6 +412,7 @@ composer run test     # Limpa cache e executa os testes do PHPUnit
 php artisan test                  # PHPUnit: 296 testes, em SQLite em memória (o mesmo que roda no CI)
 cd e2e && npm install && npm test  # Playwright: navegador de verdade (Edge), banco e porta próprios, nada sai para a internet
 k6 run k6/smoke.js                # k6: fumaça, só leitura (veja k6/README.md para carga e formulário)
+# OWASP ZAP (segurança): veja zap/README.md; só contra ambiente de teste
 ```
 
 ### Comandos do npm

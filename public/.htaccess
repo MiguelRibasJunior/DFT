@@ -37,3 +37,22 @@
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
 </IfModule>
+
+# Cabeçalhos de segurança (apontados pelo OWASP ZAP). Valem para o site e para o painel /admin.
+<IfModule mod_headers.c>
+    # Impede que o navegador "adivinhe" o tipo de um arquivo (ex.: tratar um upload como script).
+    Header always set X-Content-Type-Options "nosniff"
+    # Impede que outro site coloque este numa moldura (clickjacking). O painel e o site não usam molduras.
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # Não manda o endereço completo das páginas para outros sites ao seguir um link.
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # O site não usa câmera, microfone nem localização.
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    # Esconde a versão do PHP. (A versão do servidor, "Server:", só se esconde na configuração do servidor.)
+    Header always unset X-Powered-By
+    Header unset X-Powered-By
+
+    # HSTS: obriga o navegador a usar sempre HTTPS. DESLIGADO de propósito: o navegador guarda a regra por
+    # 1 ano, então só ative depois de confirmar que o site inteiro funciona em HTTPS (tire o # da linha abaixo).
+    # Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+</IfModule>

@@ -1,0 +1,60 @@
+# OWASP ZAP (Automation Framework): painel /admin, COM a sessão de um usuário de teste.
+# Variáveis de ambiente: ZAP_TARGET e ZAP_REPORT_DIR. A sessão NÃO vem de variável: o ZAP não substitui variáveis
+# dentro das regras do job "replacer". Por isso `node zap/login.cjs` gera zap/.tmp/plan-admin.yaml com o cookie
+# no lugar de __ADMIN_COOKIE__, e é esse arquivo gerado que se roda. Veja zap/README.md. Use o usuário descartável de um banco de teste, nunca a senha de um admin real.
+env:
+  contexts:
+    - name: admin
+      urls: ["${ZAP_TARGET}"]
+      includePaths: ["${ZAP_TARGET}/admin.*", "${ZAP_TARGET}/livewire.*"]
+      excludePaths: ["${ZAP_TARGET}/admin/logout.*"]
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    progressToStdout: true
+jobs:
+  - type: replacer
+    parameters: { deleteAllRules: true }
+    rules:
+      - description: sessao-admin
+        matchType: req_header
+        matchString: Cookie
+        matchRegex: false
+        replacementString: "__ADMIN_COOKIE__"
+
+  - type: passiveScan-config
+    parameters: { maxAlertsPerRule: 20, scanOnlyInScope: true }
+
+  - type: requestor
+    requests:
+      - { url: "${ZAP_TARGET}/admin", method: GET }
+      - { url: "${ZAP_TARGET}/admin/projects", method: GET }
+      - { url: "${ZAP_TARGET}/admin/projects/create", method: GET }
+      - { url: "${ZAP_TARGET}/admin/my-tasks", method: GET }
+      - { url: "${ZAP_TARGET}/admin/ctas", method: GET }
+      - { url: "${ZAP_TARGET}/admin/ctas/create", method: GET }
+      - { url: "${ZAP_TARGET}/admin/contact-links", method: GET }
+      - { url: "${ZAP_TARGET}/admin/contact-links/create", method: GET }
+      - { url: "${ZAP_TARGET}/admin/contact-submissions", method: GET }
+      - { url: "${ZAP_TARGET}/admin/messages", method: GET }
+      - { url: "${ZAP_TARGET}/admin/messages/create", method: GET }
+      - { url: "${ZAP_TARGET}/admin/users", method: GET }
+      - { url: "${ZAP_TARGET}/admin/users/create", method: GET }
+      - { url: "${ZAP_TARGET}/admin/settings", method: GET }
+      - { url: "${ZAP_TARGET}/admin/footer", method: GET }
+
+  - type: spider
+    parameters: { context: admin, maxDuration: 3, maxDepth: 6 }
+  - type: passiveScan-wait
+    parameters: { maxDuration: 5 }
+  - type: activeScan
+    parameters: { context: admin, maxScanDurationInMins: 10, maxRuleDurationInMins: 2, threadPerHost: 4 }
+
+  - type: report
+    parameters: { template: traditional-json, reportDir: "${ZAP_REPORT_DIR}", reportFile: admin, reportTitle: "DFT - painel admin" }
+    risks: [high, medium, low, info]
+    confidences: [high, medium, low, falsepositive]
+  - type: report
+    parameters: { template: traditional-html, reportDir: "${ZAP_REPORT_DIR}", reportFile: admin, reportTitle: "DFT - painel admin" }
+    risks: [high, medium, low, info]
+    confidences: [high, medium, low, falsepositive]
