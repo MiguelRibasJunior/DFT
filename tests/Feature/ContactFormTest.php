@@ -77,7 +77,11 @@ class ContactFormTest extends TestCase
             $this->postJson('/api/contact', $this->validPayload())->assertCreated();
         }
 
-        $this->postJson('/api/contact', $this->validPayload())->assertStatus(429);
+        $limited = $this->postJson('/api/contact', $this->validPayload())->assertStatus(429);
+
+        // O tratador de erros da API monta um JSON genérico; ele não pode descartar os cabeçalhos do limite.
+        $this->assertGreaterThan(0, (int) $limited->headers->get('Retry-After'));
+        $this->assertNotNull($limited->headers->get('X-RateLimit-Limit'));
     }
 
     public function test_submission_is_saved_even_when_email_service_fails(): void

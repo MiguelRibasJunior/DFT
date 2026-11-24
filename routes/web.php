@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\ContactLinkType;
-use App\Models\ContactLink;
-use App\Models\SiteSetting;
+use App\Http\Controllers\LegalPageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,25 +16,10 @@ use Inertia\Inertia;
 // Os dados públicos da página inicial vêm da API (/api/*), que já devolve só campos escolhidos.
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
 
-/**
- * Páginas legais fixas (/termos e /privacidade): só o necessário para o cabeçalho e o rodapé.
- * O e-mail é o do primeiro canal de contato ativo cadastrado no admin.
- */
-$legalPage = fn (string $component) => function () use ($component) {
-    $site = SiteSetting::current();
+// Páginas legais fixas: controller (e não closure) para funcionar com `php artisan route:cache`.
+Route::get('/termos', [LegalPageController::class, 'terms'])->name('terms');
 
-    return Inertia::render($component, [
-        'settings' => [
-            'site_name' => $site->site_name,
-            'copyright_text' => $site->copyright_text,
-            'email' => ContactLink::query()->active()->ordered()->where('type', ContactLinkType::Email)->value('value'),
-        ],
-    ]);
-};
-
-Route::get('/termos', $legalPage('Terms'))->name('terms');
-
-Route::get('/privacidade', $legalPage('Privacy'))->name('privacy');
+Route::get('/privacidade', [LegalPageController::class, 'privacy'])->name('privacy');
 
 Route::get('/sitemap.xml', function () {
     $path = public_path('sitemap.xml');
