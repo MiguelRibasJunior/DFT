@@ -89,15 +89,11 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
             return (
               <div
                 key={project.id}
-                tabIndex={0}
-                role="button"
-                aria-label={`Ver detalhes do projeto ${project.title}`}
-                onClick={() => onSelectProject(project.title, project.description, project.technologies)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onSelectProject(project.title, project.description, project.technologies);
-                  }
+                // O cartão inteiro responde ao clique do mouse; teclado e leitor de tela usam o botão "Ver projeto" dentro dele.
+                // (Um cartão role="button" com botão dentro é "nested-interactive".)
+                onClick={(event) => {
+                  event.currentTarget.querySelector('button')?.focus({ preventScroll: true });
+                  onSelectProject(project.title, project.description, project.technologies);
                 }}
                 className={`glass-card project-card reveal-item stagger-${index + 1} ${
                   isVisible ? 'reveal-visible' : ''
@@ -175,16 +171,12 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                     </div>
                   )}
 
-                  {/* Hover Overlay Button */}
-                  <div className="project-overlay">
-                    <button
-                      onClick={() => onSelectProject(project.title, project.description, project.technologies)}
-                      className="btn btn-primary"
-                      style={{ padding: '10px 20px', fontSize: '14px' }}
-                    >
+                  {/* Dica visual ao passar o mouse. Não é um controle: o clique cai no cartão, e o botão "Ver projeto" abaixo é o controle de teclado. */}
+                  <div className="project-overlay" aria-hidden="true">
+                    <span className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '14px' }}>
                       <span>Ver detalhes do projeto</span>
                       <ExternalLink size={16} />
-                    </button>
+                    </span>
                   </div>
                 </div>
 
@@ -236,12 +228,18 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectProject, projects:
                     </div>
 
                     <button
-                      onClick={() => onSelectProject(project.title, project.description, project.technologies)}
+                      type="button"
+                      aria-label={`Ver projeto: ${project.title}`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        event.currentTarget.focus({ preventScroll: true });
+                        onSelectProject(project.title, project.description, project.technologies);
+                      }}
                       className="btn btn-secondary"
                       style={{ width: '100%', padding: '10px', fontSize: '13px' }}
                     >
                       <span>Ver projeto</span>
-                      <ArrowRight size={14} />
+                      <ArrowRight size={14} aria-hidden="true" />
                     </button>
                   </div>
                 </div>

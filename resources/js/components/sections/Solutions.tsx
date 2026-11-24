@@ -165,19 +165,15 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
             return (
               <div
                 key={item.id}
-                role="button"
-                tabIndex={0}
                 className={`glass-card solution-card reveal-item stagger-${index + 1} ${
                   isVisible ? 'reveal-visible' : ''
                 }`}
-                onClick={() => setActiveSolution(item.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setActiveSolution(item.id);
-                  }
+                // O cartão inteiro responde ao clique do mouse; teclado e leitor de tela usam o botão "Saiba mais" dentro dele.
+                // (Um cartão role="button" com botão dentro é "nested-interactive", e o nome do botão precisa conter o texto visível.)
+                onClick={(event) => {
+                  event.currentTarget.querySelector('button')?.focus({ preventScroll: true });
+                  setActiveSolution(item.id);
                 }}
-                aria-label={`Ver detalhes de ${item.title}`}
                 style={{
                   padding: '32px 28px',
                   display: 'flex',
@@ -248,23 +244,36 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
                   </p>
                 </div>
 
-                {/* Bottom Arrow Indicator */}
-                <div
+                {/* Bottom Arrow Indicator: é o botão que teclado e leitor de tela usam para abrir os detalhes */}
+                <button
+                  type="button"
+                  aria-label={`Saiba mais sobre ${item.title}`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    event.currentTarget.focus({ preventScroll: true });
+                    setActiveSolution(item.id);
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
+                    width: '100%',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
                     fontSize: '13px',
                     fontWeight: 600,
                     color: item.color,
                     marginTop: '24px',
                     paddingTop: '16px',
+                    background: 'none',
+                    border: 'none',
                     borderTop: '1px solid rgba(41, 50, 71, 0.4)',
+                    cursor: 'pointer',
                   }}
                 >
                   <span>Saiba mais</span>
-                  <ArrowUpRight size={16} />
-                </div>
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </button>
               </div>
             );
           })}
@@ -273,7 +282,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onSelectSolution }) => {
 
       <style>{`
         .solution-card:hover .icon-box,
-        .solution-card:focus-visible .icon-box {
+        .solution-card:focus-within .icon-box {
           transform: scale(1.1) rotate(-4deg);
         }
       `}</style>

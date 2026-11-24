@@ -56,10 +56,11 @@ export const Header: React.FC<HeaderProps> = ({ logoUrl, siteName }) => {
         <a
           href={sectionHref(SECTION_IDS.hero)}
           className="site-header__brand"
-          aria-label="Devs From Tomorrow — voltar ao início"
           onClick={(event) => handleAnchorClick(event, () => closeMenu())}
         >
           <Logo imageUrl={logoUrl} alt={siteName} />
+          {/* O nome do link vem do conteúdo (logo + este trecho): sem aria-label, o texto visível sempre faz parte do nome (WCAG 2.5.3). */}
+          <span className="visually-hidden"> — voltar ao início</span>
         </a>
 
         <DesktopNav items={NAV_ITEMS} activeId={activeId} />

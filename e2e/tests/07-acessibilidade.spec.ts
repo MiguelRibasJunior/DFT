@@ -21,7 +21,6 @@ test.describe('Acessibilidade automatizada (axe, WCAG 2.1 A/AA)', () => {
   test.use({ reducedMotion: 'reduce' });
 
   test('página inicial com o banner de cookies aberto', async ({ page }) => {
-    test.fail(true, 'DEFEITOS CONHECIDOS (WCAG): botão dentro de botão nos cards de projeto (nested-interactive) e nome acessível que não contém o texto visível no logo e nos cards de solução (label-content-name-mismatch).');
     await page.goto('/');
     await loadWholePage(page);
     await expect(page.getByRole('region', { name: 'Cookies e privacidade' })).toBeVisible();
@@ -30,7 +29,6 @@ test.describe('Acessibilidade automatizada (axe, WCAG 2.1 A/AA)', () => {
   });
 
   test('página inicial depois de decidir sobre os cookies (320px)', async ({ page }) => {
-    test.fail(true, 'DEFEITOS CONHECIDOS (WCAG): os mesmos da página inicial (nested-interactive e label-content-name-mismatch).');
     await page.setViewportSize({ width: 320, height: 700 });
     await page.goto('/');
     await page.getByRole('button', { name: 'Recusar' }).click();
@@ -43,7 +41,7 @@ test.describe('Acessibilidade automatizada (axe, WCAG 2.1 A/AA)', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Recusar' }).click();
     await loadWholePage(page);
-    await page.getByRole('button', { name: /Ver detalhes de Chatbots Inteligentes/ }).click();
+    await page.getByRole('button', { name: /Saiba mais sobre Chatbots Inteligentes/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
 
     expect(await violationsOf(page, '[role="dialog"]')).toEqual([]);
@@ -64,7 +62,6 @@ test.describe('Acessibilidade automatizada (axe, WCAG 2.1 A/AA)', () => {
   });
 
   test('páginas legais (/privacidade e /termos)', async ({ page }) => {
-    test.fail(true, 'DEFEITO CONHECIDO (WCAG 1.4.1): links dentro de parágrafos só se diferenciam pela cor (link-in-text-block); falta sublinhado em Pages/Privacy.tsx e Terms.tsx.');
     for (const url of ['/privacidade', '/termos']) {
       await page.goto(url);
       expect(await violationsOf(page), url).toEqual([]);
@@ -72,7 +69,6 @@ test.describe('Acessibilidade automatizada (axe, WCAG 2.1 A/AA)', () => {
   });
 
   test('tela de login do painel', async ({ page }) => {
-    test.fail(true, 'DEFEITO CONHECIDO (WCAG 1.4.3): o link "← Voltar ao site" do login tem contraste insuficiente sobre o fundo branco.');
     await page.goto('/admin/login');
 
     expect(await violationsOf(page)).toEqual([]);

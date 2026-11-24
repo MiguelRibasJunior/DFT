@@ -130,7 +130,6 @@ test.describe('Banner de cookies (LGPD)', () => {
   });
 
   test('no desktop o banner é compacto e os botões têm altura normal', async ({ page }) => {
-    test.fail(true, 'DEFEITO CONHECIDO: no desktop os botões do banner ficam com ~200px de altura (o flex: 1 1 200px do CSS vira altura na coluna) e o banner ocupa metade da tela. Corrija em css/components/ui.css e tire esta marca.');
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
 

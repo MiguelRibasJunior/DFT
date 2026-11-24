@@ -27,18 +27,9 @@ Requisitos: PHP 8.2+, Node 20+ e o **Microsoft Edge** instalado (os testes usam 
 - **Nada sai para a internet.** O Google Analytics/Tag Manager é interceptado pelos testes (e usado para provar que nada é pedido antes do "Aceitar"), o Google Fonts é respondido vazio e o aviso por e-mail do formulário aponta para uma porta sem ninguém ouvindo (`CONTACT_NOTIFICATION_ENDPOINT`). Nenhum e-mail real é enviado.
 - O login do painel usa um usuário só dos testes (`e2e-admin@example.test`), criado no banco isolado. O Filament limita o login a 5 tentativas por minuto, por isso a sessão é criada uma vez e reaproveitada.
 
-## Defeitos conhecidos (marcados com `test.fail`)
+## Defeitos conhecidos
 
-Cinco testes documentam defeitos reais do site. Eles **passam enquanto o defeito existir** e **ficam vermelhos quando alguém o corrige**: aí é só apagar a linha `test.fail(...)` do teste.
-
-| Teste | Defeito |
-|---|---|
-| `05-cookies` › banner compacto no desktop | botões do banner com ~200 px de altura |
-| `07-acessibilidade` › home (2 testes) | botão dentro de botão nos cards de projeto; nome acessível sem o texto visível |
-| `07-acessibilidade` › páginas legais | links só diferenciados por cor |
-| `07-acessibilidade` › login do painel | contraste do link "Voltar ao site" |
-
-Há ainda um `test.fixme` em `01-pagina-inicial`: clicar no menu no primeiro instante, antes das seções carregarem, às vezes faz a página parar antes da seção.
+Nenhum no momento. Quando a suíte achar um defeito que não dá para corrigir na hora, marque o teste com `test.fail(true, 'o que está errado')`: ele passa enquanto o defeito existir e fica vermelho no dia em que alguém o corrigir (aí é só apagar a linha). Para um comportamento intermitente, use `test.fixme`.
 
 ## Quando um teste falha
 

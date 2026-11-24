@@ -30,6 +30,45 @@ interface ScrollToSectionOptions {
   moveFocus?: boolean;
 }
 
+/** Tolerância (px) entre onde a seção deveria ficar e onde ela ficou. */
+const ALIGN_TOLERANCE = 4;
+/** Quando conferir se a rolagem chegou: depois da animação e enquanto as seções ainda estão carregando. */
+const SETTLE_CHECKS_MS = [900, 1800, 3200];
+
+/**
+ * A rolagem suave calcula o destino no instante do clique, mas as seções abaixo da dobra carregam sob demanda
+ * (React.lazy) e mudam a altura da página enquanto a rolagem acontece: o clique logo ao abrir o site às vezes
+ * parava ~1000px antes da seção. Aqui a posição é conferida depois da animação e corrigida, sem animar de novo
+ * (instantâneo) para não brigar com o layout. Se a pessoa rolar ou mexer no teclado, a correção é cancelada.
+ */
+function settleOnSection(id: string): void {
+  let cancelled = false;
+  const interactionEvents = ['wheel', 'touchstart', 'mousedown', 'keydown'] as const;
+
+  const stop = () => {
+    cancelled = true;
+    interactionEvents.forEach((name) => window.removeEventListener(name, stop));
+  };
+  interactionEvents.forEach((name) => window.addEventListener(name, stop, { passive: true }));
+
+  SETTLE_CHECKS_MS.forEach((delay, index) => {
+    window.setTimeout(() => {
+      if (cancelled) return;
+
+      // A seção pode ter sido trocada pela versão carregada (o placeholder tem o mesmo ID): busca de novo.
+      const target = document.getElementById(id);
+      if (target) {
+        const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        if (Math.abs(target.getBoundingClientRect().top - offset) > ALIGN_TOLERANCE) {
+          target.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+      }
+
+      if (index === SETTLE_CHECKS_MS.length - 1) stop();
+    }, delay);
+  });
+}
+
 /**
  * Rola suavemente até a seção com o ID informado.
  * Retorna false se a seção não existir na página (o chamador pode deixar o link seguir o padrão).
@@ -39,6 +78,7 @@ export function scrollToSection(id: string, { updateHash = true, moveFocus = tru
   if (!target) return false;
 
   target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  settleOnSection(id);
 
   if (updateHash && window.location.hash !== `#${id}`) {
     window.history.replaceState(null, '', `#${id}`);
