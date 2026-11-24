@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -73,6 +74,13 @@ return new class extends Migration
             }
         });
 
+        // No MySQL/MariaDB, ao criar o índice composto o banco descarta o índice automático da chave estrangeira,
+        // e o composto passa a sustentá-la: sem recriar o índice simples antes, o dropIndex falha (erro 1553).
+        $this->keepForeignKeyIndex('activities', 'project_id');
+        $this->keepForeignKeyIndex('comments', 'project_id');
+        $this->keepForeignKeyIndex('tasks', 'project_id');
+        $this->keepForeignKeyIndex('tasks', 'assigned_to');
+
         Schema::table('activities', fn (Blueprint $table) => $table->dropIndex('activities_project_date_index'));
         Schema::table('comments', fn (Blueprint $table) => $table->dropIndex('comments_project_date_index'));
         Schema::table('contact_submissions', fn (Blueprint $table) => $table->dropIndex('contact_submissions_status_date_index'));
@@ -83,5 +91,19 @@ return new class extends Migration
         Schema::table('contact_links', fn (Blueprint $table) => $table->dropIndex('contact_links_active_order_index'));
         Schema::table('ctas', fn (Blueprint $table) => $table->dropIndex('ctas_position_lookup_index'));
         Schema::table('projects', fn (Blueprint $table) => $table->dropIndex('projects_public_listing_index'));
+    }
+
+    /** Garante, só em MySQL/MariaDB, o índice simples que o banco cria sozinho para a chave estrangeira. */
+    private function keepForeignKeyIndex(string $table, string $column): void
+    {
+        if (! in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
+
+        $name = "{$table}_{$column}_foreign";
+
+        if (! Schema::hasIndex($table, $name)) {
+            Schema::table($table, fn (Blueprint $blueprint) => $blueprint->index($column, $name));
+        }
     }
 };
