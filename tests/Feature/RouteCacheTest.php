@@ -40,6 +40,9 @@ class RouteCacheTest extends TestCase
 
         // Reinicia a aplicação para ela carregar as rotas do arquivo de cache, como em produção.
         $this->refreshApplication();
+        // O refresh cria uma aplicação nova e perde o withoutVite() do TestCase; sem ele, ambientes sem
+        // public/build (como o CI) dão erro "Vite manifest not found".
+        $this->withoutVite();
         $this->assertTrue($this->app->routesAreCached());
         $this->artisan('migrate', ['--force' => true])->assertSuccessful();
 
