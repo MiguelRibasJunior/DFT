@@ -12,6 +12,8 @@ class ContactsChart extends ChartWidget
 
     protected static bool $isLazy = false;
 
+    protected int|string|array $columnSpan = 'full';
+
     protected ?string $heading = 'Contatos recebidos';
 
     protected function getData(): array
