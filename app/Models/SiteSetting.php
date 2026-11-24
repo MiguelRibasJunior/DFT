@@ -58,7 +58,9 @@ class SiteSetting extends Model
 
     public static function current(): self
     {
-        return static::query()->firstOrCreate(['id' => 1]);
+        // `id` não é preenchível em massa: sem o unguarded, o MySQL cria a linha com o próximo AUTO_INCREMENT
+        // (que não volta atrás após rollback) e `current()` nunca mais acha o id 1, então nada salvo persistia.
+        return static::unguarded(fn () => static::query()->firstOrCreate(['id' => 1]));
     }
 
     public function seoTitle(): string

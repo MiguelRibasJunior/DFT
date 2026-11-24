@@ -58,7 +58,8 @@ class FooterSettingsTest extends TestCase
         $settings = SiteSetting::current();
         $this->assertSame('Nova descrição institucional.', $settings->description);
         $this->assertSame('© 2027 DFT.', $settings->copyright_text);
-        $this->assertSame([
+        // assertEquals: a coluna JSON do MySQL reordena as chaves (url antes de label); o conteúdo é o que importa.
+        $this->assertEquals([
             ['label' => 'Início', 'url' => '#hero'],
             ['label' => 'Blog', 'url' => 'https://blog.exemplo.com'],
         ], $settings->footer_links);
@@ -109,7 +110,11 @@ class FooterSettingsTest extends TestCase
 
         SiteSetting::current()->update(['footer_links' => [['label' => 'Só um', 'url' => '#hero']]]);
 
-        $this->getJson('/api/settings')->assertJsonPath('data.footer_links', [['label' => 'Só um', 'url' => '#hero']]);
+        // assertEquals pelo mesmo motivo: o MySQL devolve as chaves do JSON em outra ordem.
+        $this->assertEquals(
+            [['label' => 'Só um', 'url' => '#hero']],
+            $this->getJson('/api/settings')->json('data.footer_links'),
+        );
     }
 
     public function test_api_does_not_expose_private_or_legacy_fields(): void
